@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3968960525204464604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3968960525204464606}
+  - component: {fileID: 3968960525204464605}
+  m_Layer: 7
+  m_Name: JointManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3968960525204464606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3968960525204464604}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.943, y: -0.167, z: 0.499}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3968960525204464605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3968960525204464604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c350ffcd3e68a54b858eafe4cd588fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceRange: {x: 0.001, y: 1}
+  unitSegmentDst: 0.025
+  lineMaterial: {fileID: 2100000, guid: 8609c4b60de8ae24c9431c985ef1219b, type: 2}
+  lineCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -7.813731
+      outSlope: -7.813731
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.022792406
+    - serializedVersion: 3
+      time: 0.07466961
+      value: 0.65591866
+      inSlope: -2.40954
+      outSlope: -2.40954
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.14526594
+    - serializedVersion: 3
+      time: 0.49971855
+      value: 0.30306983
+      inSlope: -0.020581903
+      outSlope: -0.020581903
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.92816246
+      value: 0.6555463
+      inSlope: 2.354005
+      outSlope: 2.354005
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.14626318
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 6.7364154
+      outSlope: 6.7364154
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.02492553
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lineWidth: 0.7
+  vertexInterpolation: 0.75
+  debug: 1
+  gravityDirection: {x: 0, y: -1, z: 0}
+  gravityChange: 30
+  randomness: 0.773
+  refreshRate: 30
+  update: 1

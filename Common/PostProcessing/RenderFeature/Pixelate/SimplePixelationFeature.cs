@@ -13,8 +13,13 @@ public class SimplePixelationFeature : ScriptableRendererFeature {
 
         int _blockSize;
 
-        public PixelateRenderPass(int blockSize) {
+        bool sceneView;
+        bool preview;
+
+        public PixelateRenderPass(int blockSize, bool sceneView, bool preview) {
             _blockSize = blockSize;
+            this.sceneView = sceneView;
+            this.preview = preview;
         }
 
         public void Setup(RenderTargetIdentifier cameraRT) {
@@ -31,8 +36,11 @@ public class SimplePixelationFeature : ScriptableRendererFeature {
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
-            if (renderingData.cameraData.isSceneViewCamera)
+            if (renderingData.cameraData.isSceneViewCamera && !sceneView)
                 return;
+            if (renderingData.cameraData.isPreviewCamera && !preview) {
+                return;
+            }
 
             CommandBuffer cmd = CommandBufferPool.Get();
             cmd.Blit(m_CameraRt, m_Temp.Identifier());
@@ -56,11 +64,16 @@ public class SimplePixelationFeature : ScriptableRendererFeature {
     PixelateRenderPass _scriptablePass;
     bool _initialized;
 
-    [Range(1, 40)] public int BlockSize = 3;
+    [Range(1, 40)]
+    public int BlockSize = 3;
+
     public RenderPassEvent renderPassEvent;
 
+    public bool sceneView;
+    public bool preview;
+
     public override void Create() {
-        _scriptablePass = new PixelateRenderPass(BlockSize);
+        _scriptablePass = new PixelateRenderPass(BlockSize, sceneView, preview);
         _scriptablePass.renderPassEvent = renderPassEvent;
         _initialized = true;
     }

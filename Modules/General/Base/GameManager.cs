@@ -44,12 +44,12 @@ namespace XiheFramework {
 
         public static void RegisterComponent(GameModule component) {
             if (component == null) {
-                Debug.LogErrorFormat("Registering a null component");
+                Debug.LogErrorFormat("[GAME MANAGER]Registering a null component");
                 return;
             }
 
             if (Instance.m_GameModules.ContainsKey(component.GetType())) {
-                Debug.LogErrorFormat("Component: {0} has already existed", component.GetType().Name);
+                Debug.LogErrorFormat("[GAME MANAGER]Component: {0} has already existed", component.GetType().Name);
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace XiheFramework {
                 return (T) value;
             }
 
-            Debug.LogErrorFormat("Component: {0} does not exist", t.Name);
+            Debug.LogErrorFormat("[GAME MANAGER]Component: {0} does not exist", t.Name);
             return null;
         }
 

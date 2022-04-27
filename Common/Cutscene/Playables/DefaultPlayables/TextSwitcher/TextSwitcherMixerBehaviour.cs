@@ -13,7 +13,7 @@ public class TextSwitcherMixerBehaviour : PlayableBehaviour {
 
     private Text m_TrackBinding;
     private bool m_FirstFrameHappened;
-    
+
     public override void ProcessFrame(Playable playable, FrameData info, object playerData) {
         m_TrackBinding = playerData as Text;
 
@@ -43,8 +43,13 @@ public class TextSwitcherMixerBehaviour : PlayableBehaviour {
             m_TrackBinding.color = input.color;
             m_TrackBinding.fontSize = input.fontSize;
 
-            var translated=Game.Localization.GetValue(input.text);
-            m_TrackBinding.text = GetText(translated, input.progression, input.speed);
+            if (!input.localized) {
+                m_TrackBinding.text = GetText(input.text, input.progression, input.speed);
+            }
+            else {
+                var translated = Game.Localization.GetValue(input.text);
+                m_TrackBinding.text = GetText(translated, input.progression, input.speed);
+            }
         }
 
         if (!Mathf.Approximately(totalWeight, 1f)) {
@@ -60,7 +65,6 @@ public class TextSwitcherMixerBehaviour : PlayableBehaviour {
     /// <param name="speed"> 1 refers to full duration, 2 refer to half duration </param>
     /// <returns></returns>
     private string GetText(string original, float progression, float speed) {
-        
         int length = Mathf.FloorToInt(original.Length * progression * speed);
         length = Mathf.Clamp(length, 0, original.Length);
         var result = original.Substring(0, length);

@@ -8,7 +8,7 @@ public class TextSwitcherDrawer : PropertyDrawer
 {
     public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
     {
-        int fieldCount = 4;
+        int fieldCount = 5;
         return fieldCount * EditorGUIUtility.singleLineHeight;
     }
 
@@ -18,6 +18,7 @@ public class TextSwitcherDrawer : PropertyDrawer
         SerializedProperty fontSizeProp = property.FindPropertyRelative("fontSize");
         SerializedProperty speedProp = property.FindPropertyRelative("speed");
         SerializedProperty textProp = property.FindPropertyRelative("text");
+        SerializedProperty localizedProp = property.FindPropertyRelative("localized");
 
         Rect singleFieldRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
         EditorGUI.PropertyField(singleFieldRect, colorProp);
@@ -30,5 +31,8 @@ public class TextSwitcherDrawer : PropertyDrawer
 
         singleFieldRect.y += EditorGUIUtility.singleLineHeight;
         EditorGUI.PropertyField(singleFieldRect, textProp);
+        
+        singleFieldRect.y += EditorGUIUtility.singleLineHeight;
+        EditorGUI.PropertyField(singleFieldRect, localizedProp);
     }
 }

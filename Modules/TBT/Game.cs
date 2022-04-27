@@ -1,4 +1,4 @@
-﻿namespace XiheFramework
+﻿namespace XiheFramework.TBT
 {
     public static partial class Game
     {

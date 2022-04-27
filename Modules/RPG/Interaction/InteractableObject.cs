@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FlowCanvas;
-using NodeCanvas.Framework;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace XiheFramework {
     public class InteractableObject : MonoBehaviour {
@@ -34,7 +30,7 @@ namespace XiheFramework {
                 return;
             }
 
-            Game.Interaction.RegisterNearPlayerObject(this);
+            GameManager.GetModule<InteractionModule>().RegisterNearPlayerObject(this);
         }
 
         private void OnTriggerExit(Collider other) {
@@ -42,7 +38,7 @@ namespace XiheFramework {
                 return;
             }
 
-            Game.Interaction.UnRegisterNearPlayerObject(this);
+            GameManager.GetModule<InteractionModule>().UnRegisterNearPlayerObject(this);
         }
 
         private void OnDrawGizmos() {
@@ -51,7 +47,7 @@ namespace XiheFramework {
         }
 
         private void OnDisable() {
-            Game.Interaction.UnRegisterNearPlayerObject(this);
+            GameManager.GetModule<InteractionModule>().UnRegisterNearPlayerObject(this);
         }
     }
 }

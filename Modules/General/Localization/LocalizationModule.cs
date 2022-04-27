@@ -39,7 +39,7 @@ public class LocalizationModule : GameModule
 
     private void Start()
     {
-        ReadLocalizationFile();
+        //ReadLocalizationFile();
         //Debug.LogInfo(GetValue("上午"));
     }
 

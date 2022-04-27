@@ -11,5 +11,7 @@ public class TextSwitcherBehaviour : PlayableBehaviour {
     [Range(0.1f,50f)]public float speed = 20f;
     public string text;
 
+    public bool localized;
+
     public float progression=1f;
 }

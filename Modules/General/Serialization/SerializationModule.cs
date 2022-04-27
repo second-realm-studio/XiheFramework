@@ -12,13 +12,13 @@ namespace XiheFramework
         {
             //序列化过程（将save转化为字节流）
             //创建Save对象并保存当前游戏状态
-            BaseSaveData baseSaveData = Game.Blackboard.CreateSaveData();
+            //BaseSaveData baseSaveData = Game.Blackboard.CreateSaveData();
             //创建一个二进制格式化程序
             BinaryFormatter bf = new BinaryFormatter();
             //创建一个文件流
             FileStream fileStream = File.Create(path + fileName + suffix);
             //用二进制格式化程序的序列化方法来序列化Save对象,参数：创建的文件流和需要序列化的对象
-            bf.Serialize(fileStream, baseSaveData);
+            //bf.Serialize(fileStream, baseSaveData);
             //关闭流
             fileStream.Close();
 
@@ -47,7 +47,7 @@ namespace XiheFramework
             //关闭文件流
             fileStream.Close();
             //向Blackboard传输save中的数据
-            Game.Blackboard.LoadSaveData(saoriSave);
+            //Game.Blackboard.LoadSaveData(saoriSave);
         }
         
         public bool IfRecoverSaveFile(string fileName)

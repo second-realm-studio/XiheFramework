@@ -1,5 +1,5 @@
-﻿namespace XiheFramework.RPG {
+﻿namespace XiheFramework {
     public static partial class Game {
-        public static InteractionModule Interaction = GameManager.GetModule<InteractionModule>();
+        public static InteractionModule Interaction => GameManager.GetModule<InteractionModule>();
     }
 }

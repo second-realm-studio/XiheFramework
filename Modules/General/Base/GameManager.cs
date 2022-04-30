@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 namespace XiheFramework {
     public class GameManager : Singleton<GameManager> {
         public int frameRate = 60;
+        public float globalSpeed=1f;
 
         public string retryScene;
         public string restartScene;
@@ -32,6 +33,10 @@ namespace XiheFramework {
 
         private void Start() {
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void Update() {
+            Time.timeScale = globalSpeed;
         }
 
         private void RegisterAllComponent() {

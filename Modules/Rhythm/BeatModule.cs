@@ -30,6 +30,7 @@ public class BeatModule : GameModule {
     public float TimePerBeat => 60f / bpm; //time per beat
     public float Timer => m_Timer;
     public float CumulativeTimer => m_CumulativeTimer;
+    public float BeatCount => m_CurrentBeat;
 
     // public float MaxInputBlur => TimePerBeat; //time per beat
 
@@ -126,8 +127,6 @@ public class BeatModule : GameModule {
         }
 
         m_CurrentBeat = (m_CurrentBeat + 1);
-        Game.Blackboard.SetData("BeatCount", m_CurrentBeat, BlackBoardDataType.Runtime);
-        //Game.Event.Invoke("OnBeat", this, m_CurrentBeat);
 
         m_Timer -= TimePerBeat;
 

@@ -23,7 +23,7 @@ public class BlackBoardEditorWindow : EditorWindow {
     }
 
     private void OnEnable() {
-        Game.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
+        //Game.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
     }
 
     private void OnBlackBoardChanged(object sender, object e) {
@@ -76,7 +76,7 @@ public class BlackBoardEditorWindow : EditorWindow {
             OnBlackBoardChanged(null, null);//bad use
         }
 
-        BuildFoldout(m_States, root);
+        //BuildFoldout(m_States, root);
         //TreeViewLayout(root, 0);
 
         EditorGUILayout.EndScrollView();

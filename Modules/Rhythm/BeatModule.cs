@@ -13,7 +13,7 @@ public class BeatModule : GameModule {
     public int bpm = 90;
 
     //public int signature = 4; //4/4 3/4 etc
-    public int delay = 4;
+    public int beatDelay = 4;
     //public float inputBlur = 0.1f;
 
     private bool m_Active = false;
@@ -39,16 +39,17 @@ public class BeatModule : GameModule {
     // }
 
     private void Start() {
-        Game.Event.Subscribe("OnPlay", OnPlay);
+        Game.Event.Subscribe("OnBeatModuleActivated", OnBeatModuleActivated);
     }
 
-    private void OnPlay(object sender, object e) {
-        m_Timer = -delay * TimePerBeat;
-        m_CumulativeTimer = -delay * TimePerBeat;
-        m_CurrentBeat = -delay;
+    private void OnBeatModuleActivated(object sender, object e) {
+        m_Timer = -beatDelay * TimePerBeat;
+        m_CumulativeTimer = -beatDelay * TimePerBeat;
+        m_CurrentBeat = -beatDelay;
 
         m_Active = true;
     }
+
 
     // private void ResetInputBuffer() {
     //     // m_InputBuffer = new int[signature];
@@ -127,6 +128,7 @@ public class BeatModule : GameModule {
         }
 
         m_CurrentBeat = (m_CurrentBeat + 1);
+        Game.Event.Invoke("OnBeat", this, m_CurrentBeat);
 
         m_Timer -= TimePerBeat;
 

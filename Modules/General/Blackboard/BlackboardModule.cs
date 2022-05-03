@@ -177,7 +177,7 @@ namespace XiheFramework {
                 }
             }
 
-            Debug.Log(m_DataPathTree.Flatten());
+            //Debug.Log(m_DataPathTree.Flatten());
         }
 
         public void Reset() {

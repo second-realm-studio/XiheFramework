@@ -43,7 +43,7 @@ public class BeatModule : GameModule {
     }
 
     private void OnBeatModuleActivated(object sender, object e) {
-        m_Timer = -beatDelay * TimePerBeat;
+        //m_Timer = -beatDelay * TimePerBeat;
         m_CumulativeTimer = -beatDelay * TimePerBeat;
         m_CurrentBeat = -beatDelay;
 

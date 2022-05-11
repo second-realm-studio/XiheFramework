@@ -53,6 +53,7 @@ MonoBehaviour:
   image: {fileID: 1198773137818671982}
   text: {fileID: 1198773138254463000}
   widthPerLetter: 20
+  heightPerLine: 20
   maxLetterPerLine: 25
   edgeWidth: 25
   edgeHeight: 30
@@ -114,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.81531036, b: 0.794, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

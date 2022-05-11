@@ -14,6 +14,43 @@ public class DialogueBubble : MonoBehaviour {
 
     private RectTransform m_Transform;
 
+    public static DialogueBubble Create() {
+        var go = new GameObject("dialogue bubble");
+        var goRect = go.AddComponent<RectTransform>();
+        goRect.anchorMax = new Vector2(1f, 0f);
+        goRect.anchorMin = new Vector2(1f, 0f);
+        goRect.pivot = new Vector2(1f, 0f);
+
+        var bubble = go.AddComponent<DialogueBubble>();
+
+        var imgObj = new GameObject("image");
+        var imgRect = imgObj.AddComponent<RectTransform>();
+        imgRect.SetParent(goRect);
+        imgRect.anchorMin = Vector2.zero;
+        imgRect.anchorMax = Vector2.one;
+        imgRect.pivot = Vector2.one / 2f;
+        imgRect.sizeDelta = Vector2.zero;
+        imgRect.anchoredPosition = Vector2.zero;
+
+        var img = imgObj.AddComponent<Image>();
+
+        var txtObj = new GameObject("text");
+        var txtRect = txtObj.AddComponent<RectTransform>();
+        txtRect.SetParent(goRect);
+        txtRect.anchorMin = Vector2.zero;
+        txtRect.anchorMax = Vector2.one;
+        txtRect.pivot = Vector2.one / 2f;
+        txtRect.sizeDelta = new Vector2(-60f, -54f);
+        txtRect.anchoredPosition = Vector2.zero;
+
+        var txt = txtObj.AddComponent<Text>();
+
+        bubble.image = img;
+        bubble.text = txt;
+
+        return bubble;
+    }
+
     public void UpdateSize() {
         m_Transform = GetComponent<RectTransform>();
 

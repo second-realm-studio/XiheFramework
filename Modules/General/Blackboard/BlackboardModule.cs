@@ -56,7 +56,7 @@ namespace XiheFramework {
                 m_Data.Add(dataName, new BlackBoardObject(value, targetType));
             }
 
-            Game.Event.Invoke("BlackBoardChanged", this, null);
+            //Game.Event.Invoke("OnBlackBoardChanged", this, dataName);
             UpdateDataPathTree();
 
             // switch (targetType) {

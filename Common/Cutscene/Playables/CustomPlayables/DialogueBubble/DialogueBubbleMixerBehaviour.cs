@@ -10,7 +10,7 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
     // private int m_DefaultFontSize;
     // private string m_DefaultText;
 
-    private Transform m_TrackBinding;
+    private RectTransform m_TrackBinding;
     private bool m_FirstFrameHappened;
 
     private Dictionary<int, DialogueBubble> m_DialogueBubbles =
@@ -19,7 +19,7 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
     private const float SpaceHeight = 40f;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData) {
-        m_TrackBinding = playerData as Transform;
+        m_TrackBinding = playerData as RectTransform;
 
         if (!Application.isPlaying) {
             return;
@@ -53,6 +53,9 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
                     }
 
                     var go = Object.Instantiate(template, Vector3.zero, Quaternion.identity, m_TrackBinding);
+                    // var go = DialogueBubble.Create();
+                    // go.transform.SetParent(m_TrackBinding);
+
                     go.GetComponent<RectTransform>().localPosition = Vector3.zero;
 
                     go.text.text = input.text;

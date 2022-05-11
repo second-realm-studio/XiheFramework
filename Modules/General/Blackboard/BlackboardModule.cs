@@ -48,7 +48,7 @@ namespace XiheFramework {
         }
 
 
-        public void SetData<T>(string dataName, T value, BlackBoardDataType targetType) {
+        public void SetData<T>(string dataName, T value, BlackBoardDataType targetType = BlackBoardDataType.Runtime) {
             if (m_Data.ContainsKey(dataName)) {
                 m_Data[dataName] = new BlackBoardObject(value, targetType);
             }

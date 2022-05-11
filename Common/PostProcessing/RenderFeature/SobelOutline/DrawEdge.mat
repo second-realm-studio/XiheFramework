@@ -51,6 +51,6 @@ Material:
     - _Thickness: 0.1
     - _Threshold: 0.538
     m_Colors:
-    - _EdgeColor: {r: 0.254717, g: 0.2270826, b: 0.2270826, a: 1}
+    - _EdgeColor: {r: 0.4056604, g: 0.36930403, b: 0.36930403, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

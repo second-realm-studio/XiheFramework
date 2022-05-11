@@ -11,6 +11,9 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
     // private string m_DefaultText;
 
     private RectTransform m_TrackBinding;
+    private RectTransform m_LeftParent;
+    private RectTransform m_RightParent;
+
     private bool m_FirstFrameHappened;
 
     private Dictionary<int, DialogueBubble> m_DialogueBubbles =
@@ -29,6 +32,8 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
             return;
 
         if (!m_FirstFrameHappened) {
+            m_LeftParent = m_TrackBinding.GetChild(0) as RectTransform;
+            m_RightParent = m_TrackBinding.GetChild(1) as RectTransform;
             // m_DefaultColor = m_TrackBinding.color;
             // m_DefaultFontSize = m_TrackBinding.fontSize;
             // m_DefaultText = m_TrackBinding.text;
@@ -46,22 +51,34 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
                 DialogueBubbleBehaviour input = inputPlayable.GetBehaviour();
 
                 if (!m_DialogueBubbles.ContainsKey(i)) {
-                    var template = Game.Blackboard.GetData<DialogueBubble>("Template DialogueBubble");
+                    DialogueBubble template =
+                        Game.Blackboard.GetData<DialogueBubble>(input.isLeft ? "DialogueBubbleTemplate_Left" : "DialogueBubbleTemplate_Right");
+
                     if (template == null) {
                         Debug.Log("template null");
                         return;
                     }
 
-                    var go = Object.Instantiate(template, Vector3.zero, Quaternion.identity, m_TrackBinding);
-                    // var go = DialogueBubble.Create();
-                    // go.transform.SetParent(m_TrackBinding);
+                    RectTransform parent = null;
+                    if (m_LeftParent == null || m_RightParent == null) {
+                        parent = m_TrackBinding;
+                    }
+                    else if (input.isLeft) {
+                        parent = m_LeftParent;
+                    }
+                    else {
+                        parent = m_RightParent;
+                    }
 
-                    go.GetComponent<RectTransform>().localPosition = Vector3.zero;
+                    DialogueBubble db = Object.Instantiate(template, Vector3.zero, Quaternion.identity, parent);
 
-                    go.text.text = input.text;
-                    go.UpdateSize();
+                    db.GetComponent<RectTransform>().localPosition = Vector3.zero;
 
-                    m_DialogueBubbles.Add(i, go);
+                    db.text.text = input.text;
+                    db.image.color = input.backgroundColor;
+                    db.UpdateSize();
+
+                    m_DialogueBubbles.Add(i, db);
                 }
 
                 break;
@@ -73,19 +90,22 @@ public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
 
     private void UpdateBubblePositions() {
         foreach (var key in m_DialogueBubbles.Keys) {
-            m_DialogueBubbles[key].transform.localPosition = GetProperPosition(key);
+            var pos = GetProperPosition(key);
+            m_DialogueBubbles[key].GetComponent<RectTransform>().anchoredPosition = pos;
+            Debug.Log(key + pos.ToString());
         }
     }
 
-    private Vector3 GetProperPosition(int i) {
+    private Vector2 GetProperPosition(int i) {
         var totalHeight = 0f;
 
+
         for (int j = 0; j < m_DialogueBubbles.Count - 1 - i; j++) {
-            totalHeight += m_DialogueBubbles[j].GetComponent<RectTransform>().sizeDelta.y;
+            totalHeight += m_DialogueBubbles[m_DialogueBubbles.Count - j - 1].totalHeight;
             totalHeight += SpaceHeight;
         }
 
-        return new Vector3(0f, totalHeight, 0f);
+        return new Vector2(0f, totalHeight);
     }
 
     /// <summary>

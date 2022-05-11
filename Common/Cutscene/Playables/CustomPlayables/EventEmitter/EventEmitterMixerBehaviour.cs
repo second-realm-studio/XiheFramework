@@ -16,6 +16,10 @@ public class EventEmitterMixerBehaviour : PlayableBehaviour {
     public override void ProcessFrame(Playable playable, FrameData info, object playerData) {
         m_TrackBinding = playerData as Transform;
 
+        if (!Application.isPlaying) {
+            return;
+        }
+
         if (m_TrackBinding == null)
             return;
 

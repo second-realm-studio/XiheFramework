@@ -5,12 +5,11 @@ public class DialogueBubble : MonoBehaviour {
     public Image image;
     public Text text;
 
-    public float widthPerLetter = 20f;
-    public float heightPerLine = 20f;
     public int maxLetterPerLine = 25;
     public float edgeWidth = 25f;
     public float edgeHeight = 30f;
 
+    public float totalHeight = 0f;
 
     private RectTransform m_Transform;
 
@@ -56,6 +55,7 @@ public class DialogueBubble : MonoBehaviour {
 
         var length = text.text.Length;
         //define height first
+        var heightPerLine = text.fontSize * text.lineSpacing;
         var height = (length / maxLetterPerLine + 1) * heightPerLine + edgeHeight * 2f;
 
         var indexs = text.text.AllIndexesOf("  ", true);
@@ -64,8 +64,10 @@ public class DialogueBubble : MonoBehaviour {
             height += heightPerLine;
         }
 
+        totalHeight = height;
 
-        //define width
+            //define width
+        var widthPerLetter = text.fontSize;
         length = length > maxLetterPerLine ? maxLetterPerLine : length;
         var width = widthPerLetter * length + edgeWidth * 2f;
         m_Transform.sizeDelta = new Vector2(width, height);

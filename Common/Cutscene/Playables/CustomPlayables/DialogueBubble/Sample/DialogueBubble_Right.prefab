@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1198773137053489878}
   - component: {fileID: 1198773137053489877}
   m_Layer: 5
-  m_Name: DialogueBubble
+  m_Name: DialogueBubble_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -456, y: 379.8}
   m_SizeDelta: {x: 603.06226, y: 320.3996}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1198773137053489877
@@ -52,11 +52,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 1198773137818671982}
   text: {fileID: 1198773138254463000}
-  widthPerLetter: 20
-  heightPerLine: 20
-  maxLetterPerLine: 25
+  maxLetterPerLine: 16
   edgeWidth: 25
   edgeHeight: 30
+  totalHeight: 0
 --- !u!1 &1198773137818671976
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.81531036, b: 0.794, a: 1}
+  m_Color: {r: 0.7947599, g: 0.895, b: 0.3938, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -199,8 +198,8 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: f4c8545e5701e884da96a94abf9b46ca, type: 3}
-    m_FontSize: 20
-    m_FontStyle: 0
+    m_FontSize: 33
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
@@ -209,6 +208,6 @@ MonoBehaviour:
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_LineSpacing: 1.5
   m_Text: "\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86\u4E0D\u6311\u5254\u5DE5\u4F5C\u53EA\u8981\u6709\u4E00\u4E2A\u7A33\u5B9A\u7684\u5C31\u884C\u4E86
     \u4E0D\u6311\u5254"

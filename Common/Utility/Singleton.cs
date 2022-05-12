@@ -7,7 +7,7 @@ namespace XiheFramework {
 
         private static T m_Instance;
 
-        public static T Instance {
+        protected static T Instance {
             get {
                 if (m_Instance == null) {
                     m_Instance = FindObjectOfType<T>();

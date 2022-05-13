@@ -4,6 +4,7 @@ using NodeCanvas.Framework;
 using UnityEngine;
 using XiheFramework;
 
+[RequireComponent(typeof(Blackboard))]
 public class InitializeGameData : MonoBehaviour {
     public Blackboard blackboard;
 

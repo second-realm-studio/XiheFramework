@@ -26,7 +26,7 @@ namespace XiheFramework {
             return result;
         }
 
-        public static Vector3 ToVector3(this Vector2 vector2, V2ToV3Type convertType=V2ToV3Type.XZ) {
+        public static Vector3 ToVector3(this Vector2 vector2, V2ToV3Type convertType = V2ToV3Type.XZ) {
             var result = convertType switch {
                 V2ToV3Type.XY => new Vector3(vector2.x, vector2.y, 0f),
                 V2ToV3Type.XZ => new Vector3(vector2.x, 0f, vector2.y),
@@ -50,7 +50,80 @@ namespace XiheFramework {
 
             return new Vector2(x, y);
         }
+
+        //x - x min
+        //y - x max 
+        //z - y min
+        //w - y max
+        public static bool Contain(this Vector4 area, Vector2 target) {
+            if (target.x < area.x) {
+                return false;
+            }
+
+            if (target.x > area.y) {
+                return false;
+            }
+
+            if (target.y < area.z) {
+                return false;
+            }
+
+            if (target.y > area.w) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static Vector2 GetNearestPointFromOutside(this Vector2 origin, Vector4 area) {
+            //0
+            if (origin.x < area.x && origin.y > area.w) {
+                return new Vector2(area.x, area.w);
+            }
+
+            //1
+            if (origin.x > area.x && origin.x < area.y && origin.y > area.w) {
+                return new Vector2(origin.x, area.w);
+            }
+
+            //2
+            if (origin.x > area.y && origin.y > area.w) {
+                return new Vector2(area.y, area.w);
+            }
+
+            //3
+            if (origin.x < area.x && origin.y > area.z && origin.y < area.w) {
+                return new Vector2(area.x, origin.y);
+            }
+
+            //4
+            //middle situation implement later
+            //currently return origin at the end
+
+            //5
+            if (origin.x > area.y && origin.y > area.z && origin.y < area.w) {
+                return new Vector2(area.y, origin.y);
+            }
+
+            //6
+            if (origin.x < area.x && origin.y < area.z) {
+                return new Vector2(area.x, area.z);
+            }
+
+            //7
+            if (origin.x > area.x && origin.x < area.y && origin.y < area.z) {
+                return new Vector2(origin.x, area.z);
+            }
+
+            //8
+            if (origin.x > area.y && origin.y < area.z) {
+                return new Vector2(area.y, area.z);
+            }
+
+            return origin;
+        }
     }
+
 
     public enum V3ToV2Type {
         XY,

@@ -20,10 +20,10 @@ MonoBehaviour:
     ","_type":"FlowCanvas.Flow"},{"_ID":"49872c25-8518-4f49-88f5-edcf4125405b","_name":"Callback","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
   _objectReferences: []
   _graphSource:
-    _version: 3.2
+    _version: 3.22
     _category: 
     _comments: 
-    _translation: {x: 121, y: 81}
+    _translation: {x: 30, y: -66}
     _zoomFactor: 0.9994991
   _haltSerialization: 0
   inputDefinitions:

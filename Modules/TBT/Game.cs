@@ -1,7 +1,9 @@
-﻿namespace XiheFramework.TBT
-{
-    public static partial class Game
-    {
+﻿namespace XiheFramework {
+    public static partial class Game {
+        public static GridModule Grid => GameManager.GetModule<GridModule>();
+        public static NpcModule Npc => GameManager.GetModule<NpcModule>();
+
+
         //public static ChessBoardModule ChessBoard => GameManager.GetModule<ChessBoardModule>();
 
         //public static UnitModule Units => GameManager.GetModule<UnitModule>();

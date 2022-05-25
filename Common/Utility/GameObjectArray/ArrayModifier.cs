@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
+[ExecuteInEditMode]
 public class ArrayModifier : MonoBehaviour {
     public GameObject source;
 
@@ -65,7 +67,11 @@ public class ArrayModifier : MonoBehaviour {
                     }
 
                     Vector3 globalPos = m_CachedTransform.TransformPoint(pos);
-                    GameObject go = Instantiate(source, globalPos, m_CachedTransform.rotation, m_CachedTransform);
+                    GameObject go = PrefabUtility.InstantiatePrefab(source) as GameObject;
+                    // globalPos, m_CachedTransform.rotation, m_CachedTransform
+                    go.transform.SetParent(m_CachedTransform);
+                    go.transform.position = globalPos;
+                    go.transform.rotation = m_CachedTransform.rotation;
                     go.name = source.name + "_" + i + "_" + j + "_" + k;
                     // if (relativeOffset != Vector3.zero) {
                     //     

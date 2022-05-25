@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,6 +6,29 @@ using UnityEngine;
 namespace XiheFramework {
     public class GridModule : GameModule {
         private Dictionary<int, GridBlock> m_Blocks = new Dictionary<int, GridBlock>();
+
+        private void Start() {
+            Game.Event.Subscribe("OnRequestPathToBlock", OnRequestPathToBlock);
+        }
+
+        private void OnRequestPathToBlock(object sender, object e) {
+            var ns = sender as Transform;
+            if (ns == null) {
+                return;
+            }
+
+            var ne = e as GridBlock;
+            if (ne == null) {
+                return;
+            }
+
+            var path = GetVector3Path(ns.position, ne, false);
+            if (path == null) {
+                return;
+            }
+
+            Game.Event.Invoke("OnReceivePathToBlock", sender, path);
+        }
 
         public void RegisterBlock(int x, int y, GridBlock block) {
             var key = CantorPairUtility.CantorPair(x, y);
@@ -14,6 +38,10 @@ namespace XiheFramework {
             else {
                 m_Blocks[key] = block;
             }
+        }
+
+        public Vector3[] GetVector3Path(Vector3 position, GridBlock targetBlock, bool includeDiagonalPath) {
+            return GetVector3Path(position, targetBlock.aStarNode.gridX, targetBlock.aStarNode.gridY, includeDiagonalPath);
         }
 
         public Vector3[] GetVector3Path(Vector3 position, int targetX, int targetY, bool includeDiagonalPath) {
@@ -27,6 +55,11 @@ namespace XiheFramework {
             List<Vector3> result = new List<Vector3>();
 
             var path = GetNodePath(originX, originY, targetX, targetY, includeDiagonalPath);
+            if (path == null) {
+                //can not find path
+                return null;
+            }
+
             foreach (var node in path) {
                 result.Add(node.worldPosition);
             }
@@ -47,8 +80,18 @@ namespace XiheFramework {
             return path;
         }
 
-        public int GetNearestBlock(Vector3 position) {
-            return 0;
+        private int GetNearestBlock(Vector3 position) {
+            var lowest = float.MaxValue;
+            var lowestKey = 0;
+            foreach (var key in m_Blocks.Keys) {
+                var dst = Vector3.Distance(m_Blocks[key].transform.position, position);
+                if (dst < lowest) {
+                    lowest = dst;
+                    lowestKey = key;
+                }
+            }
+
+            return lowestKey;
         }
 
         public override void Update() {

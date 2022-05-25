@@ -9,7 +9,7 @@ namespace XiheFramework {
         private bool m_IsActive = true;
 
         public StateMachine CreateStateMachine(string fsmName) {
-            var fsm = new StateMachine();
+            var fsm = StateMachine.Create();
             if (m_StateMachines.ContainsKey(fsmName)) {
                 m_StateMachines[fsmName] = fsm;
             }

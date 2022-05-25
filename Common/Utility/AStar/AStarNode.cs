@@ -31,7 +31,7 @@ public class AStarNode : MonoBehaviour {
     }
 
     public void InitNode() {
-        var size = Game.Blackboard.GetData<float>("AStarNodeSize");
+        var size = Game.Blackboard.GetData<float>("AStar.NodeSize");
         m_Size = Math.Abs(size) <= float.Epsilon ? 1f : size;
 
         m_CachedTransform = transform;

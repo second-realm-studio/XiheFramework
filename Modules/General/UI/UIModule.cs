@@ -7,7 +7,6 @@ namespace XiheFramework {
 
         //public Transform root;
 
-        
 
         public void RegisterUIBehaviour(string behaviourName, UIBehaviour behaviour) {
             if (m_UIBehaviours.ContainsKey(behaviourName)) {
@@ -30,7 +29,7 @@ namespace XiheFramework {
 
         public bool ActivateUI(string behaviourName) {
             if (!m_UIBehaviours.ContainsKey(behaviourName)) {
-                Debug.Log("[UI] target ui behaviour is not registered");
+                Debug.Log("[UI] " + behaviourName + " is not registered");
                 return false;
             }
 
@@ -61,9 +60,10 @@ namespace XiheFramework {
             return Instantiate(uiBehaviour);
         }
 
-        public override void Update() { }
+        public override void Update() {
+        }
+
         public override void ShutDown(ShutDownType shutDownType) {
         }
-        
     }
 }

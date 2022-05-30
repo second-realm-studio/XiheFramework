@@ -48,9 +48,12 @@ Material:
     - _QueueControl: -1
     - _QueueOffset: 0
     - _Step: 0.0053
-    - _Thickness: 0.1
-    - _Threshold: 0.538
+    - _Thickness: 1
+    - _Threshold: 0.0101
+    - _Threshold1: 0.01
+    - _ThresholdMax: 0.08
+    - _ThresholdMin: 0.008
     m_Colors:
-    - _EdgeColor: {r: 0.4056604, g: 0.36930403, b: 0.36930403, a: 1}
+    - _EdgeColor: {r: 0.9528302, g: 0.7356085, b: 0.4179868, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

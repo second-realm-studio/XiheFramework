@@ -42,6 +42,8 @@ namespace XiheFramework {
                 m_OutlineMat.SetColor(OutlineColorProp, outlineColor);
                 m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
             }
+
+            Game.Grid.SetWalkable(transform.position, false);
         }
 
         protected virtual void OnInvokeCharacter(object sender, object arg) {

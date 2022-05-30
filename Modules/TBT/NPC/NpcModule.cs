@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FlowCanvas;
 using NodeCanvas.Framework;
+using UnityEngine;
 
 namespace XiheFramework {
     public class NpcModule : GameModule {
@@ -27,6 +28,10 @@ namespace XiheFramework {
             else {
                 m_Npcs.Add(npc.internalName, npc);
             }
+        }
+
+        public Transform GetNpcTransform(string internalName) {
+            return m_Npcs[internalName].transform;
         }
 
         public override void Update() {

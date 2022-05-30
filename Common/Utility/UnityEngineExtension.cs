@@ -15,7 +15,7 @@ namespace XiheFramework {
             return gameObject.AddComponent<T>();
         }
 
-        public static Vector2 ToVector2(this Vector3 vector3, V3ToV2Type convertType) {
+        public static Vector2 ToVector2(this Vector3 vector3, V3ToV2Type convertType = V3ToV2Type.XZ) {
             var result = convertType switch {
                 V3ToV2Type.XY => new Vector2(vector3.x, vector3.y),
                 V3ToV2Type.XZ => new Vector2(vector3.x, vector3.z),

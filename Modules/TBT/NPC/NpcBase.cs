@@ -15,33 +15,58 @@ namespace XiheFramework {
         public string displayName;
         public string internalName;
         public float invokeRadius;
-        
-        [Header("Outline")]
-        public Renderer outlineRenderer;
 
-        public int outlineMatIndex;
+        [Header("Outline")]
+        public Material outlineMaterial;
+        // public Renderer[] outlineRenderers;
+
+        // public int outlineMatIndex;
         public float outlineWidth;
         public Color outlineColor;
         public float highlightWidth;
         public Color highlightColor;
 
-        private Material m_OutlineMat;
-        private bool m_MouseHovering;
-        
+        // private Material m_OutlineMat;
+        // private bool m_MouseHovering;
+
         public List<string> invokableEvents = new List<string>();
 
         private static readonly int OutlineColorProp = Shader.PropertyToID("_Color");
         private static readonly int OutlineWidthProp = Shader.PropertyToID("_Width");
 
+        public void AddInvokableEvent(string eventName) {
+            if (string.IsNullOrEmpty(eventName)) {
+                return;
+            }
+
+            invokableEvents.Add(eventName);
+        }
+
+        public void RemoveInvokableEvent(string eventName) {
+            if (!invokableEvents.Contains(eventName)) {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(eventName)) {
+                return;
+            }
+
+            invokableEvents.Add(eventName);
+        }
+
         protected virtual void Start() {
             Game.Npc.RegisterNpc(this);
             Game.Event.Subscribe("OnPlayerInvokeNpc", OnInvokeCharacter);
 
-            if (outlineRenderer != null) {
-                m_OutlineMat = outlineRenderer.materials[outlineMatIndex];
-                m_OutlineMat.SetColor(OutlineColorProp, outlineColor);
-                m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
-            }
+            // if (outlineRenderers != null && outlineRenderers.Length > 0) {
+            //     foreach (var outlineRenderer in outlineRenderers) {
+            //         m_OutlineMat = outlineRenderer.materials[outlineMatIndex];
+            //         m_OutlineMat.SetColor(OutlineColorProp, outlineColor);
+            //         m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
+            //     }
+            // }
+            outlineMaterial.SetColor(OutlineColorProp, outlineColor);
+            outlineMaterial.SetFloat(OutlineWidthProp, outlineWidth);
 
             Game.Grid.SetWalkable(transform.position, false);
         }
@@ -61,18 +86,18 @@ namespace XiheFramework {
         protected abstract void OnCharacterInvokeSystem();
 
         private void OnMouseEnter() {
-            if (m_OutlineMat != null) {
-                m_MouseHovering = true;
-                m_OutlineMat.SetFloat(OutlineWidthProp, highlightWidth);
-                m_OutlineMat.SetColor(OutlineColorProp, highlightColor);
+            if (outlineMaterial != null) {
+                // m_MouseHovering = true;
+                outlineMaterial.SetFloat(OutlineWidthProp, highlightWidth);
+                outlineMaterial.SetColor(OutlineColorProp, highlightColor);
             }
         }
 
         private void OnMouseExit() {
-            if (m_OutlineMat != null) {
-                m_MouseHovering = false;
-                m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
-                m_OutlineMat.SetColor(OutlineColorProp, outlineColor);
+            if (outlineMaterial != null) {
+                // m_MouseHovering = false;
+                outlineMaterial.SetFloat(OutlineWidthProp, outlineWidth);
+                outlineMaterial.SetColor(OutlineColorProp, outlineColor);
             }
         }
 

@@ -34,6 +34,22 @@ namespace XiheFramework {
             return m_Npcs[internalName].transform;
         }
 
+        public void ActivateNpcEvent(string internalName, string eventName) {
+            if (!m_Npcs.ContainsKey(internalName)) {
+                return;
+            }
+
+            m_Npcs[internalName].AddInvokableEvent(eventName);
+        }
+
+        public void DeactivateEvent(string internalName, string eventName) {
+            if (!m_Npcs.ContainsKey(internalName)) {
+                return;
+            }
+
+            m_Npcs[internalName].RemoveInvokableEvent(eventName);
+        }
+
         public override void Update() {
         }
 

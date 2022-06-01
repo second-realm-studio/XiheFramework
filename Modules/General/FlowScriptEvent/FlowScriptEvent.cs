@@ -14,14 +14,19 @@ public class FlowScriptEvent : MonoBehaviour {
     public string description;
 
     private void Start() {
-        Play();
+        //Play();
     }
 
     public void Play() {
         var controller = gameObject.AddComponent<FlowScriptController>();
         controller.behaviour = canvas;
-        var blackBoard = gameObject.AddComponent<Blackboard>();
-        controller.blackboard = blackBoard;
+        if (gameObject.TryGetComponent<Blackboard>(out var blackBoard)) {
+            controller.blackboard = blackBoard;
+        }
+        else {
+            controller.blackboard = gameObject.AddComponent<Blackboard>();
+        }
+
         controller.StartBehaviour();
     }
 }

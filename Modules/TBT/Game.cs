@@ -3,6 +3,7 @@
         public static GridModule Grid => GameManager.GetModule<GridModule>();
         public static NpcModule Npc => GameManager.GetModule<NpcModule>();
 
+        
 
         //public static ChessBoardModule ChessBoard => GameManager.GetModule<ChessBoardModule>();
 

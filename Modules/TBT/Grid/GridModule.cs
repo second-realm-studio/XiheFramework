@@ -5,8 +5,23 @@ using UnityEngine;
 
 namespace XiheFramework {
     public class GridModule : GameModule {
-        private Dictionary<int, GridBlock> m_Blocks = new Dictionary<int, GridBlock>();
-        private Dictionary<int, bool> m_Walkables = new Dictionary<int, bool>();
+        class WalkablePair {
+            public Vector3 position;
+            public int cantorPair;
+            public bool walkable;
+
+
+            public WalkablePair(Vector3 position, int cantorPair, bool walkable) {
+                this.position = position;
+                this.cantorPair = cantorPair;
+                this.walkable = walkable;
+            }
+        }
+
+        private readonly Dictionary<int, GridBlock> m_Blocks = new Dictionary<int, GridBlock>();
+
+        private bool m_FirstFrameProcessed = false;
+        private Queue<WalkablePair> m_SetWalkableQueue = new Queue<WalkablePair>();
 
         private void Start() {
             Game.Event.Subscribe("OnRequestPathToBlock", OnRequestPathToBlock);
@@ -37,18 +52,28 @@ namespace XiheFramework {
 
         public void SetWalkable(int x, int y, bool isWalkable) {
             var key = CantorPairUtility.CantorPair(x, y);
-            SetWalkable(key, isWalkable);
+            AddWalkableQueue(key, isWalkable);
         }
 
         public void SetWalkable(Vector3 position, bool isWalkable) {
-            var key = GetNearestBlockId(position);
-            SetWalkable(key, isWalkable);
+            // var key = GetNearestBlockId(position);
+            AddWalkableQueue(position, isWalkable);
         }
 
-        void SetWalkable(int id, bool isWalkable) {
-            if (m_Blocks.ContainsKey(id)) {
-                m_Blocks[id].aStarNode.walkable = isWalkable;
-            }
+        void AddWalkableQueue(int id, bool isWalkable) {
+            // if (m_Blocks.ContainsKey(id)) {
+            //     m_Blocks[id].aStarNode.walkable = isWalkable;
+            // }
+
+            m_SetWalkableQueue.Enqueue(new WalkablePair(Vector3.zero, id, isWalkable));
+        }
+
+        void AddWalkableQueue(Vector3 position, bool isWalkable) {
+            // if (m_Blocks.ContainsKey(id)) {
+            //     m_Blocks[id].aStarNode.walkable = isWalkable;
+            // }
+
+            m_SetWalkableQueue.Enqueue(new WalkablePair(position, -1, isWalkable));
         }
 
         public void RegisterBlock(int x, int y, GridBlock block) {
@@ -120,6 +145,25 @@ namespace XiheFramework {
         }
 
         public override void Update() {
+            if (!m_FirstFrameProcessed) {
+                m_FirstFrameProcessed = true;
+                return;
+            }
+
+            while (m_SetWalkableQueue.Count > 0) {
+                var item = m_SetWalkableQueue.Dequeue();
+                int key = -1;
+                if (item.cantorPair == -1) {
+                    key = GetNearestBlockId(item.position);
+                }
+                else {
+                    key = item.cantorPair;
+                }
+
+                if (m_Blocks.ContainsKey(key)) {
+                    m_Blocks[key].aStarNode.walkable = item.walkable;
+                }
+            }
         }
 
         public override void ShutDown(ShutDownType shutDownType) {

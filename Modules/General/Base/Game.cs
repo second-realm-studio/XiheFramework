@@ -23,6 +23,8 @@
         
         public static StateMachineModule Fsm => GameManager.GetModule<StateMachineModule>();
 
+        public static FlowScriptEventModule FlowEvent => GameManager.GetModule<FlowScriptEventModule>();
+
         //public static CameraModule Camera => GameManager.GetModule<CameraModule>();
     }
 }

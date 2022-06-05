@@ -1,4 +1,8 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using FlowCanvas;
+using NodeCanvas.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,10 +11,8 @@ namespace XiheFramework {
         public NpcInteractUIItem template;
 
         private GridLayoutGroup m_Grid;
-        private List<string> m_EventNames = new List<string>();
 
         public RectTransform RectTransform { get; private set; }
-
 
         private void Start() {
             m_Grid = GetComponent<GridLayoutGroup>();

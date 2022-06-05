@@ -47,6 +47,7 @@ namespace XiheFramework {
                 return;
             }
 
+            //                                                  object, vector3[]
             Game.Event.Invoke("OnReceivePathToBlock", sender, path);
         }
 
@@ -142,6 +143,28 @@ namespace XiheFramework {
             }
 
             return lowestKey;
+        }
+
+        public Vector3 GetGridPosition(int x, int y) {
+            var key = CantorPairUtility.CantorPair(x, y);
+            if (m_Blocks.ContainsKey(key)) {
+                return m_Blocks[key].aStarNode.worldPosition;
+            }
+
+            return Vector3.zero;
+        }
+
+
+        public void GetGridCoordinate(Vector3 position, out int x, out int y) {
+            var block = GetNearestBlock(position);
+
+            x = block.aStarNode.gridX;
+            y = block.aStarNode.gridY;
+        }
+
+        public void RequestPath(Vector3 currentPosition, Vector3 targetPosition, bool includeDiagonalPath) {
+            Game.Event.Invoke("OnRequestPathToBlock", this,
+                new RequestPathArgs(currentPosition, Game.Grid.GetNearestBlock(targetPosition), includeDiagonalPath));
         }
 
         public override void Update() {

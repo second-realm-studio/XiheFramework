@@ -8,9 +8,13 @@ namespace XiheFramework {
     public class NpcModule : GameModule {
         public FlowScript eventsActivator;
 
-        private Dictionary<string, NpcBase> m_Npcs = new Dictionary<string, NpcBase>();
-
+        // public int maxInteractCount = 1;
         public MultiDictionary<string, string> m_NpcFlowEvents = new MultiDictionary<string, string>();
+
+        private Dictionary<string, NpcBase> m_Npcs = new Dictionary<string, NpcBase>();
+        // private int m_CurrentInteractCount = 0;
+
+        private string m_ActiveNpc; //who is currently interacted by player
 
         private void Start() {
             var controller = gameObject.AddComponent<FlowScriptController>();
@@ -18,6 +22,14 @@ namespace XiheFramework {
             var blackBoard = gameObject.AddComponent<Blackboard>();
             controller.blackboard = blackBoard;
             controller.StartBehaviour();
+        }
+
+        public bool AllowInteract() {
+            return string.IsNullOrEmpty(m_ActiveNpc);
+        }
+
+        public void SetInteractingNpc(string npcName) {
+            m_ActiveNpc = npcName;
         }
 
         public void RegisterNpc(NpcBase npc) {
@@ -39,6 +51,19 @@ namespace XiheFramework {
             }
 
             return null;
+        }
+
+        public bool NpcExist(string npcName) {
+            return m_Npcs.ContainsKey(npcName);
+        }
+
+        public NpcBase GetNpc(string npcName) {
+            if (m_Npcs.ContainsKey(npcName)) {
+                return m_Npcs[npcName];
+            }
+            else {
+                return null;
+            }
         }
 
         public Transform GetNpcTransform(string internalName) {

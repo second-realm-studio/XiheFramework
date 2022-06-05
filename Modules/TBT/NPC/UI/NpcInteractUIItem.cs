@@ -17,6 +17,8 @@ namespace XiheFramework {
 
         private void OnClick() {
             Game.Event.Invoke("OnFlowEventInvoked", null, eventInternalName);
+            //close ui
+            
         }
 
         public void Setup(Sprite icon, string eventDisplayName, string internalName) {

@@ -24,9 +24,9 @@ namespace XiheFramework {
 
         private string m_NextState;
 
-        public static StateMachine Create(string fsmName) {
+        public static StateMachine Create(string defaultState) {
             return new StateMachine() {
-                m_DefaultState = fsmName
+                m_DefaultState = defaultState
             };
         }
 

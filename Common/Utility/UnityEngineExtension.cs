@@ -122,6 +122,17 @@ namespace XiheFramework {
 
             return origin;
         }
+
+        public static float GetAnimationClipLength(this Animator animator, string name) {
+            var runtime=animator.runtimeAnimatorController;
+            foreach (var clip in runtime.animationClips) {
+                if (clip.name.Equals(name)) {
+                    return clip.length;
+                }
+            }
+
+            return 0f;
+        }
     }
 
 

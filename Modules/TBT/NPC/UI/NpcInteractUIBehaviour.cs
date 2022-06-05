@@ -17,10 +17,19 @@ namespace XiheFramework {
             }
 
             Game.Event.Subscribe("OnNpcInteractUIActivated", OnNpcInteractUIActivated);
+            Game.Event.Subscribe("OnNpcInteractUIUnactivated", OnNpcInteractUIUnactivated);
+
+            //close ui when flow event is invoked
+            Game.Event.Subscribe("OnFlowEventInvoked", OnFlowEventInvoked);
         }
+
 
         private void Update() {
             UpdatePosition();
+        }
+
+        private void OnFlowEventInvoked(object sender, object e) {
+            
         }
 
         private void OnNpcInteractUIActivated(object sender, object e) {
@@ -35,6 +44,9 @@ namespace XiheFramework {
 
         void AddNpcInteractUI(string sender) {
             var trans = Game.Npc.GetNpcTransform(sender);
+            if (m_NpcUIs.ContainsKey(trans)) {
+                return;
+            }
 
             var ui = Instantiate(template, Camera.main.WorldToScreenPoint(trans.position), Quaternion.identity, transform);
             var events = Game.Npc.GetNpcInvokableEvents(sender);
@@ -42,6 +54,25 @@ namespace XiheFramework {
 
             m_NpcUIs.Add(trans, ui);
         }
+
+        private void OnNpcInteractUIUnactivated(object sender, object e) {
+            if (!(sender is string npcName)) {
+                return;
+            }
+
+            // var trans = Game.Npc.GetNpcTransform(npcName);
+
+            RemoveNpcInteractUI(npcName);
+        }
+
+        private void RemoveNpcInteractUI(string npcName) {
+            var trans = Game.Npc.GetNpcTransform(npcName);
+
+            // m_NpcUIs[trans].closeAction.Invoke();
+            Destroy(m_NpcUIs[trans].gameObject, 0.0f);
+            m_NpcUIs.Remove(trans);
+        }
+
 
         void UpdatePosition() {
             foreach (var trans in m_NpcUIs.Keys) {

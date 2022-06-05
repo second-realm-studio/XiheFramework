@@ -39,12 +39,12 @@ namespace XiheFramework {
 
         public void RequestPath(Vector3 destination, bool includeDiagonal) {
             //invoke path
-            Game.Grid.RequestPath(transform.position, destination, includeDiagonal);
+            Game.Grid.RequestPath(this,transform.position, destination, includeDiagonal);
         }
 
         public void RequestPath(int x, int y, bool includeDiagonal) {
             //invoke path
-            Game.Grid.RequestPath(transform.position, Game.Grid.GetGridPosition(x, y), includeDiagonal);
+            Game.Grid.RequestPath(this,transform.position, Game.Grid.GetGridPosition(x, y), includeDiagonal);
         }
 
         public void FaceAt(Vector3 target) {

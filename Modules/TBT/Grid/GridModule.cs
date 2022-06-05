@@ -162,8 +162,8 @@ namespace XiheFramework {
             y = block.aStarNode.gridY;
         }
 
-        public void RequestPath(Vector3 currentPosition, Vector3 targetPosition, bool includeDiagonalPath) {
-            Game.Event.Invoke("OnRequestPathToBlock", this,
+        public void RequestPath(object sender,Vector3 currentPosition, Vector3 targetPosition, bool includeDiagonalPath) {
+            Game.Event.Invoke("OnRequestPathToBlock", sender,
                 new RequestPathArgs(currentPosition, Game.Grid.GetNearestBlock(targetPosition), includeDiagonalPath));
         }
 

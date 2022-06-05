@@ -17,11 +17,17 @@ public static class NpcSvc {
         if (Game.Npc.NpcExist(npcName)) {
             Game.Npc.GetNpc(npcName).RequestPath(destination, includeDiagonal);
         }
+        else {
+            Debug.LogWarning(npcName + " is not existed");
+        }
     }
 
     public static void MoveTo(string npcName, int x, int y, bool includeDiagonal) {
         if (Game.Npc.NpcExist(npcName)) {
             Game.Npc.GetNpc(npcName).RequestPath(x, y, includeDiagonal);
+        }
+        else {
+            Debug.LogWarning(npcName + " is not existed");
         }
     }
 
@@ -29,5 +35,13 @@ public static class NpcSvc {
         if (Game.Npc.NpcExist(npcName)) {
             Game.Npc.GetNpc(npcName).FaceAt(target);
         }
+    }
+
+    public static T GetNpc<T>(string npcName) where T : NpcBase {
+        if (Game.Npc.NpcExist(npcName)) {
+            return (T) Game.Npc.GetNpc(npcName);
+        }
+
+        return null;
     }
 }

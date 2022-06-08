@@ -61,8 +61,6 @@ namespace XiheFramework {
             m_OutlineMat.color = outlineColor;
             m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
 
-            Game.Grid.SetWalkable(transform.position, false);
-
             Game.Event.Subscribe("OnReceivePathToBlock", OnReceivePathToBlock);
         }
 

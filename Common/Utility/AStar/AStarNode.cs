@@ -38,6 +38,8 @@ public class AStarNode : MonoBehaviour {
         worldPosition = m_CachedTransform.position;
         gridX = Mathf.RoundToInt(m_CachedTransform.localPosition.x / size);
         gridY = Mathf.RoundToInt(m_CachedTransform.localPosition.z / size);
+        // gridX=Mathf.RoundToInt(worldPosition.x / size);
+        // gridX=Mathf.RoundToInt(worldPosition.z / size);
     }
 
     private void OnDrawGizmos() {

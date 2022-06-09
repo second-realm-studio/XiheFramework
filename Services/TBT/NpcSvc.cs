@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using UnityEngine;
 using XiheFramework;
 
@@ -43,5 +44,20 @@ public static class NpcSvc {
         }
 
         return null;
+    }
+
+    public static void InstantiateNpc(string npcName, Vector3 position, Quaternion rotation, Transform parent) {
+        if (Game.Npc.NpcExist(npcName)) {
+            var npc = Game.Npc.GetNpc(npcName);
+            npc.transform.position = position;
+            npc.transform.rotation = rotation;
+        }
+        else {
+            Game.Npc.InstantiateNpc(npcName, position, rotation, parent);
+        }
+    }
+
+    public static void DestroyNpc(string npcName, float delay) {
+        Game.Npc.DestroyNpc(npcName, delay);
     }
 }

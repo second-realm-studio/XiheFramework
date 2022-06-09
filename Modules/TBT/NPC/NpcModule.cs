@@ -6,6 +6,8 @@ using XiheFramework.Util;
 
 namespace XiheFramework {
     public class NpcModule : GameModule {
+        public List<NpcBase> npcCandidates;
+
         public FlowScript eventsActivator;
 
         // public int maxInteractCount = 1;
@@ -22,6 +24,26 @@ namespace XiheFramework {
             var blackBoard = gameObject.AddComponent<Blackboard>();
             controller.blackboard = blackBoard;
             controller.StartBehaviour();
+        }
+
+        public void InstantiateNpc(string npcName) {
+            InstantiateNpc(npcName, Vector3.zero, Quaternion.identity, null);
+        }
+
+        public void InstantiateNpc(string npcName, Vector3 position, Quaternion rotation, Transform parent) {
+            if (!NpcExist(npcName)) {
+                foreach (var npcBase in npcCandidates) {
+                    if (npcBase.internalName.Equals(npcName)) {
+                        Instantiate(npcBase, position, rotation, parent);
+                    }
+                }
+            }
+        }
+
+        public void DestroyNpc(string npcName,float delay) {
+            if (NpcExist(npcName)) {
+                Destroy(m_Npcs[npcName].gameObject,delay);
+            }
         }
 
         public bool AllowInteract() {

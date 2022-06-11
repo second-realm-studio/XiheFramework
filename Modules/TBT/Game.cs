@@ -1,9 +1,10 @@
 ﻿namespace XiheFramework {
     public static partial class Game {
         public static GridModule Grid => GameManager.GetModule<GridModule>();
-        public static NpcModule Npc => GameManager.GetModule<NpcModule>();
-
         
+        public static NpcModule Npc => GameManager.GetModule<NpcModule>();
+        
+        public static WeatherModule Weather => GameManager.GetModule<WeatherModule>();
 
         //public static ChessBoardModule ChessBoard => GameManager.GetModule<ChessBoardModule>();
 

@@ -135,6 +135,9 @@ namespace XiheFramework {
             var lowest = float.MaxValue;
             var lowestKey = 0;
             foreach (var key in m_Blocks.Keys) {
+                if (m_Blocks[key]==null) {
+
+                }
                 var dst = Vector3.Distance(m_Blocks[key].transform.position, position);
                 if (dst < lowest) {
                     lowest = dst;

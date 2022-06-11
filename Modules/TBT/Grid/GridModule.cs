@@ -135,13 +135,12 @@ namespace XiheFramework {
             var lowest = float.MaxValue;
             var lowestKey = 0;
             foreach (var key in m_Blocks.Keys) {
-                if (m_Blocks[key]==null) {
-
-                }
-                var dst = Vector3.Distance(m_Blocks[key].transform.position, position);
-                if (dst < lowest) {
-                    lowest = dst;
-                    lowestKey = key;
+                if (m_Blocks[key] != null) {
+                    var dst = Vector3.Distance(m_Blocks[key].transform.position, position);
+                    if (dst < lowest) {
+                        lowest = dst;
+                        lowestKey = key;
+                    }
                 }
             }
 
@@ -165,7 +164,7 @@ namespace XiheFramework {
             y = block.aStarNode.gridY;
         }
 
-        public void RequestPath(object sender,Vector3 currentPosition, Vector3 targetPosition, bool includeDiagonalPath) {
+        public void RequestPath(object sender, Vector3 currentPosition, Vector3 targetPosition, bool includeDiagonalPath) {
             Game.Event.Invoke("OnRequestPathToBlock", sender,
                 new RequestPathArgs(currentPosition, Game.Grid.GetNearestBlock(targetPosition), includeDiagonalPath));
         }

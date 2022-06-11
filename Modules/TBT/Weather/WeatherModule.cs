@@ -12,11 +12,9 @@ namespace XiheFramework {
         }
 
         public override void Update() {
-            throw new System.NotImplementedException();
         }
 
         public override void ShutDown(ShutDownType shutDownType) {
-            throw new System.NotImplementedException();
         }
     }
 }

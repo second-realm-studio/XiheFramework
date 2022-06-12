@@ -33,7 +33,7 @@ namespace XiheFramework {
         protected Transform interactorTransform;
         // private bool m_MouseHovering;
 
-        protected List<Vector3> receivedPath;
+        protected List<Vector3> receivedPath=new List<Vector3>();
 
         private static readonly int OutlineWidthProp = Shader.PropertyToID("_OutlineWidth");
 
@@ -64,7 +64,7 @@ namespace XiheFramework {
             Game.Event.Subscribe("OnReceivePathToBlock", OnReceivePathToBlock);
         }
 
-        private void OnReceivePathToBlock(object sender, object e) {
+        protected virtual void OnReceivePathToBlock(object sender, object e) {
             if (!(sender is NpcBase ns)) {
                 return;
             }

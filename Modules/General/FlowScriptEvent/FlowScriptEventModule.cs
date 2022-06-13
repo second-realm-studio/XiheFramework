@@ -12,6 +12,16 @@ namespace XiheFramework {
         private List<FlowScriptEvent> m_ActiveEvents = new List<FlowScriptEvent>();
         //"FlowEvent.xxx"
 
+        public void DestroyEvent(string eventName, float delay) {
+            if (m_AllEvents.ContainsKey(eventName)) {
+                foreach (var activeEvent in m_ActiveEvents) {
+                    if (activeEvent.eventName.Equals(eventName)) {
+                        Destroy(activeEvent.gameObject, delay);
+                    }
+                }
+            }
+        }
+
         private void Start() {
             m_AllEvents.Clear();
             foreach (var flowEvent in allEvents) {

@@ -13,4 +13,10 @@ public static class GridSvc {
         x = gx;
         y = gy;
     }
+
+    public static void GetBlockCoordinate(Vector3 position, out int x, out int y) {
+        var block = Game.Grid.GetNearestBlock(position);
+        x = block.aStarNode.gridX;
+        y = block.aStarNode.gridY;
+    }
 }

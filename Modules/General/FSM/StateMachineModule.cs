@@ -8,6 +8,10 @@ namespace XiheFramework {
 
         private bool m_IsActive = true;
 
+        public string GetCurrentState(string fsmName) {
+            return m_StateMachines[fsmName].GetCurrentState();
+        }
+
         public StateMachine CreateStateMachine(string fsmName) {
             var fsm = StateMachine.Create();
             if (m_StateMachines.ContainsKey(fsmName)) {

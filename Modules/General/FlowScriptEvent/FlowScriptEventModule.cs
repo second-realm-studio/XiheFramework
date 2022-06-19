@@ -10,7 +10,21 @@ namespace XiheFramework {
         private bool m_IsAnyEventRunning;
 
         private List<FlowScriptEvent> m_ActiveEvents = new List<FlowScriptEvent>();
+
         //"FlowEvent.xxx"
+        
+        public void StartEvent(string eventName) {
+            if (m_IsAnyEventRunning) {
+                Debug.LogWarning("[FLOW EVENT] Other event is running, you should not allow this to happen");
+                return;
+            }
+
+            if (m_AllEvents.ContainsKey(eventName)) {
+                var e = Instantiate(m_AllEvents[eventName]);
+                e.Play();
+                m_ActiveEvents.Add(e);
+            }
+        }
 
         public void DestroyEvent(string eventName, float delay) {
             if (m_AllEvents.ContainsKey(eventName)) {
@@ -49,18 +63,6 @@ namespace XiheFramework {
             return null;
         }
 
-        private void StartEvent(string eventName) {
-            if (m_IsAnyEventRunning) {
-                Debug.LogWarning("[FLOW EVENT] Other event is running, you should not allow this to happen");
-                return;
-            }
-
-            if (m_AllEvents.ContainsKey(eventName)) {
-                var e = Instantiate(m_AllEvents[eventName]);
-                e.Play();
-                m_ActiveEvents.Add(e);
-            }
-        }
 
         public override void Update() {
         }

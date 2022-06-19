@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace XiheFramework {
@@ -7,7 +6,9 @@ namespace XiheFramework {
 
         public Vector2 offset;
 
-        private Dictionary<Transform, NpcInteractUI> m_NpcUIs = new Dictionary<Transform, NpcInteractUI>();
+        // private Dictionary<Transform, NpcInteractUI> m_NpcUIs = new Dictionary<Transform, NpcInteractUI>();
+        private string m_CurrentOwner;
+        private NpcInteractUI m_CurrentNpcUi;
 
         public override void Start() {
             base.Start();
@@ -29,7 +30,7 @@ namespace XiheFramework {
         }
 
         private void OnFlowEventInvoked(object sender, object e) {
-            
+            RemoveNpcInteractUI();
         }
 
         private void OnNpcInteractUIActivated(object sender, object e) {
@@ -37,22 +38,29 @@ namespace XiheFramework {
                 return;
             }
 
-            var trans = Game.Npc.GetNpcTransform(npcName);
+            // var trans = Game.Npc.GetNpcTransform(sender);
 
             AddNpcInteractUI(npcName);
         }
 
         void AddNpcInteractUI(string sender) {
-            var trans = Game.Npc.GetNpcTransform(sender);
-            if (m_NpcUIs.ContainsKey(trans)) {
-                return;
+            // var trans = Game.Npc.GetNpcTransform(sender);
+            if (m_CurrentNpcUi != null) {
+                RemoveNpcInteractUI();
             }
 
-            var ui = Instantiate(template, Camera.main.WorldToScreenPoint(trans.position), Quaternion.identity, transform);
-            var events = Game.Npc.GetNpcInvokableEvents(sender);
-            ui.UpdateFlowEventItems(events);
+            m_CurrentOwner = sender;
 
-            m_NpcUIs.Add(trans, ui);
+            if (Camera.main != null) {
+                var ui = Instantiate(template, Camera.main.WorldToScreenPoint(Game.Npc.GetNpcPosition(sender)), Quaternion.identity, transform);
+                var events = Game.Npc.GetNpcInvokableEvents(sender);
+                ui.UpdateFlowEventItems(events);
+
+                m_CurrentOwner = sender;
+                m_CurrentNpcUi = ui;
+            }
+
+            // m_NpcUIs.Add(trans, ui);
         }
 
         private void OnNpcInteractUIUnactivated(object sender, object e) {
@@ -62,26 +70,31 @@ namespace XiheFramework {
 
             // var trans = Game.Npc.GetNpcTransform(npcName);
 
-            RemoveNpcInteractUI(npcName);
+            RemoveNpcInteractUI();
         }
 
-        private void RemoveNpcInteractUI(string npcName) {
-            var trans = Game.Npc.GetNpcTransform(npcName);
+        private void RemoveNpcInteractUI() {
+            if (!string.IsNullOrEmpty(m_CurrentOwner) || m_CurrentNpcUi != null) {
+                Destroy(m_CurrentNpcUi.gameObject, 0.5f);
+                m_CurrentNpcUi = null;
+            }
 
             // m_NpcUIs[trans].closeAction.Invoke();
-            Destroy(m_NpcUIs[trans].gameObject, 0.0f);
-            m_NpcUIs.Remove(trans);
         }
 
 
         void UpdatePosition() {
-            foreach (var trans in m_NpcUIs.Keys) {
-                if (Camera.main != null) {
-                    if (m_NpcUIs[trans].RectTransform != null) {
-                        m_NpcUIs[trans].RectTransform.position = Camera.main.WorldToScreenPoint(trans.position) + (Vector3) offset;
-                    }
-                }
+            if (Camera.main != null && m_CurrentNpcUi != null) {
+                m_CurrentNpcUi.RectTransform.position = Camera.main.WorldToScreenPoint(Game.Npc.GetNpcPosition(m_CurrentOwner)) + (Vector3) offset;
             }
+
+            // foreach (var trans in Keys) {
+            //     if (Camera.main != null) {
+            //         if (m_NpcUIs[trans].RectTransform != null) {
+            //             m_NpcUIs[trans].RectTransform.position = Camera.main.WorldToScreenPoint(trans.position) + (Vector3) offset;
+            //         }
+            //     }
+            // }
         }
     }
 }

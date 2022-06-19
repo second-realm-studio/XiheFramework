@@ -35,6 +35,12 @@ namespace XiheFramework {
                 }
             }
 
+            // var byeE = Game.FlowEvent.GetEvent("Npc.Goodbye") as NpcEvent;
+            // if (byeE != null) {
+            //     var byeGo = Instantiate(template, transform);
+            //     byeGo.Setup(byeE.icon, byeE.displayName, "Npc.Goodbye");
+            // }
+
             UpdateSize();
         }
 

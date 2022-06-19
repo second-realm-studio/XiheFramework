@@ -92,6 +92,10 @@ namespace XiheFramework {
             return m_Npcs[internalName].transform;
         }
 
+        public Vector3 GetNpcPosition(string internalName) {
+            return m_Npcs[internalName].transform.position;
+        }
+
         public void ActivateNpcEvent(string internalName, string eventName) {
             if (!m_Npcs.ContainsKey(internalName)) {
                 return;

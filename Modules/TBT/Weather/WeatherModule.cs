@@ -4,6 +4,9 @@ namespace XiheFramework {
     public class WeatherModule : GameModule {
         public Light sun;
 
+        public Color dayColor; //12am
+        public Color nightColor; //12pm
+
         [Range(1, 12)]
         public int month = 0;
 
@@ -61,6 +64,19 @@ namespace XiheFramework {
             // m_CachedTransform.localRotation = Quaternion.Euler(m_TargetEuler.x, 0f, 0f);
             // m_CachedTransform.rotation = Quaternion.Euler(m_CachedTransform.rotation.x, m_TargetEuler.y, 0f);
             m_CachedTransform.rotation = Quaternion.Euler(m_TargetEuler);
+
+            UpdateSunColor();
+        }
+
+        private void UpdateSunColor() {
+            var dt = (hour * 3600 + minute * 60 + second) / 86400f;
+            if (dt < 0.5f) {
+                //12pm - 12am
+                sun.color = Color.Lerp(nightColor, dayColor, dt * 2f);
+            }
+            else {
+                sun.color = Color.Lerp(dayColor, nightColor, dt * 2f - 1f);
+            }
         }
 
         public override void ShutDown(ShutDownType shutDownType) {

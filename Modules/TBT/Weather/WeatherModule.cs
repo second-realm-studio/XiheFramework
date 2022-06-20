@@ -28,6 +28,9 @@ namespace XiheFramework {
         public void SetDate(int m, int d) {
             this.month = m;
             this.day = d;
+
+            var yt = (month * 30 + day) / 360f;
+            Game.Event.Invoke("OnSetDate", this, yt);
         }
 
         public void SetDate(float t) {
@@ -36,12 +39,18 @@ namespace XiheFramework {
             var total = t * 360;
             month = (int) (total / 30f);
             day = (int) ((total - month * 30f) / 60f);
+
+            Game.Event.Invoke("OnSetDate", this, t);
         }
 
         public void SetTime(int h, int m, int s) {
             this.hour = h;
             this.minute = m;
             this.second = s;
+
+            var dt = (hour * 3600 + minute * 60 + second) / 86400f;
+
+            Game.Event.Invoke("OnSetTime", this, dt);
         }
 
         public void SetTime(float t) {
@@ -51,6 +60,9 @@ namespace XiheFramework {
             hour = (int) (total / 24f);
             minute = (int) ((total - hour * 3600f) / 60f);
             second = (int) ((total - hour * 3600f - minute * 60f) / 60f);
+
+
+            Game.Event.Invoke("OnSetTime", this, t);
         }
 
         public override void Setup() {

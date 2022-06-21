@@ -16,7 +16,7 @@ namespace XiheFramework {
         private Dictionary<string, NpcBase> m_Npcs = new Dictionary<string, NpcBase>();
         // private int m_CurrentInteractCount = 0;
 
-        private string m_ActiveNpc; //who is currently interacted by player
+        private string m_InteractingNpc; //who is currently interacted by player
 
         private void Start() {
             var controller = gameObject.AddComponent<FlowScriptController>();
@@ -47,11 +47,11 @@ namespace XiheFramework {
         }
 
         public bool AllowInteract() {
-            return string.IsNullOrEmpty(m_ActiveNpc);
+            return string.IsNullOrEmpty(m_InteractingNpc);
         }
 
         public void SetInteractingNpc(string npcName) {
-            m_ActiveNpc = npcName;
+            m_InteractingNpc = npcName;
         }
 
         public void RegisterNpc(NpcBase npc) {

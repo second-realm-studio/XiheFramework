@@ -33,13 +33,26 @@ namespace XiheFramework {
                 return;
             }
 
-            while (!ne.targetBlock.aStarNode.walkable) {
+            // //start block is equal to target block
+            // if (GetNearestBlock(ne.startPos) == ne.targetBlock) {
+            //     return;
+            // }
+
+            var target = ne.targetBlock;
+
+            while (!target.aStarNode.walkable) {
+                //if start pos'nearest block is the target block, pass it
+                //this happens when the object is standing on the new target block
+                if (target == GetNearestBlock(ne.startPos)) {
+                    return;
+                }
+
                 //get closest block
                 var size = Game.Blackboard.GetData<float>("AStar.NodeSize");
-                var blockPos = ne.targetBlock.transform.position;
+                var blockPos = target.transform.position;
                 var newBlockPos = blockPos + (ne.startPos - blockPos).normalized * size;
 
-                ne.targetBlock = m_Blocks[GetNearestBlockId(newBlockPos)];
+                target = GetNearestBlock(newBlockPos);
             }
 
             var path = GetVector3Path(ne.startPos, ne.targetBlock, ne.includeDiagonalPath);

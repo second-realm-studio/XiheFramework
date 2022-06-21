@@ -2,6 +2,7 @@ namespace XiheFramework {
     public static class FlowEventSvc {
         public static void SetEventUsed(string eventName, bool used) {
             Game.Blackboard.SetData("FlowEvent.Used." + eventName, used);
+            Game.Event.Invoke("OnFlowEventUsed", eventName, used);
         }
 
         public static bool IsEventUsed(string eventName) {

@@ -18,6 +18,9 @@ namespace XiheFramework {
         public string internalName;
         public float invokeRadius;
         public float releaseRadius;
+        
+        public bool allowUpdateCurrentBlock = true;
+
 
         [Header("Outline")]
         public Material outlineMaterial;
@@ -30,21 +33,23 @@ namespace XiheFramework {
 
         private Material m_OutlineMat;
 
+        private GridBlock m_CurrentBlock;
+
         protected Transform interactorTransform;
         // private bool m_MouseHovering;
 
-        protected List<Vector3> receivedPath=new List<Vector3>();
+        protected List<Vector3> receivedPath = new List<Vector3>();
 
         private static readonly int OutlineWidthProp = Shader.PropertyToID("_OutlineWidth");
 
         public void RequestPath(Vector3 destination, bool includeDiagonal) {
             //invoke path
-            Game.Grid.RequestPath(this,transform.position, destination, includeDiagonal);
+            Game.Grid.RequestPath(this, transform.position, destination, includeDiagonal);
         }
 
         public void RequestPath(int x, int y, bool includeDiagonal) {
             //invoke path
-            Game.Grid.RequestPath(this,transform.position, Game.Grid.GetGridPosition(x, y), includeDiagonal);
+            Game.Grid.RequestPath(this, transform.position, Game.Grid.GetGridPosition(x, y), includeDiagonal);
         }
 
         public void FaceAt(Vector3 target) {
@@ -119,6 +124,29 @@ namespace XiheFramework {
                     Game.Event.Invoke("OnPlayerReleaseNpc", interactorTransform, internalName);
                     interactorTransform = null;
                 }
+            }
+
+            if (allowUpdateCurrentBlock) {
+                UpdateCurrentBlock();
+            }
+        }
+
+        private void UpdateCurrentBlock() {
+            //update block
+            var block = Game.Grid.GetNearestBlock(transform.position);
+            Debug.LogWarning(block.gameObject.name);
+            if (block == m_CurrentBlock) {
+                return;
+            }
+
+            Debug.LogWarning(Game.Blackboard.GetData<float>("AStar.NodeSize"));
+            if (Vector3.Distance(block.aStarNode.worldPosition, transform.position) < Game.Blackboard.GetData<float>("AStar.NodeSize") * 1.414f) {
+                Game.Grid.SetWalkable(block.aStarNode.gridX, block.aStarNode.gridY, false);
+                if (m_CurrentBlock != null) {
+                    Game.Grid.SetWalkable(m_CurrentBlock.aStarNode.gridX, m_CurrentBlock.aStarNode.gridY, true);
+                }
+
+                m_CurrentBlock = block;
             }
         }
 

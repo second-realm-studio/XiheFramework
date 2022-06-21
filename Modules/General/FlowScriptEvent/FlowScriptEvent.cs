@@ -10,12 +10,15 @@ namespace XiheFramework {
         public int priority;
         public string eventName;
         public FlowScript canvas;
+        public bool playOnAwake;
 
         [TextArea]
         public string description;
 
         private void Start() {
-            //Play();
+            if (playOnAwake) {
+                Play();
+            }
         }
 
 

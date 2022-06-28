@@ -65,7 +65,13 @@ public class BlackBoardEditorWindow : EditorWindow {
         foreach (var key in Game.Blackboard.GetDataPathArray()) {
             GUILayout.BeginHorizontal();
             GUILayout.Label(key, EditorStyles.boldLabel);
-            GUILayout.Label(Game.Blackboard.GetData(key).ToString());
+            if (Game.Blackboard.GetData(key) != null) {
+                GUILayout.Label(Game.Blackboard.GetData(key).ToString());
+            }
+            else {
+                GUILayout.Label("NULL");
+            }
+
             GUILayout.EndHorizontal();
         }
 
@@ -73,7 +79,7 @@ public class BlackBoardEditorWindow : EditorWindow {
 
         //m_States = CreateStates(m_States, root);
         if (m_States == null) {
-            OnBlackBoardChanged(null, null);//bad use
+            OnBlackBoardChanged(null, null); //bad use
         }
 
         //BuildFoldout(m_States, root);

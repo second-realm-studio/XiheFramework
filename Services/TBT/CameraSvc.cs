@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 public static class CameraSvc
 {
-    public static void SwitchCamera() {
+    public static void InstantiateCamera(string name) {
         
     }
 }

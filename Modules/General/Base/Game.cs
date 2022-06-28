@@ -25,6 +25,8 @@
 
         public static FlowScriptEventModule FlowEvent => GameManager.GetModule<FlowScriptEventModule>();
 
+        public static EntityModule Entity => GameManager.GetModule<EntityModule>();
+
         //public static CameraModule Camera => GameManager.GetModule<CameraModule>();
     }
 }

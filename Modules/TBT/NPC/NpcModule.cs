@@ -40,9 +40,9 @@ namespace XiheFramework {
             }
         }
 
-        public void DestroyNpc(string npcName,float delay) {
+        public void DestroyNpc(string npcName, float delay) {
             if (NpcExist(npcName)) {
-                Destroy(m_Npcs[npcName].gameObject,delay);
+                Destroy(m_Npcs[npcName].gameObject, delay);
             }
         }
 
@@ -101,7 +101,10 @@ namespace XiheFramework {
                 return;
             }
 
-            m_NpcFlowEvents.Add(internalName, eventName);
+            if (!m_NpcFlowEvents.ContainsValue(internalName, eventName)) {
+                m_NpcFlowEvents.Add(internalName, eventName);
+            }
+
             //m_Npcs[internalName].AddInvokableEvent(eventName);
         }
 
@@ -109,7 +112,7 @@ namespace XiheFramework {
             if (!m_Npcs.ContainsKey(internalName)) {
                 return;
             }
-
+            
             m_NpcFlowEvents.Remove(internalName, eventName);
             // m_Npcs[internalName].RemoveInvokableEvent(eventName);
         }

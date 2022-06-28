@@ -139,7 +139,7 @@ namespace XiheFramework {
                 return;
             }
 
-            Debug.LogWarning(Game.Blackboard.GetData<float>("AStar.NodeSize"));
+            // Debug.LogWarning(Game.Blackboard.GetData<float>("AStar.NodeSize"));
             if (Vector3.Distance(block.aStarNode.worldPosition, transform.position) < Game.Blackboard.GetData<float>("AStar.NodeSize") * 1.414f) {
                 Game.Grid.SetWalkable(block.aStarNode.gridX, block.aStarNode.gridY, false);
                 if (m_CurrentBlock != null) {

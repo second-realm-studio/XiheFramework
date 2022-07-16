@@ -134,7 +134,7 @@ namespace XiheFramework {
         private void UpdateCurrentBlock() {
             //update block
             var block = Game.Grid.GetNearestBlock(transform.position);
-            Debug.LogWarning(block.gameObject.name);
+            //Debug.LogWarning(block.gameObject.name);
             if (block == m_CurrentBlock) {
                 return;
             }

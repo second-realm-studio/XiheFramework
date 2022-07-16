@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace XiheFramework {
     [CreateAssetMenu(menuName = "Xihe/Achievement")]
-    public class Achievement : ScriptableObject {
+    public class AchievementData : ScriptableObject {
         public string achievementName;
         public string description;
         public bool isHidden;

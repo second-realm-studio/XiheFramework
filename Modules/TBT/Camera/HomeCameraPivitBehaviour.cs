@@ -45,9 +45,12 @@ public class HomeCameraPivitBehaviour : MonoBehaviour {
         var delta = Game.Input.GetMouseDeltaPosition();
         if (Camera.main != null) {
             var cam = Camera.main.transform;
-            var worldDrag = cam.right * delta.x + cam.forward * delta.y;
+            var forward = cam.forward;
+            forward.y = 0f;
+            forward.Normalize();
+            var worldDrag = cam.right * delta.x + forward * delta.y;
             if (invertDrag) {
-                worldDrag = cam.right * -delta.x + cam.forward * -delta.y;
+                worldDrag = cam.right * -delta.x + forward * -delta.y;
             }
 
             m_Destination += worldDrag * Time.deltaTime;

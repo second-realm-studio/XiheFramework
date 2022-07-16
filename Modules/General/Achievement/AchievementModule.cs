@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace XiheFramework {
     public class AchievementModule : GameModule {
-        public List<Achievement> achievements;
-        private Dictionary<string, Achievement> m_Achievements = new Dictionary<string, Achievement>();
+        public List<AchievementData> achievements;
+        private Dictionary<string, AchievementData> m_Achievements = new Dictionary<string, AchievementData>();
 
-        private Dictionary<string, AchievementProgress> m_progresses = new Dictionary<string, AchievementProgress>();
+        private Dictionary<string, AchievementProgress> m_Progresses = new Dictionary<string, AchievementProgress>();
 
         public override void Setup() {
             base.Setup();

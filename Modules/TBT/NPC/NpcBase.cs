@@ -18,7 +18,7 @@ namespace XiheFramework {
         public string internalName;
         public float invokeRadius;
         public float releaseRadius;
-        
+
         public bool allowUpdateCurrentBlock = true;
 
 
@@ -59,12 +59,14 @@ namespace XiheFramework {
 
         protected virtual void Start() {
             Game.Npc.RegisterNpc(this);
-            Game.Event.Subscribe("OnPlayerInvokeNpc", OnInvokeCharacter);
-            Game.Event.Subscribe("OnPlayerReleaseNpc", OnReleaseCharacter);
+            Game.Event.Subscribe("OnPlayerInvokeNpc", OnInvokeNpc);
+            Game.Event.Subscribe("OnPlayerReleaseNpc", OnReleaseNpc);
 
-            m_OutlineMat = outlineMaterial;
-            m_OutlineMat.color = outlineColor;
-            m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
+            if (outlineMaterial) {
+                m_OutlineMat = outlineMaterial;
+                m_OutlineMat.color = outlineColor;
+                m_OutlineMat.SetFloat(OutlineWidthProp, outlineWidth);
+            }
 
             Game.Event.Subscribe("OnReceivePathToBlock", OnReceivePathToBlock);
         }
@@ -87,7 +89,7 @@ namespace XiheFramework {
         }
 
 
-        protected virtual void OnInvokeCharacter(object sender, object e) {
+        protected virtual void OnInvokeNpc(object sender, object e) {
             var ns = sender as Transform;
             var ne = (string) e;
             if (!string.Equals(ne, internalName)) {
@@ -100,12 +102,12 @@ namespace XiheFramework {
 
             if (ns != null && Vector3.Distance(transform.position, ns.position) < invokeRadius) {
                 interactorTransform = ns;
-                OnCharacterInvokeSystem();
+                OnNpcInvokeSystem();
                 Game.Npc.SetInteractingNpc(internalName);
             }
         }
 
-        protected virtual void OnReleaseCharacter(object sender, object e) {
+        protected virtual void OnReleaseNpc(object sender, object e) {
             var ns = sender as Transform;
             var ne = (string) e;
             if (!string.Equals(ne, internalName)) {
@@ -115,7 +117,7 @@ namespace XiheFramework {
             Game.Npc.SetInteractingNpc(null);
         }
 
-        protected abstract void OnCharacterInvokeSystem();
+        protected abstract void OnNpcInvokeSystem();
 
         protected virtual void Update() {
             if (interactorTransform != null) {

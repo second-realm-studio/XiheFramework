@@ -124,7 +124,7 @@ namespace XiheFramework {
         }
 
         public static float GetAnimationClipLength(this Animator animator, string name) {
-            var runtime=animator.runtimeAnimatorController;
+            var runtime = animator.runtimeAnimatorController;
             foreach (var clip in runtime.animationClips) {
                 if (clip.name.Equals(name)) {
                     return clip.length;
@@ -132,6 +132,32 @@ namespace XiheFramework {
             }
 
             return 0f;
+        }
+
+        public static void SetLightIntensitySmooth(this Light light, MonoBehaviour owner, float targetIntensity, float duration) {
+            owner.StopAllCoroutines();
+            owner.StartCoroutine(SetLightIntensity(light, targetIntensity, duration));
+        }
+
+        private static IEnumerator SetLightIntensity(Light targetLight, float targetIntensity, float duration) {
+            while (Math.Abs(targetLight.intensity - targetIntensity) > 0.001f) {
+                var intensity = targetLight.intensity;
+
+                var delta = (targetIntensity - intensity) * Time.deltaTime / duration;
+                intensity += delta;
+
+                targetLight.intensity = intensity;
+
+                if (Math.Abs(intensity - targetIntensity) < delta) {
+                    targetLight.intensity = targetIntensity;
+                }
+
+                yield return null;
+            }
+            
+            targetLight.intensity = targetIntensity;
+
+            yield return null;
         }
     }
 

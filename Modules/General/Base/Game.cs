@@ -27,6 +27,8 @@
 
         public static EntityModule Entity => GameManager.GetModule<EntityModule>();
 
+        public static AchievementModule Achievement => GameManager.GetModule<AchievementModule>();
+
         //public static CameraModule Camera => GameManager.GetModule<CameraModule>();
     }
 }

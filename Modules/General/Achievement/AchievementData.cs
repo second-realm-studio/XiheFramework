@@ -5,14 +5,15 @@ using FlowCanvas;
 using UnityEngine;
 
 namespace XiheFramework {
-    [CreateAssetMenu(menuName = "Xihe/Achievement")]
+    [CreateAssetMenu(menuName = "Xihe/Achievement/Achievement Data")]
     public class AchievementData : ScriptableObject {
         public string achievementName;
-        public string description;
+        public int id;
+        public int progressionLimit;
+        public string unlockedDescription;
+        public string lockedDescription;
         public bool isHidden;
         public Sprite lockedIcon;
-        public string lockedText;//hint
         public Sprite unlockedIcon;
-        public string unlockedText;
     }
 }

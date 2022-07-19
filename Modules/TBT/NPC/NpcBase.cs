@@ -175,5 +175,9 @@ namespace XiheFramework {
             Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
             Gizmos.DrawSphere(transform.position, releaseRadius);
         }
+
+        protected void ClearOutline() {
+            m_OutlineMat.SetFloat(OutlineWidthProp, 0);
+        }
     }
 }

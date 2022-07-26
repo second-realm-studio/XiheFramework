@@ -37,6 +37,7 @@ namespace XiheFramework {
             return result;
         }
 
+        //hard clamp (change direction)
         public static Vector2 Clamp(this Vector2 vector2, float min, float max) {
             float x = Mathf.Clamp(vector2.x, min, max);
             float y = Mathf.Clamp(vector2.y, min, max);
@@ -44,11 +45,24 @@ namespace XiheFramework {
             return new Vector2(x, y);
         }
 
+        //hard clamp (change direction)
         public static Vector2 Clamp(this Vector2 vector2, Vector2 min, Vector2 max) {
             float x = Mathf.Clamp(vector2.x, min.x, max.x);
             float y = Mathf.Clamp(vector2.y, min.y, max.y);
 
             return new Vector2(x, y);
+        }
+
+        //proportional clamp (change length)
+        public static Vector3 ClampProportional(this Vector3 vector3, float min, float max) {
+            if (vector3.magnitude < min) {
+                return vector3.normalized * min;
+            }
+            else if (vector3.magnitude > max) {
+                return vector3.normalized * max;
+            }
+
+            return vector3;
         }
 
         //x - x min
@@ -154,10 +168,14 @@ namespace XiheFramework {
 
                 yield return null;
             }
-            
+
             targetLight.intensity = targetIntensity;
 
             yield return null;
+        }
+
+        public static bool Contains(this LayerMask mask, int layer) {
+            return mask == (mask | (1 << layer));
         }
     }
 

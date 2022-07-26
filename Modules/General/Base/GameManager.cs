@@ -7,7 +7,9 @@ using UnityEngine.SceneManagement;
 namespace XiheFramework {
     public class GameManager : Singleton<GameManager> {
         public int frameRate = 60;
-        public float globalSpeed=1f;
+        public float globalSpeed = 1f;
+
+        public float logoDisplayTime;
 
         public string retryScene;
         public string restartScene;
@@ -33,6 +35,12 @@ namespace XiheFramework {
 
         private void Start() {
             DontDestroyOnLoad(gameObject);
+
+            //play xihe logo
+            if (logoDisplayTime > 0) {
+                Game.Blackboard.SetData("System.LogoDisplayTime", logoDisplayTime);
+                Game.FlowEvent.StartEvent("System.DisplayXiheLogo");
+            }
         }
 
         private void Update() {

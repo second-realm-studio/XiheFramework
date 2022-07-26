@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace XiheFramework {
     public abstract class GameModule : MonoBehaviour {
-
         protected virtual void Awake() {
             GameManager.RegisterComponent(this);
         }
@@ -12,10 +12,15 @@ namespace XiheFramework {
         /// Useful for setting up data before other modules trying to access it
         /// </summary>
         public virtual void Setup() {
-            
         }
 
         public abstract void Update();
+
+        public virtual void FixedUpdate() {
+        }
+
+        public virtual void LateUpdate() {
+        }
 
         public abstract void ShutDown(ShutDownType shutDownType);
     }

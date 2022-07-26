@@ -7,13 +7,17 @@ namespace XiheFramework {
         private readonly Dictionary<string, KeyCode> m_KeyActionBinds = new Dictionary<string, KeyCode>();
 
         //public List<ActionKeyPair> actionKeyPairs;
-        [SerializeField] private List<ActionKeyPair> bindingSetting = new List<ActionKeyPair>();
+        [SerializeField]
+        private List<ActionKeyPair> bindingSetting = new List<ActionKeyPair>();
 
         private Vector2 m_MouseDeltaPosition;
         private Vector2 m_LastFrameMousePosition;
 
         private float m_WASDInputMultiplier = 0f;
         private float m_WASDInputAcceleration = 1f;
+
+        private float m_ArrowInputMultiplier = 0f;
+        private float m_ArrowInputAcceleration = 1f;
 
         public bool allowInput = true;
 
@@ -99,8 +103,42 @@ namespace XiheFramework {
                 m_WASDInputMultiplier -= Time.deltaTime * m_WASDInputAcceleration;
             }
 
-
             m_WASDInputMultiplier = Mathf.Clamp01(m_WASDInputMultiplier);
+
+            return input;
+        }
+
+        public Vector2 GetArrowInput() {
+            Vector2 input = Vector2.zero; //↑ ↓ ← →
+            bool holding = false;
+            if (Input.GetKey(KeyCode.UpArrow)) {
+                input.y += m_ArrowInputMultiplier;
+                holding = true;
+            }
+
+            if (Input.GetKey(KeyCode.DownArrow)) {
+                input.y -= m_ArrowInputMultiplier;
+                holding = true;
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow)) {
+                input.x -= m_ArrowInputMultiplier;
+                holding = true;
+            }
+
+            if (Input.GetKey(KeyCode.RightArrow)) {
+                input.x += m_ArrowInputMultiplier;
+                holding = true;
+            }
+
+            if (holding) {
+                m_ArrowInputMultiplier += Time.deltaTime * m_ArrowInputAcceleration;
+            }
+            else {
+                m_ArrowInputMultiplier -= Time.deltaTime * m_ArrowInputAcceleration;
+            }
+
+            m_ArrowInputMultiplier = Mathf.Clamp01(m_ArrowInputMultiplier);
 
             return input;
         }

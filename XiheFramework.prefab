@@ -133,39 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allEvents:
-  - {fileID: 3229522519238436621, guid: 96ccc114c1f234d46bfd502ebf2b1e71, type: 3}
-  - {fileID: 7764803809467784512, guid: cc2c63694c3365e4ab34595332040de0, type: 3}
-  - {fileID: 3116776696421871024, guid: 1fc68b2e90242174fbfa124ceeb6f391, type: 3}
-  - {fileID: 2953934863975922420, guid: 612c1b29895273f46b36ee3d1a045e8b, type: 3}
-  - {fileID: -7792137103705169036, guid: cb5a8b15a1ab94940bdf1d1a6d1185b1, type: 3}
-  - {fileID: -7792137103705169036, guid: 3f7035453f68a734481f658a7db1578b, type: 3}
-  - {fileID: 7764803809467784512, guid: 36920b63b13773e479cca6fe7d0eb98d, type: 3}
-  - {fileID: -7792137103705169036, guid: ea2e205c699449949a77e625ebe51a21, type: 3}
-  - {fileID: -7792137103705169036, guid: 0017ad734d89acb4a9cab27cd4829aa3, type: 3}
-  - {fileID: 7764803809467784512, guid: 4afa777afb809364c8db2affd4227120, type: 3}
-  - {fileID: -7792137103705169036, guid: 7c920d5b48f82f54986b79d9fff38a65, type: 3}
-  - {fileID: 8269130444282702616, guid: 8de4bb497ebbd9a4a87cdc396f48396f, type: 3}
-  - {fileID: -7792137103705169036, guid: 74af8af3c89a91447a20dd88b63469f5, type: 3}
-  - {fileID: -7792137103705169036, guid: 9e2df1740c836bc40a079e3e28f11e11, type: 3}
-  - {fileID: -7792137103705169036, guid: c1f9d51d383456a41b15692611624842, type: 3}
-  - {fileID: -7792137103705169036, guid: 007977402603faf4b85f2d6373cf2eef, type: 3}
-  - {fileID: 7764803809467784512, guid: 186142c21e1b93f428a0d1c7ec3b5f08, type: 3}
-  - {fileID: 7764803809467784512, guid: c39207c0f9945ab45a2f6f9121476ac0, type: 3}
-  - {fileID: 7764803809467784512, guid: 517a6c40e2a64ef4e80173d553f17fa2, type: 3}
-  - {fileID: -7792137103705169036, guid: 562ad36dde7fccc43b432a98a49e8c96, type: 3}
-  - {fileID: -7792137103705169036, guid: 7d3f9591dfbb95049bdc86ea6cd48fac, type: 3}
-  - {fileID: -7792137103705169036, guid: 6df064e01466b9849b6c06c2bee12d04, type: 3}
-  - {fileID: -7792137103705169036, guid: d6cae2a4ea23b8e41b33d79d5f5f62cd, type: 3}
-  - {fileID: -7792137103705169036, guid: d46e1237b516d04449d72f9ce04938ae, type: 3}
-  - {fileID: -7792137103705169036, guid: 99fb9cc657314b64c83e838331137ef6, type: 3}
-  - {fileID: -7792137103705169036, guid: cce05a802ea028444b0eab7b80266e33, type: 3}
-  - {fileID: -7792137103705169036, guid: 31f0cf6161a1c3643a9f5251a77b459f, type: 3}
-  - {fileID: -7792137103705169036, guid: 6d92b8a2ea11a234286be55eb933fa2c, type: 3}
-  - {fileID: -7792137103705169036, guid: 22e391a54cb63b04584ae86dae0126e6, type: 3}
-  - {fileID: -7792137103705169036, guid: 370c1ad6f585d204ca16d22dca90046f, type: 3}
-  - {fileID: -7792137103705169036, guid: 67f0806d38bafce4688c425098cc3112, type: 3}
-  - {fileID: -7792137103705169036, guid: 181541d520e28114587d5c2b5f7b57a1, type: 3}
-  - {fileID: -7792137103705169036, guid: 2d8a9008e4c058b47bdfd69dcdd5ecbe, type: 3}
+  - {fileID: 6526803108424117279, guid: 3df1ed06291ed0a4db332ac7e863cc8b, type: 3}
 --- !u!1 &1839843085749060136
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,6 +414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frameRate: 60
   globalSpeed: 1
+  logoDisplayTime: 0
   retryScene: 
   restartScene: 
 --- !u!1 &3293463646007246670

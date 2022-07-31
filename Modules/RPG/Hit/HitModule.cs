@@ -13,7 +13,7 @@ namespace XiheFramework {
         private Dictionary<HitBox, float> m_IFrames = new Dictionary<HitBox, float>(); //hitbox to be invincible,iframe left(in second)
         // private Dictionary<,int>
 
-        private MultiDictionary<string, int> m_HitRecords = new MultiDictionary<string, int>(); //hit guid, owner id
+        private MultiDictionary<string, string> m_HitRecords = new MultiDictionary<string, string>(); //hit guid, owner id
 
         public string GetNewGuid() {
             return Guid.NewGuid().ToString();
@@ -29,7 +29,7 @@ namespace XiheFramework {
             }
         }
 
-        public void RemoveHitRecord(string guid, int ownerId) {
+        public void RemoveHitRecord(string guid, string ownerId) {
             m_HitRecords.Remove(guid, ownerId);
         }
 
@@ -100,7 +100,7 @@ namespace XiheFramework {
             }
         }
 
-        private IEnumerator RemoveHitRecordWithDelayCo(string guid, float cd, int ownerId) {
+        private IEnumerator RemoveHitRecordWithDelayCo(string guid, float cd, string ownerId) {
             yield return new WaitForSeconds(cd);
 
             //remove owner id from hit record

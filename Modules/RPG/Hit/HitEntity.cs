@@ -22,16 +22,5 @@ namespace XiheFramework {
         protected void RefreshGuid() {
             guid = Game.Hit.GetNewGuid();
         }
-
-        protected void RemoveHitRecordWithDelay(float cd, int ownerId) {
-            StartCoroutine(RemoveHitRecordWithDelayCo(cd, ownerId));
-        }
-
-        private IEnumerator RemoveHitRecordWithDelayCo(float cd, int ownerId) {
-            yield return cd;
-
-            //remove owner id from hit record
-            Game.Hit.RemoveHitRecord(guid, ownerId);
-        }
     }
 }

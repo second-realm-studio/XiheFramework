@@ -10,7 +10,8 @@ namespace XiheFramework {
         public string nickName;
         public int maxPlayer=4;
         
-
+        
+        
         public void CreateRoom() {
             
         }

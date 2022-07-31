@@ -5,19 +5,25 @@ using UnityEngine;
 namespace XiheFramework {
     public class InputModule : GameModule {
         private readonly Dictionary<string, KeyCode> m_KeyActionBinds = new Dictionary<string, KeyCode>();
+        private readonly Dictionary<string, TwoDirectionalKeySet> m_TwoAxisKeyBinds = new Dictionary<string, TwoDirectionalKeySet>();
 
         //public List<ActionKeyPair> actionKeyPairs;
         [SerializeField]
         private List<ActionKeyPair> bindingSetting = new List<ActionKeyPair>();
 
+        [SerializeField]
+        private List<TwoDirectionalKeySet> twoAxisKeySetting = new List<TwoDirectionalKeySet>();
+
         private Vector2 m_MouseDeltaPosition;
         private Vector2 m_LastFrameMousePosition;
 
-        private float m_WASDInputMultiplier = 0f;
-        private float m_WASDInputAcceleration = 1f;
+        // private float m_WASDInputMultiplier = 0f;
 
-        private float m_ArrowInputMultiplier = 0f;
-        private float m_ArrowInputAcceleration = 1f;
+        private Dictionary<string, float> m_TwoDirectionalMultipliers = new Dictionary<string, float>();
+        // private float m_WASDInputAcceleration = 1f;
+
+        // private float m_ArrowInputMultiplier = 0f;
+        // private float m_ArrowInputAcceleration = 1f;
 
         public bool allowInput = true;
 
@@ -32,6 +38,16 @@ namespace XiheFramework {
                 }
 
                 m_KeyActionBinds.Add(pair.action, pair.key);
+            }
+
+            foreach (var pair in twoAxisKeySetting) {
+                if (m_TwoAxisKeyBinds.ContainsKey(pair.name)) {
+                    Debug.LogErrorFormat(
+                        "[XIHE INPUT] Multiple keycodes are assigning to a same twoAxisBinding, ignoring [{0},{1},{2},{3},{4}]",
+                        pair.name, pair.forward.ToString(), pair.backward.ToString(), pair.left.ToString(), pair.right.ToString());
+                }
+
+                m_TwoAxisKeyBinds.Add(pair.name, pair);
             }
         }
 
@@ -73,75 +89,126 @@ namespace XiheFramework {
 
         public Vector2 GetXZInput() => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        public Vector2 GetWASDInput() {
+        // public Vector2 GetWASDInput() {
+        //     Vector2 input = Vector2.zero; //w,s,a,d
+        //     bool holding = false;
+        //     if (Input.GetKey(KeyCode.W)) {
+        //         input.y += m_WASDInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.S)) {
+        //         input.y -= m_WASDInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.A)) {
+        //         input.x -= m_WASDInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.D)) {
+        //         input.x += m_WASDInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (holding) {
+        //         m_WASDInputMultiplier += Time.deltaTime * m_WASDInputAcceleration;
+        //     }
+        //     else {
+        //         m_WASDInputMultiplier -= Time.deltaTime * m_WASDInputAcceleration;
+        //     }
+        //
+        //     m_WASDInputMultiplier = Mathf.Clamp01(m_WASDInputMultiplier);
+        //
+        //     return input;
+        // }
+
+
+        public Vector2 GetTwoAxisInput(string setName, float acceleration = 1f) {
+            if (!m_TwoAxisKeyBinds.ContainsKey(setName)) {
+                return Vector2.zero;
+            }
+
+            var set = m_TwoAxisKeyBinds[setName];
+
+            float mul = 0f;
+            if (!m_TwoDirectionalMultipliers.ContainsKey(setName)) {
+                m_TwoDirectionalMultipliers.Add(setName, 0f);
+            }
+            else {
+                mul = m_TwoDirectionalMultipliers[setName];
+            }
+
             Vector2 input = Vector2.zero; //w,s,a,d
             bool holding = false;
-            if (Input.GetKey(KeyCode.W)) {
-                input.y += m_WASDInputMultiplier;
+            if (Input.GetKey(set.forward)) {
+                input.y += mul;
                 holding = true;
             }
 
-            if (Input.GetKey(KeyCode.S)) {
-                input.y -= m_WASDInputMultiplier;
+            if (Input.GetKey(set.backward)) {
+                input.y -= mul;
                 holding = true;
             }
 
-            if (Input.GetKey(KeyCode.A)) {
-                input.x -= m_WASDInputMultiplier;
+            if (Input.GetKey(set.left)) {
+                input.x -= mul;
                 holding = true;
             }
 
-            if (Input.GetKey(KeyCode.D)) {
-                input.x += m_WASDInputMultiplier;
-                holding = true;
-            }
-
-            if (holding) {
-                m_WASDInputMultiplier += Time.deltaTime * m_WASDInputAcceleration;
-            }
-            else {
-                m_WASDInputMultiplier -= Time.deltaTime * m_WASDInputAcceleration;
-            }
-
-            m_WASDInputMultiplier = Mathf.Clamp01(m_WASDInputMultiplier);
-
-            return input;
-        }
-
-        public Vector2 GetArrowInput() {
-            Vector2 input = Vector2.zero; //↑ ↓ ← →
-            bool holding = false;
-            if (Input.GetKey(KeyCode.UpArrow)) {
-                input.y += m_ArrowInputMultiplier;
-                holding = true;
-            }
-
-            if (Input.GetKey(KeyCode.DownArrow)) {
-                input.y -= m_ArrowInputMultiplier;
-                holding = true;
-            }
-
-            if (Input.GetKey(KeyCode.LeftArrow)) {
-                input.x -= m_ArrowInputMultiplier;
-                holding = true;
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow)) {
-                input.x += m_ArrowInputMultiplier;
+            if (Input.GetKey(set.right)) {
+                input.x += mul;
                 holding = true;
             }
 
             if (holding) {
-                m_ArrowInputMultiplier += Time.deltaTime * m_ArrowInputAcceleration;
+                mul += Time.deltaTime * acceleration;
             }
             else {
-                m_ArrowInputMultiplier -= Time.deltaTime * m_ArrowInputAcceleration;
+                mul -= Time.deltaTime * acceleration;
             }
 
-            m_ArrowInputMultiplier = Mathf.Clamp01(m_ArrowInputMultiplier);
+            mul = Mathf.Clamp01(mul);
+            m_TwoDirectionalMultipliers[setName] = mul;
 
             return input;
         }
+
+        // public Vector2 GetArrowInput() {
+        //     Vector2 input = Vector2.zero; //↑ ↓ ← →
+        //     bool holding = false;
+        //     if (Input.GetKey(KeyCode.UpArrow)) {
+        //         input.y += m_ArrowInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.DownArrow)) {
+        //         input.y -= m_ArrowInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.LeftArrow)) {
+        //         input.x -= m_ArrowInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (Input.GetKey(KeyCode.RightArrow)) {
+        //         input.x += m_ArrowInputMultiplier;
+        //         holding = true;
+        //     }
+        //
+        //     if (holding) {
+        //         m_ArrowInputMultiplier += Time.deltaTime * m_ArrowInputAcceleration;
+        //     }
+        //     else {
+        //         m_ArrowInputMultiplier -= Time.deltaTime * m_ArrowInputAcceleration;
+        //     }
+        //
+        //     m_ArrowInputMultiplier = Mathf.Clamp01(m_ArrowInputMultiplier);
+        //
+        //     return input;
+        // }
 
         public Vector2 GetMouseDeltaPosition() {
             return m_MouseDeltaPosition;
@@ -185,6 +252,15 @@ namespace XiheFramework {
                 this.action = action;
                 this.key = key;
             }
+        }
+
+        [Serializable]
+        public struct TwoDirectionalKeySet {
+            public string name;
+            public KeyCode forward;
+            public KeyCode backward;
+            public KeyCode left;
+            public KeyCode right;
         }
 
         // [Serializable]

@@ -5,11 +5,15 @@ using UnityEngine;
 
 public class HitBox : MonoBehaviour {
     public Collider hitboxCollider;
-    public int ownerId;
+    public string ownerId;
 
     private void Start() {
         if (hitboxCollider == null) {
             this.hitboxCollider = GetComponent<Collider>();
         }
+    }
+
+    public void Init(string guid) {
+        ownerId = guid;
     }
 }

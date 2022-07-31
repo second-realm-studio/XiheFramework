@@ -6,19 +6,32 @@ using XiheFramework;
 
 namespace XiheFramework {
     public abstract class HitEntity : MonoBehaviour {
-        public int id = -1;
-        public float damage;
+        public string guid;
+        public float damage; //standard damage 
+        public float duration = 1f;
+        public float coolDown = 0.4f; //define the cooldown time for a hit entity to be able to hit a same target again
+
+        //public Vector3 damageDirection;
 
         public abstract void Play();
-        
-        private void Start() {
-            id = Game.Hit.NextId;
+
+        protected virtual void Start() {
+            RefreshGuid();
         }
 
-        private void Update() {
-            // if (Input.GetKeyDown(KeyCode.P)) {
-            //     Play();
-            // }
+        protected void RefreshGuid() {
+            guid = Game.Hit.GetNewGuid();
+        }
+
+        protected void RemoveHitRecordWithDelay(float cd, int ownerId) {
+            StartCoroutine(RemoveHitRecordWithDelayCo(cd, ownerId));
+        }
+
+        private IEnumerator RemoveHitRecordWithDelayCo(float cd, int ownerId) {
+            yield return cd;
+
+            //remove owner id from hit record
+            Game.Hit.RemoveHitRecord(guid, ownerId);
         }
     }
 }

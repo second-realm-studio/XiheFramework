@@ -92,6 +92,10 @@ namespace XiheFramework.Util {
                 return false;
             }
 
+            if (!m_Dictionary.ContainsKey(key)) {
+                return false;
+            }
+            
             return m_Dictionary[key].Contains(value);
         }
 

@@ -1,0 +1,11 @@
+{
+  "name": "com.sky_haihai.xiheframework",
+  "displayName": "XiheFramework",
+  "version": "0.1.0",
+  "unity": "2021.3",
+  "description": "A game framework being used by a few people in xihe studio. Integrated common modules such as Event, FSM, Blackboard,etc.",
+  "license": "MIT",
+  "keywords": [ "Utils" ],
+  "dependencies": {
+  }
+}

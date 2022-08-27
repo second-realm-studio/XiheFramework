@@ -1,11 +1,13 @@
 using System.Collections.Generic;
-using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 
 
 namespace XiheFramework {
-    public class NetworkModule : GameModule, IConnectionCallbacks {
+    /// <summary>
+    /// UNDER DEVELOPMENT
+    /// SWITCHING TO MIRROR
+    /// </summary>
+    public class NetworkModule : GameModule {
         public string gameVersion;
         public string nickName;
         public int maxPlayer=4;
@@ -17,7 +19,7 @@ namespace XiheFramework {
         }
         
         private void Start() {
-            PhotonNetwork.AddCallbackTarget(this);
+            
         }
 
         public override void Setup() {
@@ -34,27 +36,27 @@ namespace XiheFramework {
             
         }
         
-        #region PUN2 Callbacks
-
-        public void OnConnected() {
-        }
-
-        public void OnConnectedToMaster() {
-            Debug.Log("Connected to Master");
-        }
-
-        public void OnDisconnected(DisconnectCause cause) {
-        }
-
-        public void OnRegionListReceived(RegionHandler regionHandler) {
-        }
-
-        public void OnCustomAuthenticationResponse(Dictionary<string, object> data) {
-        }
-
-        public void OnCustomAuthenticationFailed(string debugMessage) {
-        }
-
-        #endregion
+        // #region PUN2 Callbacks
+        //
+        // public void OnConnected() {
+        // }
+        //
+        // public void OnConnectedToMaster() {
+        //     Debug.Log("Connected to Master");
+        // }
+        //
+        // public void OnDisconnected(DisconnectCause cause) {
+        // }
+        //
+        // public void OnRegionListReceived(RegionHandler regionHandler) {
+        // }
+        //
+        // public void OnCustomAuthenticationResponse(Dictionary<string, object> data) {
+        // }
+        //
+        // public void OnCustomAuthenticationFailed(string debugMessage) {
+        // }
+        //
+        // #endregion
     }
 }

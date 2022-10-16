@@ -15,4 +15,10 @@ public static class UtilSvc {
     public static string JoinString(string a, string b) {
         return a + b;
     }
+
+    public static void AddDeltaTime(float input, out float output) {
+        output = input + Time.deltaTime;
+    }
+    
+    
 }

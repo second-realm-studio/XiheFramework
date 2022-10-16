@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FlowCanvas;
 using UnityEngine;
 using static System.String;
 
@@ -71,7 +72,7 @@ namespace XiheFramework {
         public void ChangeState(string targetState) {
             m_UpdateToExit = true;
             m_NextState = targetState;
-            // Debug.LogInfo("Change to "+targetState);
+            Debug.Log("Change to "+targetState);
         }
 
         public void Update() {

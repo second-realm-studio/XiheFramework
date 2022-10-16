@@ -53,6 +53,10 @@ namespace XiheFramework {
             return new Vector2(x, y);
         }
 
+        public static Vector2 Clamp(this Vector2 vector2, Vector4 bound) {
+            return vector2.Clamp(new Vector2(bound.x, bound.y), new Vector2(bound.z, bound.w));
+        }
+
         //proportional clamp (change length)
         public static Vector3 ClampProportional(this Vector3 vector3, float min, float max) {
             if (vector3.magnitude < min) {

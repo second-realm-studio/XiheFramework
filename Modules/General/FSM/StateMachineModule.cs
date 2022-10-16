@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,36 @@ namespace XiheFramework {
 
         private bool m_IsActive = true;
 
+        public Dictionary<string, StateMachine> GetData() {
+            return m_StateMachines;
+        }
+
         public string GetCurrentState(string fsmName) {
             return m_StateMachines[fsmName].GetCurrentState();
+        }
+
+        public void SetDefaultState(string fsmName, string stateName) {
+            if (!IsFsmExisted(fsmName)) return;
+
+            m_StateMachines[fsmName].SetDefaultState(stateName);
+        }
+
+        public void ChangeState(string fsmName, string stateName) {
+            if (!IsFsmExisted(fsmName)) return;
+
+            m_StateMachines[fsmName].ChangeState(stateName);
+        }
+
+        public void AddFlowState(string fsmName, string stateName, Action onEnter, Action onUpdate, Action onExit) {
+            if (!IsFsmExisted(fsmName)) return;
+
+            var state = new FlowState(m_StateMachines[fsmName], onEnter, onUpdate, onExit);
+
+            m_StateMachines[fsmName].AddState(stateName, state);
+        }
+
+        public bool IsFsmExisted(string fsmName) {
+            return m_StateMachines.ContainsKey(fsmName);
         }
 
         public StateMachine CreateStateMachine(string fsmName) {
@@ -41,8 +70,7 @@ namespace XiheFramework {
         }
 
         public override void ShutDown(ShutDownType shutDownType) {
-             m_StateMachines.Clear();
+            m_StateMachines.Clear();
         }
-
     }
 }

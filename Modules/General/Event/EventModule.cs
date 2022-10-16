@@ -62,7 +62,7 @@ namespace XiheFramework {
             // }
         }
 
-        public void Invoke(string eventName, object sender, object eventArg) {
+        public void Invoke(string eventName, object sender=null, object eventArg=null) {
             //lock (m_LockRoot)
 
             if (m_CurrentEvents.ContainsKey(eventName)) {

@@ -206,6 +206,8 @@ namespace XiheFramework {
 // #endif
 //         }
 
+        public bool isActive;
+
         [Range(1, 10)]
         public int chainLength = 2;
 
@@ -222,6 +224,7 @@ namespace XiheFramework {
         [Range(0, 1)]
         public float snapBackStrength = 1f;
 
+        public float handleSize;
 
         private float[] m_BonesLength; //Target to Origin
         private float m_CompleteLength;
@@ -287,7 +290,9 @@ namespace XiheFramework {
 
         // Update is called once per frame
         void LateUpdate() {
-            ResolveIK();
+            if (isActive) {
+                ResolveIK();
+            }
         }
 
         private void ResolveIK() {
@@ -408,10 +413,15 @@ namespace XiheFramework {
                 current = current.parent;
             }
 
-            Handles.matrix=Matrix4x4.identity;
+            Handles.matrix = Matrix4x4.identity;
             Handles.color = Color.red;
-            Handles.DrawWireCube(target.position, new Vector3(3, 1, 5));
-            Handles.DrawWireCube(pole.position, Vector3.one);
+            if (target != null) {
+                Handles.DrawWireCube(target.position, new Vector3(3, 1, 5) * handleSize);
+            }
+
+            if (pole != null) {
+                Handles.DrawWireCube(pole.position, Vector3.one * handleSize);
+            }
 #endif
         }
     }

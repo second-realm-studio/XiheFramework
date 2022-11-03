@@ -3,6 +3,6 @@
 Add submodule  
 Path: Assets/XiheFramework
 
-Dependency:
-FlowCanvas
+Dependency:  
+FlowCanvas  
 ASE(optional)

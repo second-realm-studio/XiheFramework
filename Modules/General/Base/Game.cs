@@ -20,7 +20,7 @@
         public static UIModule UI => GameManager.GetModule<UIModule>();
 
         public static LocalizationModule Localization => GameManager.GetModule<LocalizationModule>();
-        
+
         public static StateMachineModule Fsm => GameManager.GetModule<StateMachineModule>();
 
         public static FlowScriptEventModule FlowEvent => GameManager.GetModule<FlowScriptEventModule>();
@@ -28,6 +28,10 @@
         public static EntityModule Entity => GameManager.GetModule<EntityModule>();
 
         public static AchievementModule Achievement => GameManager.GetModule<AchievementModule>();
+
+        public static T GetModule<T>() where T : GameModule {
+            return GameManager.GetModule<T>();
+        }
 
         //public static CameraModule Camera => GameManager.GetModule<CameraModule>();
     }

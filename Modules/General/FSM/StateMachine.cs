@@ -59,7 +59,7 @@ namespace XiheFramework {
         }
 
         public void Start() {
-            if (!m_States.ContainsKey(m_DefaultState)) {
+            if (m_DefaultState == null || !m_States.ContainsKey(m_DefaultState)) {
                 m_DefaultState = m_States.Keys.First();
             }
 
@@ -72,7 +72,7 @@ namespace XiheFramework {
         public void ChangeState(string targetState) {
             m_UpdateToExit = true;
             m_NextState = targetState;
-            Debug.Log("Change to "+targetState);
+            Debug.Log("Change to " + targetState);
         }
 
         public void Update() {
@@ -98,6 +98,9 @@ namespace XiheFramework {
             if (m_EnterToUpdate && m_NextFrameLock) {
                 if (m_States.ContainsKey(m_CurrentState)) {
                     m_States[m_CurrentState].OnUpdate();
+                }
+                else {
+                    Debug.Log("[FSM] state " + m_CurrentState + " does not exist");
                 }
             }
 

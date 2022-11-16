@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace XiheFramework {
     public class StateMachineModule : GameModule {
+        public bool enableDebug;
+        
         private readonly Dictionary<string, StateMachine> m_StateMachines = new Dictionary<string, StateMachine>();
 
         private bool m_IsActive = true;

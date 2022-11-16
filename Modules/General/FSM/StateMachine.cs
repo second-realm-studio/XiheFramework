@@ -72,7 +72,9 @@ namespace XiheFramework {
         public void ChangeState(string targetState) {
             m_UpdateToExit = true;
             m_NextState = targetState;
-            Debug.Log("Change to " + targetState);
+            if (Game.Fsm.enableDebug) {
+                Debug.Log("Change to " + targetState);
+            }
         }
 
         public void Update() {

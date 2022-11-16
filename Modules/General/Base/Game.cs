@@ -28,6 +28,7 @@
         public static EntityModule Entity => GameManager.GetModule<EntityModule>();
 
         public static AchievementModule Achievement => GameManager.GetModule<AchievementModule>();
+        public static ParticleEffectModule Particle => GameManager.GetModule<ParticleEffectModule>();
 
         public static T GetModule<T>() where T : GameModule {
             return GameManager.GetModule<T>();

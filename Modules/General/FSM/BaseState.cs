@@ -9,12 +9,12 @@ namespace XiheFramework {
         }
 
         public abstract void OnEnter();
-        
+
         public abstract void OnUpdate();
-        
+
         public abstract void OnExit();
 
-        protected void ChangeState(string targetState) {
+        public void ChangeState(string targetState) {
             m_ParentStateMachine.ChangeState(targetState);
         }
     }

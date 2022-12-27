@@ -17,7 +17,7 @@ namespace XiheFramework {
             this.onUpdateCallbacks = onUpdateCallbacks;
             this.onExitCallbacks = onExitCallbacks;
         }
-        
+
         public override void OnEnter() {
             onEnterCallbacks.Invoke();
         }

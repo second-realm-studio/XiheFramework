@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace XiheFramework {
     public abstract class UIBehaviour : MonoBehaviour

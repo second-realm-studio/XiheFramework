@@ -5,14 +5,14 @@ using UnityEngine;
 namespace XiheFramework {
     public class InputModule : GameModule {
         private readonly Dictionary<string, KeyCode> m_KeyActionBinds = new Dictionary<string, KeyCode>();
-        private readonly Dictionary<string, TwoDirectionalKeySet> m_TwoAxisKeyBinds = new Dictionary<string, TwoDirectionalKeySet>();
+
+        private readonly Dictionary<string, TwoDirectionalKeySet> m_TwoAxisKeyBinds =
+            new Dictionary<string, TwoDirectionalKeySet>();
 
         //public List<ActionKeyPair> actionKeyPairs;
-        [SerializeField]
-        private List<ActionKeyPair> bindingSetting = new List<ActionKeyPair>();
+        [SerializeField] private List<ActionKeyPair> bindingSetting = new List<ActionKeyPair>();
 
-        [SerializeField]
-        private List<TwoDirectionalKeySet> twoAxisKeySetting = new List<TwoDirectionalKeySet>();
+        [SerializeField] private List<TwoDirectionalKeySet> twoAxisKeySetting = new List<TwoDirectionalKeySet>();
 
         private Vector2 m_MouseDeltaPosition;
         private Vector2 m_LastFrameMousePosition;
@@ -44,7 +44,8 @@ namespace XiheFramework {
                 if (m_TwoAxisKeyBinds.ContainsKey(pair.name)) {
                     Debug.LogErrorFormat(
                         "[XIHE INPUT] Multiple keycodes are assigning to a same twoAxisBinding, ignoring [{0},{1},{2},{3},{4}]",
-                        pair.name, pair.forward.ToString(), pair.backward.ToString(), pair.left.ToString(), pair.right.ToString());
+                        pair.name, pair.forward.ToString(), pair.backward.ToString(), pair.left.ToString(),
+                        pair.right.ToString());
                 }
 
                 m_TwoAxisKeyBinds.Add(pair.name, pair);
@@ -75,19 +76,44 @@ namespace XiheFramework {
             return m_KeyActionBinds.ContainsKey(keyActionTypes);
         }
 
-        public bool GetKeyDown(string keyActionTypes) => allowInput && Input.GetKeyDown(GetKeyCode(keyActionTypes));
+        public bool GetKeyDown(string keyActionTypes) => allowInput && (Input.GetKeyDown(GetKeyCode(keyActionTypes)) ||
+                                                         Input.GetButtonDown(keyActionTypes));
 
-        public bool GetKey(string keyActionTypes) => allowInput && Input.GetKey(GetKeyCode(keyActionTypes));
+        public bool GetKey(string keyActionTypes) => allowInput && (Input.GetKey(GetKeyCode(keyActionTypes)) ||
+                                                                    Input.GetButtonDown(keyActionTypes));
 
-        public bool GetKeyUp(string keyActionTypes) => allowInput && Input.GetKeyUp(GetKeyCode(keyActionTypes));
+        public bool GetKeyUp(string keyActionTypes) => allowInput && Input.GetKeyUp(GetKeyCode(keyActionTypes)) ||
+                                                       Input.GetButtonDown(keyActionTypes);
 
-        public bool GetMouseDown(int mouseType) => allowInput && Input.GetMouseButtonDown(mouseType);
+        public bool GetMouseUp(int mouseType) {
+            var btnUp = mouseType switch {
+                0 => Input.GetButtonUp("Submit"),
+                1 => Input.GetButtonUp("Cancel"),
+                _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
+            };
+            return allowInput && (Input.GetMouseButtonUp(mouseType) || btnUp);
+        }
 
-        public bool GetMouse(int mouseType) => allowInput && Input.GetMouseButton(mouseType);
+        public bool GetMouseDown(int mouseType) {
+            var btnDown = mouseType switch {
+                0 => Input.GetButtonDown("Submit"),
+                1 => Input.GetButtonDown("Cancel"),
+                _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
+            };
+            return allowInput && (Input.GetMouseButtonDown(mouseType) || btnDown);
+        }
 
-        public bool GetMouseUp(int mouseType) => allowInput && Input.GetMouseButtonUp(mouseType);
+        public bool GetMouse(int mouseType) {
+            var btn = mouseType switch {
+                0 => Input.GetButton("Submit"),
+                1 => Input.GetButton("Cancel"),
+                _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
+            };
+            return allowInput && (Input.GetMouseButton(mouseType) || btn);
+        }
 
         public Vector2 GetXZInput() => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        public Vector2 GetMouseXZInput() => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         // public Vector2 GetWASDInput() {
         //     Vector2 input = Vector2.zero; //w,s,a,d
@@ -240,8 +266,7 @@ namespace XiheFramework {
             UpdateMouseDeltaPosition();
         }
 
-        public override void ShutDown(ShutDownType shutDownType) {
-        }
+        public override void ShutDown(ShutDownType shutDownType) { }
 
         [Serializable]
         public struct ActionKeyPair {

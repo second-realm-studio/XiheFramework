@@ -11,28 +11,13 @@ namespace XiheFramework {
 
         private object m_LockRoot = new object();
 
-        //private MultiDictionary<string, EventPair> m_WaitingList = new MultiDictionary<string, EventPair>();
         private readonly Queue<EventPair> m_WaitingList = new Queue<EventPair>();
 
+        public override void Setup() {
+            base.Setup();
+        }
 
         public override void Update() {
-            // if (m_WaitingList.Count > 0)
-            // {
-            //     lock (m_LockRoot)
-            //     {
-            //         for (int i = 0; i < m_WaitingList.Count; i++)
-            //         {
-            //             var element = m_WaitingList.ElementAt(i);
-            //
-            //             for (int j = 0; j < element.Value.Count; j++)
-            //             {
-            //                 element.Value[j].EventHandler.Invoke(element.Value[j].Sender, element.Value[j].Argument);
-            //             }
-            //         }
-            //     }
-            // }
-            // m_WaitingList.Clear();
-
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
                     var element = m_WaitingList.Dequeue();
@@ -56,15 +41,9 @@ namespace XiheFramework {
             }
 
             m_CurrentEvents.Remove(eventName, handler);
-
-            // if (m_CurrentEvents.ContainsKey(eventName)) {
-            //     m_CurrentEvents[eventName] -= action;
-            // }
         }
 
         public void Invoke(string eventName, object sender=null, object eventArg=null) {
-            //lock (m_LockRoot)
-
             if (m_CurrentEvents.ContainsKey(eventName)) {
                 foreach (var handler in m_CurrentEvents[eventName]) {
                     var eventPair = new EventPair(sender, eventArg, handler);
@@ -79,11 +58,7 @@ namespace XiheFramework {
 
             Graph.SendGlobalEvent(eventName, eventArg, sender);
         }
-
-        /// <summary>
-        /// 被注册，并且有回调函数的事件数量
-        /// </summary>
-        /// <returns></returns>
+        
         public int Count() {
             return m_CurrentEvents.Count;
         }

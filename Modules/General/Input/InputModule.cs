@@ -76,14 +76,11 @@ namespace XiheFramework {
             return m_KeyActionBinds.ContainsKey(keyActionTypes);
         }
 
-        public bool GetKeyDown(string keyActionTypes) => allowInput && (Input.GetKeyDown(GetKeyCode(keyActionTypes)) ||
-                                                         Input.GetButtonDown(keyActionTypes));
+        public bool GetKeyDown(string keyActionTypes) => allowInput && Input.GetKeyDown(GetKeyCode(keyActionTypes));
 
-        public bool GetKey(string keyActionTypes) => allowInput && (Input.GetKey(GetKeyCode(keyActionTypes)) ||
-                                                                    Input.GetButtonDown(keyActionTypes));
+        public bool GetKey(string keyActionTypes) => allowInput && Input.GetKey(GetKeyCode(keyActionTypes));
 
-        public bool GetKeyUp(string keyActionTypes) => allowInput && Input.GetKeyUp(GetKeyCode(keyActionTypes)) ||
-                                                       Input.GetButtonDown(keyActionTypes);
+        public bool GetKeyUp(string keyActionTypes) => allowInput && Input.GetKeyUp(GetKeyCode(keyActionTypes));
 
         public bool GetMouseUp(int mouseType) {
             var btnUp = mouseType switch {

@@ -16,6 +16,7 @@ namespace XiheFramework {
 
         private Vector2 m_MouseDeltaPosition;
         private Vector2 m_LastFrameMousePosition;
+        private bool m_IsLastFrameFocused;
 
         // private float m_WASDInputMultiplier = 0f;
 
@@ -88,16 +89,17 @@ namespace XiheFramework {
                 1 => Input.GetButtonUp("Cancel"),
                 _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
             };
-            return allowInput && (Input.GetMouseButtonUp(mouseType) || btnUp);
+            return allowInput && Input.GetMouseButtonUp(mouseType);
         }
 
         public bool GetMouseDown(int mouseType) {
             var btnDown = mouseType switch {
                 0 => Input.GetButtonDown("Submit"),
                 1 => Input.GetButtonDown("Cancel"),
+                2 => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
             };
-            return allowInput && (Input.GetMouseButtonDown(mouseType) || btnDown);
+            return allowInput && Input.GetMouseButtonDown(mouseType);
         }
 
         public bool GetMouse(int mouseType) {
@@ -106,47 +108,11 @@ namespace XiheFramework {
                 1 => Input.GetButton("Cancel"),
                 _ => throw new ArgumentOutOfRangeException(nameof(mouseType), mouseType, null)
             };
-            return allowInput && (Input.GetMouseButton(mouseType) || btn);
+            return allowInput && Input.GetMouseButton(mouseType);
         }
 
         public Vector2 GetXZInput() => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         public Vector2 GetMouseXZInput() => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        // public Vector2 GetWASDInput() {
-        //     Vector2 input = Vector2.zero; //w,s,a,d
-        //     bool holding = false;
-        //     if (Input.GetKey(KeyCode.W)) {
-        //         input.y += m_WASDInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.S)) {
-        //         input.y -= m_WASDInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.A)) {
-        //         input.x -= m_WASDInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.D)) {
-        //         input.x += m_WASDInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (holding) {
-        //         m_WASDInputMultiplier += Time.deltaTime * m_WASDInputAcceleration;
-        //     }
-        //     else {
-        //         m_WASDInputMultiplier -= Time.deltaTime * m_WASDInputAcceleration;
-        //     }
-        //
-        //     m_WASDInputMultiplier = Mathf.Clamp01(m_WASDInputMultiplier);
-        //
-        //     return input;
-        // }
-
 
         public Vector2 GetTwoAxisInput(string setName, float acceleration = 1f) {
             if (!m_TwoAxisKeyBinds.ContainsKey(setName)) {
@@ -198,49 +164,21 @@ namespace XiheFramework {
             return input;
         }
 
-        // public Vector2 GetArrowInput() {
-        //     Vector2 input = Vector2.zero; //↑ ↓ ← →
-        //     bool holding = false;
-        //     if (Input.GetKey(KeyCode.UpArrow)) {
-        //         input.y += m_ArrowInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.DownArrow)) {
-        //         input.y -= m_ArrowInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.LeftArrow)) {
-        //         input.x -= m_ArrowInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (Input.GetKey(KeyCode.RightArrow)) {
-        //         input.x += m_ArrowInputMultiplier;
-        //         holding = true;
-        //     }
-        //
-        //     if (holding) {
-        //         m_ArrowInputMultiplier += Time.deltaTime * m_ArrowInputAcceleration;
-        //     }
-        //     else {
-        //         m_ArrowInputMultiplier -= Time.deltaTime * m_ArrowInputAcceleration;
-        //     }
-        //
-        //     m_ArrowInputMultiplier = Mathf.Clamp01(m_ArrowInputMultiplier);
-        //
-        //     return input;
-        // }
-
         public Vector2 GetMouseDeltaPosition() {
             return m_MouseDeltaPosition;
         }
 
         private void UpdateMouseDeltaPosition() {
-            var currentFrameMousePosition = Input.mousePosition;
-            m_MouseDeltaPosition = currentFrameMousePosition.ToVector2(V3ToV2Type.XY) - m_LastFrameMousePosition;
-            m_LastFrameMousePosition = currentFrameMousePosition;
+            if (m_IsLastFrameFocused) {//prevent mouse delta position from being calculated when the game is not focused
+                var currentFrameMousePosition = Input.mousePosition;
+                m_MouseDeltaPosition = currentFrameMousePosition.ToVector2(V3ToV2Type.XY) - m_LastFrameMousePosition;
+                m_LastFrameMousePosition = currentFrameMousePosition;
+            }
+            else {
+                m_LastFrameMousePosition = Input.mousePosition;
+            }
+
+            m_IsLastFrameFocused = Application.isFocused;
         }
 
         public void DisableInput() {
@@ -261,6 +199,13 @@ namespace XiheFramework {
 
         public override void Update() {
             UpdateMouseDeltaPosition();
+        }
+
+        private void OnApplicationFocus(bool hasFocus) {
+            m_MouseDeltaPosition = Vector2.zero;
+            if (!hasFocus) {
+                m_IsLastFrameFocused = false;
+            }
         }
 
         public override void ShutDown(ShutDownType shutDownType) { }

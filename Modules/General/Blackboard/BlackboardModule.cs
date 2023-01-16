@@ -123,7 +123,7 @@ namespace XiheFramework {
 
         public T GetData<T>(string dataName) {
             if (m_Data.ContainsKey(dataName)) {
-                return (T) m_Data[dataName].entity;
+                return (T)m_Data[dataName].entity;
             }
 
             // if (m_RuntimeBlackboard.ContainsKey(dataName)) {
@@ -138,31 +138,21 @@ namespace XiheFramework {
             //     return (T) m_GlobalSaveDataBlackboard[dataName];
             // }
 
+            Debug.LogWarning("[BLACKBOARD] data does not exist. dataName: " + dataName);
+
             return default;
         }
 
         public bool ContainsKey(string dataName) {
-            // return m_RuntimeBlackboard.ContainsKey(dataName) ||
-            //        m_SaveDataBlackboard.ContainsKey(dataName) ||
-            //        m_GlobalSaveDataBlackboard.ContainsKey(dataName);
             return m_Data.ContainsKey(dataName);
         }
 
-        public void RemoveData<T>(string dataName) {
-            // if (m_RuntimeBlackboard.ContainsKey(dataName)) {
-            //     m_RuntimeBlackboard.Remove(dataName);
-            // }
-            // else if (m_SaveDataBlackboard.ContainsKey(dataName)) {
-            //     m_SaveDataBlackboard.Remove(dataName);
-            // }
-            // else if (m_GlobalSaveDataBlackboard.Remove(dataName)) {
-            //     m_GlobalSaveDataBlackboard.Remove(dataName);
-            // }
+        public void RemoveData(string dataName) {
             if (m_Data.ContainsKey(dataName)) {
                 m_Data.Remove(dataName);
             }
             else {
-                Game.Log.LogErrorFormat("black board doesn't contain data name : " + dataName);
+                Game.Log.LogWarningFormat("black board doesn't contain data name : " + dataName);
             }
         }
 
@@ -185,8 +175,7 @@ namespace XiheFramework {
             m_DataPathTree = null;
         }
 
-        public override void Update() {
-        }
+        public override void Update() { }
 
         public override void ShutDown(ShutDownType shutDownType) {
             Reset();

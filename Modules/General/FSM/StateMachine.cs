@@ -70,6 +70,12 @@ namespace XiheFramework {
         }
 
         public void ChangeState(string targetState) {
+            //when targetState has not been added to this state machine
+            if (!m_States.ContainsKey(targetState)) {
+                Debug.LogErrorFormat("[FSM] Current FSM does not contain the target state: {0}", targetState);
+                return;
+            }
+
             m_UpdateToExit = true;
             m_NextState = targetState;
             if (Game.Fsm.enableDebug) {
@@ -109,6 +115,9 @@ namespace XiheFramework {
             m_NextFrameLock = true;
         }
 
+        /// <summary>
+        /// shutdown fsm
+        /// </summary>
         public void ShutDown() {
             m_CurrentState = Empty;
         }

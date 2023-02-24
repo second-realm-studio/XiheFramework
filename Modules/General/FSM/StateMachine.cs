@@ -118,7 +118,7 @@ namespace XiheFramework {
         /// <summary>
         /// shutdown fsm
         /// </summary>
-        public void ShutDown() {
+        public void Stop() {
             m_CurrentState = Empty;
         }
     }

@@ -14,7 +14,7 @@ public class FsmEditorWindow : EditorWindow {
     [MenuItem("Xihe/FSM Debug Window")]
     static void Init() {
         // Get existing open window or if none, make a new one:
-        FsmEditorWindow window = (FsmEditorWindow) EditorWindow.GetWindow(typeof(FsmEditorWindow));
+        FsmEditorWindow window = (FsmEditorWindow)EditorWindow.GetWindow(typeof(FsmEditorWindow));
         window.Show();
     }
 
@@ -38,6 +38,11 @@ public class FsmEditorWindow : EditorWindow {
             return;
         }
 
+        if (Game.Fsm == null) {
+            GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
+            return;
+        }
+
         var data = Game.Fsm.GetData();
         //var root = Game.Blackboard.GetDataPaths();
         if (data == null) {
@@ -57,7 +62,7 @@ public class FsmEditorWindow : EditorWindow {
         GUILayout.Label("State Machine", EditorStyles.boldLabel);
         GUILayout.Label("Current State", EditorStyles.boldLabel);
         GUILayout.EndHorizontal();
-        
+
         foreach (var key in data.Keys) {
             GUILayout.BeginHorizontal();
             GUILayout.Label(key, EditorStyles.boldLabel);

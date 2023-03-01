@@ -8,7 +8,7 @@ using UnityEngine;
 using XiheFramework;
 
 public class BlackBoardEditorWindow : EditorWindow {
-    string[] m_Options = {"Group", "Type"};
+    string[] m_Options = { "Group", "Type" };
     private int m_SortingMode;
     private Vector2 m_ScrollPos;
 
@@ -18,7 +18,7 @@ public class BlackBoardEditorWindow : EditorWindow {
     [MenuItem("Xihe/BlackBoard Debug Window")]
     static void Init() {
         // Get existing open window or if none, make a new one:
-        BlackBoardEditorWindow window = (BlackBoardEditorWindow) EditorWindow.GetWindow(typeof(BlackBoardEditorWindow));
+        BlackBoardEditorWindow window = (BlackBoardEditorWindow)EditorWindow.GetWindow(typeof(BlackBoardEditorWindow));
         window.Show();
     }
 
@@ -45,6 +45,11 @@ public class BlackBoardEditorWindow : EditorWindow {
         if (!Application.isPlaying) {
             GUILayout.Label("DATA STATUS : NOT IN PLAY MODE", EditorStyles.boldLabel);
             m_SortingMode = EditorGUILayout.Popup("Sorting Mode:", m_SortingMode, m_Options);
+            return;
+        }
+
+        if (Game.Blackboard == null) {
+            GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
             return;
         }
 

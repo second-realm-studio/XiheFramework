@@ -1,5 +1,5 @@
 # XiheFramework  
-A Unity-based game framework for agile development designed to be used by small teams (1-10).
+A Unity-based game framework for agile development designed to be used by small teams (1-10). Uses names instead of IDs to prevent you from filling a bunch of excel tables :)
 ## Main Features  
 
 ### Core Modules

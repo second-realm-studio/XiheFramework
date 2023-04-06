@@ -18,12 +18,12 @@ namespace XiheFramework.Util {
 
         public void Add(TKey key, TValue value) {
             if (key == null) {
-                Game.Log.LogError("MultiDictionary key is null");
+                Debug.LogError("MultiDictionary key is null");
                 return;
             }
 
             if (value == null) {
-                Game.Log.LogError("MultiDictionary value is null");
+                Debug.LogError("MultiDictionary value is null");
                 return;
             }
 
@@ -38,22 +38,22 @@ namespace XiheFramework.Util {
 
         public void Remove(TKey key, TValue value) {
             if (key == null) {
-                Game.Log.LogError("MultiDictionary key is null");
+                Debug.LogError("MultiDictionary key is null");
                 return;
             }
 
             if (value == null) {
-                Game.Log.LogError("MultiDictionary value is null");
+                Debug.LogError("MultiDictionary value is null");
                 return;
             }
 
             if (!m_Dictionary.ContainsKey(key)) {
-                Game.Log.LogErrorFormat("MultiDictionary Key {0} is not existed", key);
+                Debug.LogErrorFormat("MultiDictionary Key {0} is not existed", key);
                 return;
             }
 
             if (!m_Dictionary[key].Contains(value)) {
-                Game.Log.LogErrorFormat("MultiDictionary Value {0} is not existed", value);
+                Debug.LogErrorFormat("MultiDictionary Value {0} is not existed", value);
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace XiheFramework.Util {
 
         public List<TValue> GetList(TKey key) {
             if (key == null) {
-                Game.Log.LogError("MultiDictionary key is null");
+                Debug.LogError("MultiDictionary key is null");
                 return null;
             }
 
@@ -74,7 +74,7 @@ namespace XiheFramework.Util {
 
         public bool ContainsKey(TKey key) {
             if (key == null) {
-                Game.Log.LogError("MultiDictionary key is null");
+                Debug.LogError("MultiDictionary key is null");
                 return false;
             }
 
@@ -83,12 +83,12 @@ namespace XiheFramework.Util {
 
         public bool ContainsValue(TKey key, TValue value) {
             if (key == null) {
-                Game.Log.LogError("MultiDictionary key is null");
+                Debug.LogError("MultiDictionary key is null");
                 return false;
             }
 
             if (value == null) {
-                Game.Log.LogError("MultiDictionary value is null");
+                Debug.LogError("MultiDictionary value is null");
                 return false;
             }
 

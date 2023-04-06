@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using FlowCanvas.Nodes;
-using UnityEditor;
 using UnityEngine;
-using XiheFramework;
 
 public class BezierPath : MonoBehaviour {
     public List<CurveInfo> pathPoints = new List<CurveInfo>();

@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine.SceneManagement;
 
-namespace XiheFramework {
+namespace XiheFramework.Services {
     public class SceneSvc {
         public static void LoadScene(string loadSceneName) {
             SceneManager.LoadScene(loadSceneName);

@@ -1,24 +1,19 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
-    public abstract class UIBehaviour : MonoBehaviour
-    {
+namespace XiheFramework.Modules.UI {
+    public abstract class UIBehaviour : MonoBehaviour {
         public string uiName;
-        public virtual void Start()
-        {
+
+        public virtual void Start() {
             Register();
         }
 
-        public virtual void Register()
-        {
-            if (uiName == string.Empty)
-            {
-                uiName = gameObject.name + gameObject.GetHashCode();
-            }
+        public virtual void Register() {
+            if (uiName == string.Empty) uiName = gameObject.name + gameObject.GetHashCode();
             Game.UI.RegisterUIBehaviour(uiName, this);
         }
+
         public virtual void Active() {
             gameObject.SetActive(true);
         }

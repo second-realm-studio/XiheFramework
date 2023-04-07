@@ -1,11 +1,10 @@
 {
-    "name": "com.xihestudio.xiheframework",
-    "displayName": "XiheFramework",
-    "version": "1.0.0",
-    "description": "A game framework for agile development",
-    "unity": "2021.3",
-    "unityPackageManager": true,
-    "dependencies": {
-        
-    }
+  "name": "com.xihestudio.xiheframework",
+  "displayName": "XiheFramework",
+  "version": "1.0.0",
+  "description": "A game framework for agile development",
+  "unity": "2021.3",
+  "unityPackageManager": true,
+  "dependencies": {
+  }
 }

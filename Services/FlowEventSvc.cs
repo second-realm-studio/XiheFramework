@@ -1,4 +1,6 @@
-namespace XiheFramework {
+using XiheFramework.Modules.Base;
+
+namespace XiheFramework.Services {
     public static class FlowEventSvc {
         public static void SetEventUsed(string eventName, bool used) {
             Game.Blackboard.SetData("FlowEvent.Used." + eventName, used);

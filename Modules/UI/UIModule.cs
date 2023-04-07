@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.UI {
     public class UIModule : GameModule {
-        private readonly Dictionary<string, UIBehaviour> m_UIBehaviours = new Dictionary<string, UIBehaviour>();
+        private readonly Dictionary<string, UIBehaviour> m_UIBehaviours = new();
+
+        public override void Update() { }
 
         //public Transform root;
 
@@ -18,13 +21,11 @@ namespace XiheFramework {
         }
 
         /// <summary>
-        /// use UnActiveUI instead to hide ui
+        ///     use UnActiveUI instead to hide ui
         /// </summary>
         /// <param name="behaviourName"></param>
         public void UnregisterUIBehaviour(string behaviourName) {
-            if (m_UIBehaviours.ContainsKey(behaviourName)) {
-                m_UIBehaviours.Remove(behaviourName);
-            }
+            if (m_UIBehaviours.ContainsKey(behaviourName)) m_UIBehaviours.Remove(behaviourName);
         }
 
         public bool ActivateUI(string behaviourName) {
@@ -60,10 +61,6 @@ namespace XiheFramework {
             return Instantiate(uiBehaviour);
         }
 
-        public override void Update() {
-        }
-
-        public override void ShutDown(ShutDownType shutDownType) {
-        }
+        public override void ShutDown(ShutDownType shutDownType) { }
     }
 }

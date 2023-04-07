@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
-using XiheFramework;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.FSM {
     public class FlowState : BaseState {
-        private Action onEnterCallbacks;
-        private Action onUpdateCallbacks;
-        private Action onExitCallbacks;
+        private readonly Action onEnterCallbacks;
+        private readonly Action onExitCallbacks;
+        private readonly Action onUpdateCallbacks;
 
         public FlowState(StateMachine parentStateMachine, Action onEnterCallbacks, Action onUpdateCallbacks, Action onExitCallbacks) : base(
             parentStateMachine) {

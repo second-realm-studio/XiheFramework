@@ -1,15 +1,21 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.FSM {
     public class StateMachineModule : GameModule {
         public bool enableDebug;
 
-        private readonly Dictionary<string, StateMachine> m_StateMachines = new Dictionary<string, StateMachine>();
+        private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
         private bool m_IsActive = true;
+
+        public override void Update() {
+            if (!m_IsActive) return;
+
+            foreach (var stateMachine in m_StateMachines.Values) stateMachine.Update();
+        }
 
         public Dictionary<string, StateMachine> GetData() {
             return m_StateMachines;
@@ -19,10 +25,9 @@ namespace XiheFramework {
             if (m_StateMachines.ContainsKey(fsmName)) {
                 return m_StateMachines[fsmName].GetCurrentState();
             }
-            else {
-                Debug.LogError("[FSM] Fsm: " + fsmName + " does not exist");
-                return null;
-            }
+
+            Debug.LogError("[FSM] Fsm: " + fsmName + " does not exist");
+            return null;
         }
 
         public void SetDefaultState(string fsmName, string stateName) {
@@ -78,14 +83,6 @@ namespace XiheFramework {
 
         public void ContinueAllStateMachines() {
             m_IsActive = true;
-        }
-
-        public override void Update() {
-            if (!m_IsActive) return;
-
-            foreach (var stateMachine in m_StateMachines.Values) {
-                stateMachine.Update();
-            }
         }
 
         public override void ShutDown(ShutDownType shutDownType) {

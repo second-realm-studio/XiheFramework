@@ -1,18 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.FlowScriptEvent {
     public class FlowScriptEventModule : GameModule {
         public List<FlowScriptEvent> allEvents;
 
-        private Dictionary<string, FlowScriptEvent> m_AllEvents = new Dictionary<string, FlowScriptEvent>();
+        private readonly List<FlowScriptEvent> m_ActiveEvents = new();
+
+        private readonly Dictionary<string, FlowScriptEvent> m_AllEvents = new();
 
         private bool m_IsAnyEventRunning;
 
-        private List<FlowScriptEvent> m_ActiveEvents = new List<FlowScriptEvent>();
+        private void Start() {
+            m_AllEvents.Clear();
+            foreach (var flowEvent in allEvents) m_AllEvents.Add(flowEvent.eventName, flowEvent);
+
+            Game.Event.Subscribe("OnFlowEventInvoked", OnFlowEventInvoked);
+            Game.Event.Subscribe("OnFlowEventEnded", OnFlowEventEnded);
+        }
+
+
+        public override void Update() { }
 
         //"FlowEvent.xxx"
-        
+
         public void StartEvent(string eventName) {
             if (m_IsAnyEventRunning) {
                 Debug.LogWarning("[FLOW EVENT] Other event is running, you should not allow this to happen");
@@ -27,23 +39,10 @@ namespace XiheFramework {
         }
 
         public void DestroyEvent(string eventName, float delay) {
-            if (m_AllEvents.ContainsKey(eventName)) {
-                foreach (var activeEvent in m_ActiveEvents) {
-                    if (activeEvent.eventName.Equals(eventName)) {
+            if (m_AllEvents.ContainsKey(eventName))
+                foreach (var activeEvent in m_ActiveEvents)
+                    if (activeEvent.eventName.Equals(eventName))
                         Destroy(activeEvent.gameObject, delay);
-                    }
-                }
-            }
-        }
-
-        private void Start() {
-            m_AllEvents.Clear();
-            foreach (var flowEvent in allEvents) {
-                m_AllEvents.Add(flowEvent.eventName, flowEvent);
-            }
-
-            Game.Event.Subscribe("OnFlowEventInvoked", OnFlowEventInvoked);
-            Game.Event.Subscribe("OnFlowEventEnded", OnFlowEventEnded);
         }
 
         private void OnFlowEventEnded(object sender, object e) {
@@ -51,26 +50,18 @@ namespace XiheFramework {
         }
 
         private void OnFlowEventInvoked(object sender, object e) {
-            var ne = (string) e;
+            var ne = (string)e;
             StartEvent(ne);
         }
 
         public FlowScriptEvent GetEvent(string eventName) {
-            if (m_AllEvents.ContainsKey(eventName)) {
-                return m_AllEvents[eventName];
-            }
+            if (m_AllEvents.ContainsKey(eventName)) return m_AllEvents[eventName];
 
             return null;
         }
 
-
-        public override void Update() {
-        }
-
         public override void ShutDown(ShutDownType shutDownType) {
-            foreach (var e in m_ActiveEvents) {
-                Destroy(e.gameObject, Time.deltaTime);
-            }
+            foreach (var e in m_ActiveEvents) Destroy(e.gameObject, Time.deltaTime);
 
             m_ActiveEvents.Clear();
         }

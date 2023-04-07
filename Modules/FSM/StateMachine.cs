@@ -1,30 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using XiheFramework.Modules.Base;
 using static System.String;
 
-namespace XiheFramework {
-    [System.Serializable]
+namespace XiheFramework.Modules.FSM {
+    [Serializable]
     public class StateMachine {
-        private Dictionary<string, BaseState> m_States = new Dictionary<string, BaseState>();
-
         private string m_CurrentState;
 
         private string m_DefaultState;
 
-        #region Locks
-
-        private bool m_ExitToEnter = false;
-        private bool m_EnterToUpdate = false;
-        private bool m_UpdateToExit = false;
-        private bool m_NextFrameLock = false;
-
-        #endregion
-
         private string m_NextState;
+        private Dictionary<string, BaseState> m_States = new();
 
         public static StateMachine Create(string defaultState) {
-            return new StateMachine() {
+            return new StateMachine {
                 m_DefaultState = defaultState
             };
         }
@@ -42,24 +34,18 @@ namespace XiheFramework {
         }
 
         public void AddState(string stateName, BaseState state) {
-            if (!m_States.ContainsKey(stateName)) {
+            if (!m_States.ContainsKey(stateName))
                 m_States.Add(stateName, state);
-            }
-            else {
+            else
                 m_States[stateName] = state;
-            }
         }
 
         public void RemoveState(string stateName) {
-            if (m_States.ContainsKey(stateName)) {
-                m_States.Remove(stateName);
-            }
+            if (m_States.ContainsKey(stateName)) m_States.Remove(stateName);
         }
 
         public void Start() {
-            if (m_DefaultState == null || !m_States.ContainsKey(m_DefaultState)) {
-                m_DefaultState = m_States.Keys.First();
-            }
+            if (m_DefaultState == null || !m_States.ContainsKey(m_DefaultState)) m_DefaultState = m_States.Keys.First();
 
             m_CurrentState = m_DefaultState;
 
@@ -76,15 +62,11 @@ namespace XiheFramework {
 
             m_UpdateToExit = true;
             m_NextState = targetState;
-            if (Game.Fsm.enableDebug) {
-                Debug.Log("Change to " + targetState);
-            }
+            if (Game.Fsm.enableDebug) Debug.Log("Change to " + targetState);
         }
 
         public void Update() {
-            if (IsNullOrEmpty(m_CurrentState)) {
-                return;
-            }
+            if (IsNullOrEmpty(m_CurrentState)) return;
 
             if (m_ExitToEnter) {
                 m_States[m_CurrentState].OnEnter();
@@ -102,22 +84,29 @@ namespace XiheFramework {
             }
 
             if (m_EnterToUpdate && m_NextFrameLock) {
-                if (m_States.ContainsKey(m_CurrentState)) {
+                if (m_States.ContainsKey(m_CurrentState))
                     m_States[m_CurrentState].OnUpdate();
-                }
-                else {
+                else
                     Debug.Log("[FSM] state " + m_CurrentState + " does not exist");
-                }
             }
 
             m_NextFrameLock = true;
         }
 
         /// <summary>
-        /// shutdown fsm
+        ///     shutdown fsm
         /// </summary>
         public void Stop() {
             m_CurrentState = Empty;
         }
+
+        #region Locks
+
+        private bool m_ExitToEnter;
+        private bool m_EnterToUpdate;
+        private bool m_UpdateToExit;
+        private bool m_NextFrameLock;
+
+        #endregion
     }
 }

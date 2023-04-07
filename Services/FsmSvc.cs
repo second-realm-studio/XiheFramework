@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
-using XiheFramework;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Services {
     public static class FsmSvc {
         public static string GetState(string fsmName) {
             return Game.Fsm.GetCurrentState(fsmName);

@@ -1,14 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Setting {
     public class SettingModule : GameModule {
-
         public override void Update() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void ShutDown(ShutDownType shutDownType) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

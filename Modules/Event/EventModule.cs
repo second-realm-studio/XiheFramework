@@ -2,20 +2,16 @@
 using System.Collections.Generic;
 using NodeCanvas.Framework;
 using UnityEngine;
-using XiheFramework.Util;
+using XiheFramework.Modules.Base;
+using XiheFramework.Utility;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Event {
     public class EventModule : GameModule {
-        private readonly MultiDictionary<string, EventHandler<object>> m_CurrentEvents =
-            new MultiDictionary<string, EventHandler<object>>();
+        private readonly MultiDictionary<string, EventHandler<object>> m_CurrentEvents = new();
 
-        private object m_LockRoot = new object();
+        private readonly Queue<EventPair> m_WaitingList = new();
 
-        private readonly Queue<EventPair> m_WaitingList = new Queue<EventPair>();
-
-        public override void Setup() {
-            base.Setup();
-        }
+        private readonly object m_LockRoot = new();
 
         public override void Update() {
             lock (m_LockRoot) {
@@ -24,6 +20,10 @@ namespace XiheFramework {
                     element.EventHandler.Invoke(element.Sender, element.Argument);
                 }
             }
+        }
+
+        public override void Setup() {
+            base.Setup();
         }
 
         public override void ShutDown(ShutDownType shutDownType) {
@@ -43,30 +43,28 @@ namespace XiheFramework {
             m_CurrentEvents.Remove(eventName, handler);
         }
 
-        public void Invoke(string eventName, object sender=null, object eventArg=null) {
-            if (m_CurrentEvents.ContainsKey(eventName)) {
+        public void Invoke(string eventName, object sender = null, object eventArg = null) {
+            if (m_CurrentEvents.ContainsKey(eventName))
                 foreach (var handler in m_CurrentEvents[eventName]) {
                     var eventPair = new EventPair(sender, eventArg, handler);
                     lock (m_LockRoot) {
                         m_WaitingList.Enqueue(eventPair);
                     }
                 }
-            }
-            else {
+            else
                 Debug.LogWarning("Event :" + eventName + " does not have any c# subscriber");
-            }
 
             Graph.SendGlobalEvent(eventName, eventArg, sender);
         }
-        
+
         public int Count() {
             return m_CurrentEvents.Count;
         }
 
         private class EventPair {
-            public object Sender;
-            public object Argument;
-            public EventHandler<object> EventHandler;
+            public readonly object Argument;
+            public readonly EventHandler<object> EventHandler;
+            public readonly object Sender;
 
             public EventPair(object sender, object argument, EventHandler<object> eventHandler) {
                 Sender = sender;

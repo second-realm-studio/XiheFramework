@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Input {
     [Serializable]
-    public enum KeyActionTypes
-    {
+    public enum KeyActionTypes {
         MoveForward,
         MoveBackward,
         MoveLeft,
@@ -16,8 +15,8 @@ namespace XiheFramework {
         Fire,
         Dash,
         Map,
-        SwitchCharacter,
-        
+        SwitchCharacter
+
         //...
     }
 }

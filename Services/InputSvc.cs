@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Services {
     public static class InputSvc {
         public static void AssignKeyMap(string action, KeyCode key) {
             Game.Input.SetKeycode(action, key);
@@ -48,8 +49,8 @@ namespace XiheFramework {
         }
 
         public static Vector3 GetGlobalMoveAxis(Transform playerTransform, Transform playerCamera) {
-            float h = UnityEngine.Input.GetAxis("Horizontal"); //-1 ~ 1
-            float v = UnityEngine.Input.GetAxis("Vertical");
+            var h = Input.GetAxis("Horizontal"); //-1 ~ 1
+            var v = Input.GetAxis("Vertical");
 
             var camForward = Vector3.Scale(playerCamera.forward, new Vector3(1, 0, 1)).normalized;
             var twoAxis = v * camForward + h * playerCamera.right.normalized;
@@ -58,7 +59,7 @@ namespace XiheFramework {
         }
 
         public static Vector2 GetMouseAxis() {
-            return new Vector2(UnityEngine.Input.GetAxis("Mouse X"), UnityEngine.Input.GetAxis("Mouse Y"));
+            return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
-namespace XiheFramework
-{
-    [System.Serializable]
-    public class SaveData
-    {
+namespace XiheFramework.Modules.Serialization {
+    [Serializable]
+    public class SaveData {
         public string name;
         public string time;
         public string note;

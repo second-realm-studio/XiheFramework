@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Serialization {
     public static class SerializationUtil {
-
         //int
         public static string ParseIntToString(int value) {
             return value.ToString();
@@ -41,7 +36,7 @@ namespace XiheFramework {
         }
 
         public static Vector3 ParseStringToVector3(string value) {
-            Vector3 target = new Vector3();
+            var target = new Vector3();
             var strs = value.Split(',');
             if (strs.Length == 3) {
                 target.x = float.Parse(strs[0]);

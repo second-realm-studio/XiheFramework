@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Modules.Base;
+using XiheFramework.Utility;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Blackboard {
     public class BlackboardModule : GameModule {
         // private readonly Dictionary<string, object> m_RuntimeBlackboard = new Dictionary<string, object>();
         // private readonly Dictionary<string, object> m_SaveDataBlackboard = new Dictionary<string, object>();
         // private readonly Dictionary<string, object> m_GlobalSaveDataBlackboard = new Dictionary<string, object>();
 
-        private readonly Dictionary<string, BlackBoardObject> m_Data = new Dictionary<string, BlackBoardObject>();
+        private readonly Dictionary<string, BlackBoardObject> m_Data = new();
 
         private TreeNode<string> m_DataPathTree;
+
+        public void Reset() {
+            m_Data.Clear();
+            m_DataPathTree = null;
+        }
+
+        public override void Update() { }
 
         // public BaseSaveData CreateSaveData() {
         //     BaseSaveData saveData = new BaseSaveData {
@@ -31,10 +39,8 @@ namespace XiheFramework {
         // }
 
         public object[] GetDataArray() {
-            List<object> result = new List<object>();
-            foreach (var key in m_Data.Keys) {
-                result.Add(m_Data[key].entity);
-            }
+            var result = new List<object>();
+            foreach (var key in m_Data.Keys) result.Add(m_Data[key].entity);
 
             return result.ToArray();
         }
@@ -49,12 +55,10 @@ namespace XiheFramework {
 
 
         public void SetData<T>(string dataName, T value, BlackBoardDataType targetType = BlackBoardDataType.Runtime) {
-            if (m_Data.ContainsKey(dataName)) {
+            if (m_Data.ContainsKey(dataName))
                 m_Data[dataName] = new BlackBoardObject(value, targetType);
-            }
-            else {
+            else
                 m_Data.Add(dataName, new BlackBoardObject(value, targetType));
-            }
 
             //Game.Event.Invoke("OnBlackBoardChanged", this, dataName);
             UpdateDataPathTree();
@@ -122,9 +126,7 @@ namespace XiheFramework {
         }
 
         public T GetData<T>(string dataName) {
-            if (m_Data.ContainsKey(dataName)) {
-                return (T)m_Data[dataName].entity;
-            }
+            if (m_Data.ContainsKey(dataName)) return (T)m_Data[dataName].entity;
 
             // if (m_RuntimeBlackboard.ContainsKey(dataName)) {
             //     return (T) m_RuntimeBlackboard[dataName];
@@ -148,12 +150,10 @@ namespace XiheFramework {
         }
 
         public void RemoveData(string dataName) {
-            if (m_Data.ContainsKey(dataName)) {
+            if (m_Data.ContainsKey(dataName))
                 m_Data.Remove(dataName);
-            }
-            else {
+            else
                 Debug.LogWarningFormat("black board doesn't contain data name : " + dataName);
-            }
         }
 
         private void UpdateDataPathTree() {
@@ -169,13 +169,6 @@ namespace XiheFramework {
 
             //Debug.Log(m_DataPathTree.Flatten());
         }
-
-        public void Reset() {
-            m_Data.Clear();
-            m_DataPathTree = null;
-        }
-
-        public override void Update() { }
 
         public override void ShutDown(ShutDownType shutDownType) {
             Reset();

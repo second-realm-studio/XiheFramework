@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace XiheFramework {
+﻿namespace XiheFramework.Modules.FSM {
     public abstract class BaseState {
-        private StateMachine m_ParentStateMachine;
-        
+        private readonly StateMachine m_ParentStateMachine;
+
         protected BaseState(StateMachine parentStateMachine) {
             m_ParentStateMachine = parentStateMachine;
         }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using XiheFramework.Modules.Audio;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework {
+namespace XiheFramework.Services {
     public static class AudioSvc {
         public static AudioSource PlayAudio(AudioSource audioSource, AudioChannelTypes channelType, AudioClip audioClip, float volume, bool loop) {
             return Game.Audio.Play(audioSource, channelType, audioClip, volume, loop);

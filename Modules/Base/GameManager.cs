@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using XiheFramework.Utility;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Base {
     public class GameManager : Singleton<GameManager> {
+        private const int FrameAtSceneId = 0;
         public int frameRate = 60;
         public float globalSpeed = 1f;
 
@@ -13,24 +16,18 @@ namespace XiheFramework {
 
         public string retryScene;
         public string restartScene;
-        private const int FrameAtSceneId = 0;
 
-        private readonly Dictionary<Type, GameModule> m_GameModules = new Dictionary<Type, GameModule>();
+        private readonly Dictionary<Type, GameModule> m_GameModules = new();
 
-        private Queue<GameModule> m_RegisterGameModulesQueue = new Queue<GameModule>();
+        private readonly Queue<GameModule> m_RegisterGameModulesQueue = new();
 
         private void Awake() {
             Application.targetFrameRate = frameRate;
 
             RegisterAllComponent();
-            foreach (var component in m_GameModules.Values) {
-                component.Setup();
-            }
+            foreach (var component in m_GameModules.Values) component.Setup();
 
             Debug.LogFormat("XiheFramework Initialized");
-        }
-
-        private void OnEnable() {
         }
 
         private void Start() {
@@ -46,6 +43,8 @@ namespace XiheFramework {
         private void Update() {
             Time.timeScale = globalSpeed;
         }
+
+        private void OnEnable() { }
 
         private void RegisterAllComponent() {
             while (m_RegisterGameModulesQueue.Count > 0) {
@@ -72,22 +71,16 @@ namespace XiheFramework {
 
         public static T GetModule<T>() where T : GameModule {
             var t = typeof(T);
-            if (Instance == null) {
-                return null;
-            }
+            if (Instance == null) return null;
 
-            if (Instance.m_GameModules.TryGetValue(t, out var value)) {
-                return (T) value;
-            }
+            if (Instance.m_GameModules.TryGetValue(t, out var value)) return (T)value;
 
             Debug.LogErrorFormat("[GAME MANAGER]Component: {0} does not exist", t.Name);
             return null;
         }
 
         public static void ShutDown(ShutDownType shutDownType) {
-            for (int i = 0; i < Instance.m_GameModules.Count; i++) {
-                Instance.m_GameModules.ElementAt(i).Value.ShutDown(shutDownType);
-            }
+            for (var i = 0; i < Instance.m_GameModules.Count; i++) Instance.m_GameModules.ElementAt(i).Value.ShutDown(shutDownType);
 
             //Instance.m_GameComponents.Clear();
 
@@ -103,7 +96,7 @@ namespace XiheFramework {
                 case ShutDownType.Quit:
                     Application.Quit();
 #if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
+                    EditorApplication.isPlaying = false;
 #endif
                     break;
                 default:

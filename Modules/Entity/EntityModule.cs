@@ -1,34 +1,31 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework;
+using XiheFramework.Modules.Base;
 
-public class EntityModule : GameModule {
-    private Dictionary<string, Entity> m_Entities = new Dictionary<string, Entity>();
+namespace XiheFramework.Modules.Entity {
+    public class EntityModule : GameModule {
+        private readonly Dictionary<string, Entity> m_Entities = new();
 
-    public void RegisterEntity(string id, Entity entity) {
-        if (m_Entities.ContainsKey(id)) {
-            m_Entities[id] = entity;
-        }
-        else {
-            m_Entities.Add(id, entity);
-        }
-    }
+        public override void Update() { }
 
-    public Entity GetEntity(string entityName) {
-        var id = new Hash128();
-        id.Append(entityName);
-        if (!m_Entities.ContainsKey(id.ToString())) {
-            Debug.LogErrorFormat("[ENTITY] Entity : {0} is not Existed", entityName);
-            return null;
+        public void RegisterEntity(string id, Entity entity) {
+            if (m_Entities.ContainsKey(id))
+                m_Entities[id] = entity;
+            else
+                m_Entities.Add(id, entity);
         }
 
-        return m_Entities[id.ToString()];
-    }
+        public Entity GetEntity(string entityName) {
+            var id = new Hash128();
+            id.Append(entityName);
+            if (!m_Entities.ContainsKey(id.ToString())) {
+                Debug.LogErrorFormat("[ENTITY] Entity : {0} is not Existed", entityName);
+                return null;
+            }
 
-    public override void Update() {
-    }
+            return m_Entities[id.ToString()];
+        }
 
-    public override void ShutDown(ShutDownType shutDownType) {
+        public override void ShutDown(ShutDownType shutDownType) { }
     }
 }

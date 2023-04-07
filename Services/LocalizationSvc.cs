@@ -1,15 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using XiheFramework.Modules.Base;
 
-namespace XiheFramework
-{
-    public class LocalizationSvc
-    {
-        public static string GetValue(string key)
-        {
+namespace XiheFramework.Services {
+    public class LocalizationSvc {
+        public static string GetValue(string key) {
             return Game.Localization.GetValue(key);
         }
     }
 }
-

@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace XiheFramework {
+namespace XiheFramework.Modules.Blackboard {
     [Serializable]
     public struct BlackBoardObject {
-        public object entity;
         public BlackBoardDataType type;
+        public object entity;
 
         public BlackBoardObject(object entity, BlackBoardDataType type) {
             this.entity = entity;

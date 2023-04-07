@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 
-namespace XiheFramework {
-    [System.Serializable]
+namespace XiheFramework.Modules.FSM {
+    [Serializable]
     public abstract class State<T> : BaseState {
         protected T owner;
 

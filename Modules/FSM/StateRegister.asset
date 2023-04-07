@@ -33,11 +33,11 @@ MonoBehaviour:
     Name","_type":"System.String"},{"_ID":"2a297d14-9b3a-43a0-95e5-208ca68b9dea","_name":"IsDefaultState","_type":"System.Boolean"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
   _objectReferences: []
   _graphSource:
-    _version: 3.25
+    _version: 3.26
     _category: 
     _comments: 
-    _translation: {x: 222, y: 111}
-    _zoomFactor: 1
+    _translation: {x: -11, y: 199}
+    _zoomFactor: 0.6975214
   _haltSerialization: 0
   inputDefinitions:
   - _ID: 7fe003ff-fbff-4d70-98ab-58e9a773ab58

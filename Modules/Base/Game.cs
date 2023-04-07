@@ -1,12 +1,23 @@
-﻿namespace XiheFramework {
+﻿using XiheFramework.Modules.Audio;
+using XiheFramework.Modules.Blackboard;
+using XiheFramework.Modules.Entity;
+using XiheFramework.Modules.Event;
+using XiheFramework.Modules.FlowScriptEvent;
+using XiheFramework.Modules.FSM;
+using XiheFramework.Modules.Input;
+using XiheFramework.Modules.Localization;
+using XiheFramework.Modules.Serialization;
+using XiheFramework.Modules.UI;
+
+namespace XiheFramework.Modules.Base {
     /// <summary>
-    /// shortcut to get all component
+    ///     shortcut to get all component
     /// </summary>
-    public static partial class Game {
+    public static class Game {
         public static AudioModule Audio => GameManager.GetModule<AudioModule>();
 
         public static EventModule Event => GameManager.GetModule<EventModule>();
-        
+
         public static InputModule Input => GameManager.GetModule<InputModule>();
 
         public static BlackboardModule Blackboard => GameManager.GetModule<BlackboardModule>();

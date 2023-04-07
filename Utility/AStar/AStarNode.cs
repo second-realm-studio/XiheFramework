@@ -27,17 +27,6 @@ namespace XiheFramework.Utility.AStar {
             InitNode();
         }
 
-        private void OnDrawGizmos() {
-            if (Selection.Contains(gameObject))
-                Gizmos.color = new Color(1f, 0.5f, 0f);
-            else if (walkable)
-                Gizmos.color = Color.white;
-            else
-                Gizmos.color = Color.red;
-
-            Gizmos.DrawWireCube(transform.position, new Vector3(m_Size, 0.2f, m_Size));
-        }
-
         public void InitNode() {
             var size = Game.Blackboard.GetData<float>("AStar.NodeSize");
             m_Size = Math.Abs(size) <= float.Epsilon ? 1f : size;
@@ -49,5 +38,18 @@ namespace XiheFramework.Utility.AStar {
             // gridX=Mathf.RoundToInt(worldPosition.x / size);
             // gridX=Mathf.RoundToInt(worldPosition.z / size);
         }
+        
+#if UNITY_EDITOR
+        private void OnDrawGizmos() {
+            if (Selection.Contains(gameObject))
+                Gizmos.color = new Color(1f, 0.5f, 0f);
+            else if (walkable)
+                Gizmos.color = Color.white;
+            else
+                Gizmos.color = Color.red;
+
+            Gizmos.DrawWireCube(transform.position, new Vector3(m_Size, 0.2f, m_Size));
+        }
+#endif
     }
 }

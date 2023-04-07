@@ -4,6 +4,7 @@ using UnityEngine;
 namespace XiheFramework.Utility.GameObjectArray {
     [ExecuteInEditMode]
     public class ArrayModifier : MonoBehaviour {
+#if UNITY_EDITOR
         public GameObject source;
 
         [Range(1, 20)] public int countX = 1;
@@ -75,5 +76,6 @@ namespace XiheFramework.Utility.GameObjectArray {
                     // DestroyImmediate(t.gameObject);
                 };
         }
+#endif
     }
 }

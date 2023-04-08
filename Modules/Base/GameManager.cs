@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 using XiheFramework.Utility;
 
 namespace XiheFramework.Modules.Base {
+    /// <summary>
+    /// Game manager for XiheFramework, work as a Singleton
+    /// </summary>
     public class GameManager : Singleton<GameManager> {
         private const int FrameAtSceneId = 0;
         public int frameRate = 60;
@@ -54,6 +57,10 @@ namespace XiheFramework.Modules.Base {
             }
         }
 
+        /// <summary>
+        /// Register GameModule to let the framework recognize it
+        /// </summary>
+        /// <param name="component"></param>
         public static void RegisterComponent(GameModule component) {
             if (component == null) {
                 Debug.LogErrorFormat("[GAME MANAGER]Registering a null component");
@@ -69,6 +76,12 @@ namespace XiheFramework.Modules.Base {
             Instance.m_RegisterGameModulesQueue.Enqueue(component);
         }
 
+        /// <summary>
+        /// Get GameModule
+        /// Should use Game.ModuleName instead
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T GetModule<T>() where T : GameModule {
             var t = typeof(T);
             if (Instance == null) return null;
@@ -79,6 +92,10 @@ namespace XiheFramework.Modules.Base {
             return null;
         }
 
+        /// <summary>
+        /// Shut down the game with ShutDownType 
+        /// </summary>
+        /// <param name="shutDownType"></param>
         public static void ShutDown(ShutDownType shutDownType) {
             for (var i = 0; i < Instance.m_GameModules.Count; i++) Instance.m_GameModules.ElementAt(i).Value.ShutDown(shutDownType);
 
@@ -100,7 +117,7 @@ namespace XiheFramework.Modules.Base {
 #endif
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(shutDownType), shutDownType, null);
+                    break;
             }
         }
     }

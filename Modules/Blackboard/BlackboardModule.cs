@@ -5,39 +5,22 @@ using XiheFramework.Utility;
 
 namespace XiheFramework.Modules.Blackboard {
     public class BlackboardModule : GameModule {
-        // private readonly Dictionary<string, object> m_RuntimeBlackboard = new Dictionary<string, object>();
-        // private readonly Dictionary<string, object> m_SaveDataBlackboard = new Dictionary<string, object>();
-        // private readonly Dictionary<string, object> m_GlobalSaveDataBlackboard = new Dictionary<string, object>();
-
         private readonly Dictionary<string, BlackBoardObject> m_Data = new();
 
         private TreeNode<string> m_DataPathTree;
 
+        /// <summary>
+        /// Clear all runtime data
+        /// </summary>
         public void Reset() {
             m_Data.Clear();
             m_DataPathTree = null;
         }
 
-        public override void Update() { }
-
-        // public BaseSaveData CreateSaveData() {
-        //     BaseSaveData saveData = new BaseSaveData {
-        //         saveData = m_SaveDataBlackboard,
-        //     };
-        //     return saveData;
-        // }
-        //
-        // public void LoadSaveData(BaseSaveData saveData) {
-        //     m_SaveDataBlackboard.Clear();
-        //     //给blackboard赋值
-        //     foreach (var variable in saveData.saveData) {
-        //         m_SaveDataBlackboard.Add(variable.Key, variable.Value);
-        //     }
-        //
-        //     //加载对应场景
-        //     //Game.Scene.LoadScene(Game.Blackboard.GetData<string>(XiheKeywords.VAR_CurrentSceneName));
-        // }
-
+        /// <summary>
+        /// Retrive all data from the current blackboard
+        /// </summary>
+        /// <returns> data </returns>
         public object[] GetDataArray() {
             var result = new List<object>();
             foreach (var key in m_Data.Keys) result.Add(m_Data[key].entity);
@@ -45,6 +28,10 @@ namespace XiheFramework.Modules.Blackboard {
             return result.ToArray();
         }
 
+        /// <summary>
+        /// Retrive all keys from the current blackboard
+        /// </summary>
+        /// <returns> keys </returns>
         public IEnumerable<string> GetDataPathArray() {
             return m_Data.Keys;
         }
@@ -54,101 +41,58 @@ namespace XiheFramework.Modules.Blackboard {
         }
 
 
+        /// <summary>
+        /// Set data at runtime
+        /// </summary>
+        /// <param name="dataName">data name, work as indexing key</param>
+        /// <param name="value">data entity</param>
+        /// <param name="targetType">data type</param>
+        /// <typeparam name="T">object</typeparam>
         public void SetData<T>(string dataName, T value, BlackBoardDataType targetType = BlackBoardDataType.Runtime) {
             if (m_Data.ContainsKey(dataName))
                 m_Data[dataName] = new BlackBoardObject(value, targetType);
             else
                 m_Data.Add(dataName, new BlackBoardObject(value, targetType));
 
-            //Game.Event.Invoke("OnBlackBoardChanged", this, dataName);
             UpdateDataPathTree();
-
-            // switch (targetType) {
-            //     case BlackBoardDataType.Runtime:
-            //         if (m_RuntimeBlackboard.ContainsKey(dataName)) {
-            //             m_RuntimeBlackboard[dataName] = value;
-            //         }
-            //         else {
-            //             m_RuntimeBlackboard.Add(dataName, value);
-            //         }
-            //
-            //         if (m_SaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_SaveDataBlackboard.Remove(dataName);
-            //         }
-            //
-            //         if (m_GlobalSaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_GlobalSaveDataBlackboard.Remove(dataName);
-            //         }
-            //
-            //         break;
-            //     case BlackBoardDataType.SaveData:
-            //         if (m_SaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_SaveDataBlackboard[dataName] = value;
-            //         }
-            //         else {
-            //             m_SaveDataBlackboard.Add(dataName, value);
-            //         }
-            //
-            //         if (m_RuntimeBlackboard.ContainsKey(dataName)) {
-            //             m_RuntimeBlackboard.Remove(dataName);
-            //         }
-            //
-            //         if (m_GlobalSaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_GlobalSaveDataBlackboard.Remove(dataName);
-            //         }
-            //
-            //         break;
-            //     case BlackBoardDataType.GlobalSaveData:
-            //         if (m_GlobalSaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_GlobalSaveDataBlackboard[dataName] = value;
-            //         }
-            //         else {
-            //             m_GlobalSaveDataBlackboard.Add(dataName, value);
-            //         }
-            //
-            //         if (m_SaveDataBlackboard.ContainsKey(dataName)) {
-            //             m_SaveDataBlackboard.Remove(dataName);
-            //         }
-            //
-            //         if (m_RuntimeBlackboard.ContainsKey(dataName)) {
-            //             m_RuntimeBlackboard.Remove(dataName);
-            //         }
-            //
-            //         break;
-            //     default:
-            //         return;
-            //         throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null);
-            // }
         }
 
+        /// <summary>
+        /// Get data entity at runtime
+        /// </summary>
+        /// <param name="dataName">data name, work as indexing key</param>
+        /// <returns></returns>
         public object GetData(string dataName) {
             return GetData<object>(dataName);
         }
 
+        /// <summary>
+        /// Get data entity at runtime with a type conversion
+        /// </summary>
+        /// <param name="dataName">data name, work as indexing key</param>
+        /// <typeparam name="T">output type</typeparam>
+        /// <returns></returns>
         public T GetData<T>(string dataName) {
             if (m_Data.ContainsKey(dataName)) return (T)m_Data[dataName].entity;
-
-            // if (m_RuntimeBlackboard.ContainsKey(dataName)) {
-            //     return (T) m_RuntimeBlackboard[dataName];
-            // }
-            //
-            // if (m_SaveDataBlackboard.ContainsKey(dataName)) {
-            //     return (T) m_SaveDataBlackboard[dataName];
-            // }
-            //
-            // if (m_GlobalSaveDataBlackboard.ContainsKey(dataName)) {
-            //     return (T) m_GlobalSaveDataBlackboard[dataName];
-            // }
 
             Debug.LogWarning("[BLACKBOARD] data does not exist. dataName: " + dataName);
 
             return default;
         }
 
+        /// <summary>
+        /// Check whether a data name exists
+        /// </summary>
+        /// <param name="dataName">data name, work as indexing key</param>
+        /// <returns></returns>
         public bool ContainsKey(string dataName) {
             return m_Data.ContainsKey(dataName);
         }
 
+        /// <summary>
+        /// Remove a data entity from the runtime Blackboard using its data name
+        /// </summary>
+        /// <param name="dataName">data name, work as indexing key</param>
         public void RemoveData(string dataName) {
             if (m_Data.ContainsKey(dataName))
                 m_Data.Remove(dataName);
@@ -166,11 +110,9 @@ namespace XiheFramework.Modules.Blackboard {
                     currentLayer = node;
                 }
             }
-
-            //Debug.Log(m_DataPathTree.Flatten());
         }
 
-        public override void ShutDown(ShutDownType shutDownType) {
+        internal override void ShutDown(ShutDownType shutDownType) {
             Reset();
         }
     }

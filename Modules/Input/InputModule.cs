@@ -52,7 +52,7 @@ namespace XiheFramework.Modules.Input {
             }
         }
 
-        public override void Update() {
+        internal override void OnUpdate() {
             UpdateMouseDeltaPosition();
         }
 
@@ -209,7 +209,7 @@ namespace XiheFramework.Modules.Input {
             return UnityEngine.Input.anyKeyDown;
         }
 
-        public override void ShutDown(ShutDownType shutDownType) { }
+        internal override void ShutDown(ShutDownType shutDownType) { }
 
         [Serializable]
         public struct ActionKeyPair {

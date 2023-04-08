@@ -19,9 +19,16 @@ namespace XiheFramework.Modules.Audio {
 
             foreach (var pair in typeChannelPairs) m_AudioMixerGroups.Add(pair.type, pair);
         }
-
-        public override void Update() { }
-
+        
+        /// <summary>
+        /// Play Audio 
+        /// </summary>
+        /// <param name="audioSource"> target audio source, can be Null</param>
+        /// <param name="channelType"></param>
+        /// <param name="audioClip"></param>
+        /// <param name="volume"> 0-1 </param>
+        /// <param name="loop"></param>
+        /// <returns></returns>
         public AudioSource Play(AudioSource audioSource, AudioChannelTypes channelType, AudioClip audioClip, float volume,
             bool loop) {
             if (audioSource == null) {
@@ -63,7 +70,7 @@ namespace XiheFramework.Modules.Audio {
 
             return audioSource;
         }
-
+        
         public void SetPause(AudioSource audioSource, bool pause) {
             if (pause)
                 audioSource.Pause();
@@ -79,6 +86,9 @@ namespace XiheFramework.Modules.Audio {
             audioSource.Stop();
         }
 
+        /// <summary>
+        /// Destroy all temporary AudioSource under the framework audio root
+        /// </summary>
         public void StopAll() {
             var temp = tempAudioRoot.childCount;
             for (var i = 0; i < temp; i++) {
@@ -87,7 +97,7 @@ namespace XiheFramework.Modules.Audio {
             }
         }
 
-        public override void ShutDown(ShutDownType shutDownType) {
+        internal override void ShutDown(ShutDownType shutDownType) {
             StopAll();
         }
 

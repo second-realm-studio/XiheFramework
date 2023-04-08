@@ -19,12 +19,7 @@ namespace XiheFramework.Modules.FlowScriptEvent {
             Game.Event.Subscribe("OnFlowEventInvoked", OnFlowEventInvoked);
             Game.Event.Subscribe("OnFlowEventEnded", OnFlowEventEnded);
         }
-
-
-        public override void Update() { }
-
-        //"FlowEvent.xxx"
-
+        
         public void StartEvent(string eventName) {
             if (m_IsAnyEventRunning) {
                 Debug.LogWarning("[FLOW EVENT] Other event is running, you should not allow this to happen");
@@ -60,7 +55,7 @@ namespace XiheFramework.Modules.FlowScriptEvent {
             return null;
         }
 
-        public override void ShutDown(ShutDownType shutDownType) {
+        internal override void ShutDown(ShutDownType shutDownType) {
             foreach (var e in m_ActiveEvents) Destroy(e.gameObject, Time.deltaTime);
 
             m_ActiveEvents.Clear();

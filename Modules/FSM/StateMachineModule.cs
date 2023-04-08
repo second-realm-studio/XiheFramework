@@ -11,7 +11,7 @@ namespace XiheFramework.Modules.FSM {
 
         private bool m_IsActive = true;
 
-        public override void Update() {
+        internal override void OnUpdate() {
             if (!m_IsActive) return;
 
             foreach (var stateMachine in m_StateMachines.Values) stateMachine.Update();
@@ -85,7 +85,7 @@ namespace XiheFramework.Modules.FSM {
             m_IsActive = true;
         }
 
-        public override void ShutDown(ShutDownType shutDownType) {
+        internal override void ShutDown(ShutDownType shutDownType) {
             m_StateMachines.Clear();
         }
     }

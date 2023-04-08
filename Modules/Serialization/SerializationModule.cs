@@ -7,9 +7,7 @@ namespace XiheFramework.Modules.Serialization {
     public class SerializationModule : GameModule {
         private const string suffix = ".saori";
         private readonly string path = Application.streamingAssetsPath + "/";
-
-        public override void Update() { }
-
+        
         public void WriteSaveData(string fileName) {
             //序列化过程（将save转化为字节流）
             //创建Save对象并保存当前游戏状态
@@ -81,6 +79,6 @@ namespace XiheFramework.Modules.Serialization {
             return null;
         }
 
-        public override void ShutDown(ShutDownType shutDownType) { }
+        internal override void ShutDown(ShutDownType shutDownType) { }
     }
 }

@@ -13,7 +13,7 @@ namespace XiheFramework.Modules.Event {
 
         private readonly object m_LockRoot = new();
 
-        public override void Update() {
+        internal override void OnUpdate() {
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
                     var element = m_WaitingList.Dequeue();
@@ -22,14 +22,15 @@ namespace XiheFramework.Modules.Event {
             }
         }
 
-        public override void Setup() {
-            base.Setup();
-        }
-
-        public override void ShutDown(ShutDownType shutDownType) {
+        internal override void ShutDown(ShutDownType shutDownType) {
             m_CurrentEvents.Clear();
         }
 
+        /// <summary>
+        /// Subscribe to event name with a handler
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <param name="handler"></param>
         public void Subscribe(string eventName, EventHandler<object> handler) {
             m_CurrentEvents.Add(eventName, handler);
         }

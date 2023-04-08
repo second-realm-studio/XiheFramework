@@ -6,11 +6,6 @@ namespace XiheFramework.Modules.UI {
     public class UIModule : GameModule {
         private readonly Dictionary<string, UIBehaviour> m_UIBehaviours = new();
 
-        public override void Update() { }
-
-        //public Transform root;
-
-
         public void RegisterUIBehaviour(string behaviourName, UIBehaviour behaviour) {
             if (m_UIBehaviours.ContainsKey(behaviourName)) {
                 m_UIBehaviours[behaviourName].UnActive();
@@ -60,7 +55,5 @@ namespace XiheFramework.Modules.UI {
         public T InstantiateUIBehaviour<T>(T uiBehaviour) where T : UIBehaviour {
             return Instantiate(uiBehaviour);
         }
-
-        public override void ShutDown(ShutDownType shutDownType) { }
     }
 }

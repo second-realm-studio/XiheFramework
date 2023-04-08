@@ -18,9 +18,7 @@ namespace XiheFramework.Modules.Localization {
             //ReadLocalizationFile();
             //Debug.LogInfo(GetValue("上午"));
         }
-
-        public override void Update() { }
-
+        
         public string GetValue(string key) {
             return m_LocalizationDictionary[key][(int)language];
         }
@@ -39,6 +37,6 @@ namespace XiheFramework.Modules.Localization {
             }
         }
 
-        public override void ShutDown(ShutDownType shutDownType) { }
+        internal override void ShutDown(ShutDownType shutDownType) { }
     }
 }

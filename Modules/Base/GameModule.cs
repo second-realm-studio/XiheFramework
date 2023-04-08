@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace XiheFramework.Modules.Base {
     public abstract class GameModule : MonoBehaviour {
@@ -6,18 +7,34 @@ namespace XiheFramework.Modules.Base {
             GameManager.RegisterComponent(this);
         }
 
-        public abstract void Update();
+        private void Update() {
+            OnUpdate();
+        }
 
-        public virtual void FixedUpdate() { }
+        private void FixedUpdate() {
+            OnFixedUpdate();
+        }
 
-        public virtual void LateUpdate() { }
+        private void LateUpdate() {
+            OnLateUpdate();
+        }
+
+        internal virtual void OnUpdate() { }
+
+        internal virtual void OnFixedUpdate() { }
+
+        internal virtual void OnLateUpdate() { }
 
         /// <summary>
-        ///     Called after all game modules are registered (End of Awake)
-        ///     Useful for setting up data before other modules trying to access it
+        /// Called after all game modules are registered (End of Awake)
+        /// Useful for setting up data before other modules trying to access it
         /// </summary>
-        public virtual void Setup() { }
+        internal virtual void Setup() { }
 
-        public abstract void ShutDown(ShutDownType shutDownType);
+        /// <summary>
+        /// Callback function invoked when 
+        /// </summary>
+        /// <param name="shutDownType"></param>
+        internal virtual void ShutDown(ShutDownType shutDownType) { }
     }
 }

@@ -32,3 +32,6 @@ Functions can be used as nodes inside FlowCanvas via Service layer.
 ## Add to your Unity project
 Add Git Submodule  
 Path: Assets/XiheFramework
+
+#Special Thanks
+Lawrence P

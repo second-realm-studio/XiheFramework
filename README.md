@@ -1,5 +1,7 @@
 # XiheFramework  
 A Unity-based game framework for agile development designed to be used by small teams (1-10). Uses names instead of IDs to prevent you from filling a bunch of excel tables :)
+## Document
+[XiheFramework API Document](https://sky-haihai.github.io/xiheframework-document/) 
 ## Main Features  
 
 ### Core Modules
@@ -32,3 +34,6 @@ Functions can be used as nodes inside FlowCanvas via Service layer.
 ## Add to your Unity project
 Add Git Submodule  
 Path: Assets/XiheFramework
+
+#Special Thanks
+Lawrence P

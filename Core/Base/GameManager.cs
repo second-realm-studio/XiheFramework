@@ -17,9 +17,6 @@ namespace XiheFramework.Modules.Base {
 
         public float logoDisplayTime;
 
-        public string retryScene;
-        public string restartScene;
-
         private readonly Dictionary<Type, GameModule> m_GameModules = new();
 
         private readonly Queue<GameModule> m_RegisterGameModulesQueue = new();
@@ -105,12 +102,13 @@ namespace XiheFramework.Modules.Base {
                 case ShutDownType.None:
                     break;
                 case ShutDownType.Retry:
-                    SceneManager.LoadScene(Instance.retryScene);
+                    Game.Event.Invoke("System.OnRetry");
                     break;
                 case ShutDownType.Restart:
-                    SceneManager.LoadScene(Instance.restartScene);
+                    Game.Event.Invoke("System.OnRestart");
                     break;
                 case ShutDownType.Quit:
+                    Game.Event.Invoke("System.OnQuit");
                     Application.Quit();
 #if UNITY_EDITOR
                     EditorApplication.isPlaying = false;

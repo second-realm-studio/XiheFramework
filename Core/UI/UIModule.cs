@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
 
-namespace XiheFramework.Modules.UI {
+namespace XiheFramework.Core.UI {
     public class UIModule : GameModule {
         private readonly Dictionary<string, UIBehaviour> m_UIBehaviours = new();
 
@@ -40,20 +40,34 @@ namespace XiheFramework.Modules.UI {
             return true;
         }
 
-        public bool TryGetUIBehaviour<T>(out T uiBehaviour) where T : UIBehaviour {
-            var obj = FindObjectOfType<T>();
-            if (obj) {
-                uiBehaviour = obj;
-                return obj;
+        public bool TryGetUIBehaviour<T>(string uiName, out T uiBehaviour) where T : UIBehaviour {
+            // var obj = FindObjectOfType<T>();
+            // if (obj) {
+            //     uiBehaviour = obj;
+            //     return obj;
+            // }
+            //
+            // uiBehaviour = null;
+            // //var go = Instantiate(uiBehaviour, gameObject.transform);
+            // return false;
+
+            if (m_UIBehaviours.ContainsKey(uiName)) {
+                uiBehaviour = m_UIBehaviours[uiName] as T;
+                if (uiBehaviour != null) {
+                    return true;
+                }
             }
 
             uiBehaviour = null;
-            //var go = Instantiate(uiBehaviour, gameObject.transform);
             return false;
         }
 
         public T InstantiateUIBehaviour<T>(T uiBehaviour) where T : UIBehaviour {
             return Instantiate(uiBehaviour);
+        }
+
+        internal override void OnReset() {
+            m_UIBehaviours.Clear();
         }
     }
 }

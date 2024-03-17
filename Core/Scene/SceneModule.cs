@@ -3,27 +3,55 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
-using XiheFramework;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
 
-public class SceneModule : GameModule {
-    /// <summary>
-    /// Load scene async using Addressable
-    /// </summary>
-    /// <param name="sceneName"></param>
-    /// <param name="loadSceneMode"></param>
-    /// <param name="activateOnLoad"></param>
-    public void LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad) {
-        StartCoroutine(LoadAsyncCo(sceneName, loadSceneMode, activateOnLoad));
-    }
+namespace XiheFramework.Core.Scene {
+    public class SceneModule : GameModule {
+        public readonly string CurrentLevelDataName = "Game.CurrentLevel";
+        public string menuLevelAddress;
+        public bool loadMenuOnSetup;
 
-    private IEnumerator LoadAsyncCo(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad) {
-        AsyncOperationHandle<SceneInstance> loadAO = Addressables.LoadSceneAsync(name, loadSceneMode, activateOnLoad);
-        while (!loadAO.IsDone) {
-            Game.Event.Invoke("Scene.OnLoadProgressing", sceneName, loadAO.PercentComplete);
-            yield return null;
+        internal override void OnLateStart() {
+            if (loadMenuOnSetup) {
+                LoadSceneAsync(menuLevelAddress, LoadSceneMode.Single, true);
+            }
         }
 
-        Game.Event.Invoke("Scene.OnLoadFinished", sceneName, loadAO.PercentComplete);
+        /// <summary>
+        /// Load scene async using Addressable
+        /// </summary>
+        /// <param name="sceneAddress"></param>
+        /// <param name="loadSceneMode"></param>
+        /// <param name="activateOnLoad"></param>
+        public void LoadSceneAsync(string sceneAddress, LoadSceneMode loadSceneMode, bool activateOnLoad) {
+            Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
+
+            // StartCoroutine(LoadAsyncCo(sceneAddress, loadSceneMode, activateOnLoad));
+        }
+
+        // private IEnumerator LoadAsyncCo(string sceneName, LoadSceneMode loadSceneMode, bool activateOnLoad) {
+        //     // AsyncOperationHandle<SceneInstance> loadAO = 
+        //     Addressables.LoadSceneAsync(sceneName, loadSceneMode, activateOnLoad);
+        //     // while (!loadAO.IsDone) {
+        //     //     // Game.Event.Invoke("Scene.OnLoadProgressing", sceneName, loadAO.PercentComplete);
+        //     //     yield return null;
+        //     // }
+        //
+        //     // Game.Event.Invoke("Scene.OnLoadFinished", sceneName, loadAO.PercentComplete);
+        // }
+
+        // public void UnloadSceneAsync(string sceneName) {
+        //     StartCoroutine(UnLoadAsyncCo(sceneName));
+        // }
+
+        // private IEnumerator UnLoadAsyncCo(string sceneName) {
+        //     AsyncOperationHandle<SceneInstance> unloadAO = Addressables.UnloadSceneAsync();
+        //     while (!unloadAO.IsDone) {
+        //         Game.Event.Invoke("Scene.OnUnloadProgressing", sceneName, unloadAO.PercentComplete);
+        //         yield return null;
+        //     }
+        //
+        //     Game.Event.Invoke("Scene.OnUnloadFinished", sceneName, unloadAO.PercentComplete);
+        // }
     }
 }

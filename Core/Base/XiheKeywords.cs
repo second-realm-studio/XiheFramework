@@ -1,4 +1,4 @@
-﻿namespace XiheFramework.Modules.Base {
+﻿namespace XiheFramework.Core.Base {
     public class XiheKeywords {
         //scene
         public const string VAR_LoadSceneAsyncProgress = "VAR_LoadSceneAsyncProgress";

@@ -1,22 +1,49 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace XiheFramework.Modules.Base {
+namespace XiheFramework.Core.Base {
     public abstract class GameModule : MonoBehaviour {
+        public int updateInterval;
+        public int fixedUpdateInterval;
+        public int lateUpdateInterval;
+
+        public bool enableDebug;
+
+        private int m_UpdateTimer;
+        private int m_FixedUpdateTimer;
+        private int m_LateUpdateTimer;
+
         protected virtual void Awake() {
             GameManager.RegisterComponent(this);
         }
 
         private void Update() {
-            OnUpdate();
+            if (m_UpdateTimer >= updateInterval) {
+                m_UpdateTimer -= updateInterval;
+                OnUpdate();
+            }
+            else {
+                m_UpdateTimer += 1;
+            }
         }
 
         private void FixedUpdate() {
-            OnFixedUpdate();
+            if (m_FixedUpdateTimer >= fixedUpdateInterval) {
+                m_FixedUpdateTimer -= fixedUpdateInterval;
+                OnFixedUpdate();
+            }
+            else {
+                m_FixedUpdateTimer += 1;
+            }
         }
 
         private void LateUpdate() {
-            OnLateUpdate();
+            if (m_LateUpdateTimer >= lateUpdateInterval) {
+                m_LateUpdateTimer -= lateUpdateInterval;
+                OnLateUpdate();
+            }
+            else {
+                m_LateUpdateTimer += 1;
+            }
         }
 
         internal virtual void OnUpdate() { }
@@ -31,10 +58,8 @@ namespace XiheFramework.Modules.Base {
         /// </summary>
         internal virtual void Setup() { }
 
-        /// <summary>
-        /// Callback function invoked when 
-        /// </summary>
-        /// <param name="shutDownType"></param>
-        internal virtual void ShutDown(ShutDownType shutDownType) { }
+        internal virtual void OnLateStart() { }
+        
+        internal virtual void OnReset() { }
     }
 }

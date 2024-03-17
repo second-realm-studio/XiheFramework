@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Modules.Base;
-using XiheFramework.Utility;
+using XiheFramework.Core.Base;
+using XiheFramework.Utility.Extension;
 
-namespace XiheFramework.Modules.Input {
+namespace XiheFramework.Core.Input {
     public class InputModule : GameModule {
         //public List<ActionKeyPair> actionKeyPairs;
         [SerializeField] private List<ActionKeyPair> bindingSetting = new();
@@ -208,9 +208,7 @@ namespace XiheFramework.Modules.Input {
         public bool AnyKeyDown() {
             return UnityEngine.Input.anyKeyDown;
         }
-
-        internal override void ShutDown(ShutDownType shutDownType) { }
-
+        
         [Serializable]
         public struct ActionKeyPair {
             public string action;

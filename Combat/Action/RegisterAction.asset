@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625114ef92abc6f4d98f906588e93662, type: 3}
+  m_Name: RegisterAction
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"FlowCanvas.Macros.Macro","nodes":[{"identifier":"OnActionEnter","_parameters":[],"_returns":{"_ID":"dd19835e-0533-447b-93b7-d829df0a9d53","_name":"Value"},"_position":{"x":523.0,"y":244.0},"$type":"FlowCanvas.Nodes.CustomFunctionEvent","$id":"0"},{"_position":{"x":853.0,"y":285.0},"$type":"FlowCanvas.Macros.MacroOutputNode","$id":"1"},{"identifier":"OnActionUpdate","_parameters":[],"_returns":{"_ID":"dd19835e-0533-447b-93b7-d829df0a9d53","_name":"Value"},"_position":{"x":520.0,"y":317.0},"$type":"FlowCanvas.Nodes.CustomFunctionEvent","$id":"2"},{"identifier":"OnActionExit","_parameters":[],"_returns":{"_ID":"dd19835e-0533-447b-93b7-d829df0a9d53","_name":"Value"},"_position":{"x":532.0,"y":391.0},"$type":"FlowCanvas.Nodes.CustomFunctionEvent","$id":"3"},{"_position":{"x":289.0,"y":259.0},"$type":"FlowCanvas.Macros.MacroInputNode"}],"connections":[{"_sourcePortName":"
+    ","_targetPortName":"c5385248-f017-429c-a2c0-ccf3c600e883","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"
+    ","_targetPortName":"60733fd2-28fa-4673-9ff2-49843db3b604","_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"
+    ","_targetPortName":"811facc5-c0d0-4f7f-b60b-c4eb2f456b24","_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"inputDefinitions":[],"outputDefinitions":[{"_ID":"c5385248-f017-429c-a2c0-ccf3c600e883","_name":"OnActionEnter","_type":"FlowCanvas.Flow"},{"_ID":"60733fd2-28fa-4673-9ff2-49843db3b604","_name":"OnActionUpdate","_type":"FlowCanvas.Flow"},{"_ID":"811facc5-c0d0-4f7f-b60b-c4eb2f456b24","_name":"OnActionExit","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.26
+    _category: 
+    _comments: 
+    _translation: {x: 12, y: 124}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  inputDefinitions: []
+  outputDefinitions:
+  - _ID: c5385248-f017-429c-a2c0-ccf3c600e883
+    _name: OnActionEnter
+    _type: FlowCanvas.Flow
+  - _ID: 60733fd2-28fa-4673-9ff2-49843db3b604
+    _name: OnActionUpdate
+    _type: FlowCanvas.Flow
+  - _ID: 811facc5-c0d0-4f7f-b60b-c4eb2f456b24
+    _name: OnActionExit
+    _type: FlowCanvas.Flow

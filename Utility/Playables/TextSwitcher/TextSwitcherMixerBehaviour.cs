@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UI;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 
 namespace XiheFramework.Utility.Playables.TextSwitcher {
     public class TextSwitcherMixerBehaviour : PlayableBehaviour {

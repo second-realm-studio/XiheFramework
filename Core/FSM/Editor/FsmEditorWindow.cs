@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Modules.Base;
-using XiheFramework.Utility;
+using XiheFramework.Entry;
+using XiheFramework.Utility.DataStructure;
 
-namespace XiheFramework.Modules.FSM.Editor {
+namespace XiheFramework.Core.FSM.Editor {
     public class FsmEditorWindow : EditorWindow {
         private int m_IterationIndex;
 

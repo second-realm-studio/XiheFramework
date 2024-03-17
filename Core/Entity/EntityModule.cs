@@ -1,29 +1,59 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
+using XiheFramework.Entry;
 
-namespace XiheFramework.Modules.Entity {
+namespace XiheFramework.Core.Entity {
+    //TODO: change to hash based id
     public class EntityModule : GameModule {
-        private readonly Dictionary<string, Entity> m_Entities = new();
-        
-        public void RegisterEntity(string id, Entity entity) {
-            if (m_Entities.ContainsKey(id))
-                m_Entities[id] = entity;
-            else
-                m_Entities.Add(id, entity);
+        public readonly string OnEntityRegisteredEventName = "Event.OnEntityRegistered";
+        private uint m_NextId = 1001;
+        private readonly Dictionary<uint, GameEntity> m_Entities = new();
+
+        private readonly object m_LockRoot = new();
+
+        public void RegisterEntity(GameEntity entity, out uint distributedId, uint presetId = 0) {
+            lock (m_LockRoot) {
+                if (presetId != 0) {
+                    if (m_Entities.ContainsKey(presetId)) {
+                        Debug.LogWarning($"[ENTITY] Preset Id {presetId} is already existed, replacing it, make sure the last instance with this id is destroyed");
+                        m_Entities[presetId] = entity;
+                    }
+                    else {
+                        m_Entities.Add(presetId, entity);
+                    }
+
+                    distributedId = presetId;
+                    Game.Event.InvokeNow(OnEntityRegisteredEventName, entity, presetId);
+                    return;
+                }
+
+                while (m_Entities.ContainsKey(m_NextId)) {
+                    m_NextId++;
+                }
+
+                distributedId = m_NextId;
+                m_Entities.Add(m_NextId, entity);
+                Game.Event.InvokeNow(OnEntityRegisteredEventName, entity, m_NextId);
+            }
         }
 
-        public Entity GetEntity(string entityName) {
-            var id = new Hash128();
-            id.Append(entityName);
-            if (!m_Entities.ContainsKey(id.ToString())) {
-                Debug.LogErrorFormat("[ENTITY] Entity : {0} is not Existed", entityName);
-                return null;
+        public T GetEntity<T>(uint entityId) where T : GameEntity {
+            if (m_Entities.ContainsKey(entityId)) {
+                return m_Entities[entityId] as T;
             }
 
-            return m_Entities[id.ToString()];
+            Debug.LogWarning($"[ENTITY] Entity : {entityId} is not Existed");
+            return null;
         }
 
-        internal override void ShutDown(ShutDownType shutDownType) { }
+        public bool IsEntityExisted(uint entityId) {
+            return m_Entities.ContainsKey(entityId);
+        }
+
+        internal override void OnReset() {
+            m_Entities.Clear();
+            m_NextId = 1001;
+        }
     }
 }

@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using XiheFramework.Utility;
 
-namespace XiheFramework.Modules.Base {
+namespace XiheFramework.Core.Base {
     /// <summary>
     /// Game manager for XiheFramework, work as a Singleton
     /// </summary>
     public class GameManager : Singleton<GameManager> {
         private const int FrameAtSceneId = 0;
         public int frameRate = 60;
-        public float globalSpeed = 1f;
-
-        public float logoDisplayTime;
 
         private readonly Dictionary<Type, GameModule> m_GameModules = new();
 
@@ -33,18 +27,9 @@ namespace XiheFramework.Modules.Base {
         private void Start() {
             DontDestroyOnLoad(gameObject);
 
-            //play xihe logo
-            if (logoDisplayTime > 0) {
-                Game.Blackboard.SetData("System.LogoDisplayTime", logoDisplayTime);
-                Game.FlowEvent.StartEvent("System.DisplayXiheLogo");
-            }
+            //late start for all modules
+            foreach (var component in m_GameModules.Values) component.OnLateStart();
         }
-
-        private void Update() {
-            Time.timeScale = globalSpeed;
-        }
-
-        private void OnEnable() { }
 
         private void RegisterAllComponent() {
             while (m_RegisterGameModulesQueue.Count > 0) {
@@ -89,34 +74,10 @@ namespace XiheFramework.Modules.Base {
             return null;
         }
 
-        /// <summary>
-        /// Shut down the game with ShutDownType 
-        /// </summary>
-        /// <param name="shutDownType"></param>
-        public static void ShutDown(ShutDownType shutDownType) {
-            for (var i = 0; i < Instance.m_GameModules.Count; i++) Instance.m_GameModules.ElementAt(i).Value.ShutDown(shutDownType);
-
-            //Instance.m_GameComponents.Clear();
-
-            switch (shutDownType) {
-                case ShutDownType.None:
-                    break;
-                case ShutDownType.Retry:
-                    Game.Event.Invoke("System.OnRetry");
-                    break;
-                case ShutDownType.Restart:
-                    Game.Event.Invoke("System.OnRestart");
-                    break;
-                case ShutDownType.Quit:
-                    Game.Event.Invoke("System.OnQuit");
-                    Application.Quit();
-#if UNITY_EDITOR
-                    EditorApplication.isPlaying = false;
-#endif
-                    break;
-                default:
-                    break;
-            }
+        public static void ResetFramework() {
+            foreach (var component in Instance.m_GameModules.Values) component.OnReset();
+            Instance.m_GameModules.Clear();
+            Instance.m_RegisterGameModulesQueue.Clear();
         }
     }
 }

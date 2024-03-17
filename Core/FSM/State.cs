@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XiheFramework.Modules.FSM {
+namespace XiheFramework.Core.FSM {
     [Serializable]
     public abstract class State<T> : BaseState {
         protected T owner;

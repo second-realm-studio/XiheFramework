@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
 
-namespace XiheFramework.Modules.Localization {
+namespace XiheFramework.Core.Localization {
     public class LocalizationModule : GameModule {
         public Languages language = Languages.English;
 
@@ -30,13 +28,12 @@ namespace XiheFramework.Modules.Localization {
             srInfo.BaseStream.Seek(0, SeekOrigin.Begin);
             var strResult = srInfo.ReadToEnd();
 
-            var jObject = (JObject)JsonConvert.DeserializeObject(strResult);
-            foreach (var i in jObject) {
-                string[] strArray = { jObject[i.Key]["eng"].ToString(), jObject[i.Key]["jap"].ToString() };
-                m_LocalizationDictionary.Add(i.Key, strArray);
-            }
+            //TODO: Newtonsoft.Json is not supported in Unity 2022.3.0f1, need to change to another json parser
+            // var jObject = (JObject)JsonConvert.DeserializeObject(strResult);
+            // foreach (var i in jObject) {
+            //     string[] strArray = { jObject[i.Key]["eng"].ToString(), jObject[i.Key]["jap"].ToString() };
+            //     m_LocalizationDictionary.Add(i.Key, strArray);
+            // }
         }
-
-        internal override void ShutDown(ShutDownType shutDownType) { }
     }
 }

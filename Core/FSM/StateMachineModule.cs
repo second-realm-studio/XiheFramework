@@ -1,20 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
 
-namespace XiheFramework.Modules.FSM {
+namespace XiheFramework.Core.FSM {
     public class StateMachineModule : GameModule {
-        public bool enableDebug;
-
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
+        private Queue<string> m_RemoveQueue = new();
         private bool m_IsActive = true;
+
 
         internal override void OnUpdate() {
             if (!m_IsActive) return;
 
-            foreach (var stateMachine in m_StateMachines.Values) stateMachine.Update();
+            while (m_RemoveQueue.Count > 0) {
+                var fsmName = m_RemoveQueue.Dequeue();
+                m_StateMachines.Remove(fsmName);
+            }
+
+            var keys = m_StateMachines.Keys.ToArray();
+            foreach (var key in keys) {
+                if (!m_StateMachines.ContainsKey(key)) {
+                    Debug.LogWarning($"[FSM] Fsm: {key} does not exist");
+                }
+                else if (m_StateMachines[key] == null) {
+                    Debug.LogWarning($"[FSM] Fsm: {key} is null");
+                }
+                else {
+                    var stateMachine = m_StateMachines[key];
+                    stateMachine.Update();
+                }
+            }
         }
 
         public Dictionary<string, StateMachine> GetData() {
@@ -42,12 +60,24 @@ namespace XiheFramework.Modules.FSM {
             m_StateMachines[fsmName].ChangeState(stateName);
         }
 
-        public void AddFlowState(string fsmName, string stateName, Action onEnter, Action onUpdate, Action onExit) {
+        public void AddState(string fsmName, string stateName, BaseState state) {
             if (!IsFsmExisted(fsmName)) return;
 
-            var state = new FlowState(m_StateMachines[fsmName], onEnter, onUpdate, onExit);
+            m_StateMachines[fsmName].AddState(stateName, state);
+        }
+
+        public void AddActionState(string fsmName, string stateName, Action onEnter, Action onUpdate, Action onExit) {
+            if (!IsFsmExisted(fsmName)) return;
+
+            var state = new ActionState(m_StateMachines[fsmName], onEnter, onUpdate, onExit);
 
             m_StateMachines[fsmName].AddState(stateName, state);
+        }
+
+        public void RemoveState(string fsmName, string stateName) {
+            if (!IsFsmExisted(fsmName)) return;
+
+            m_StateMachines[fsmName].RemoveState(stateName);
         }
 
         public bool IsFsmExisted(string fsmName) {
@@ -70,23 +100,54 @@ namespace XiheFramework.Modules.FSM {
         public void RemoveStateMachine(string fsmName) {
             if (m_StateMachines.ContainsKey(fsmName)) {
                 m_StateMachines[fsmName].Stop();
-                m_StateMachines.Remove(fsmName);
+                m_RemoveQueue.Enqueue(fsmName);
             }
             else {
                 Debug.LogWarningFormat("[FSM] Can not remove fsm with name: {0} because it does not exist", fsmName);
             }
         }
 
-        public void PauseAllStateMachines() {
+        public void StartStateMachine(string fsmName) {
+            if (m_StateMachines.ContainsKey(fsmName)) {
+                m_StateMachines[fsmName].Start();
+            }
+            else {
+                Debug.LogWarningFormat("[FSM] Can not start fsm with name: {0} because it does not exist", fsmName);
+            }
+        }
+
+        public void StopStateMachine(string fsmName) {
+            if (m_StateMachines.ContainsKey(fsmName)) {
+                m_StateMachines[fsmName].Stop();
+            }
+            else {
+                Debug.LogWarningFormat("[FSM] Can not stop fsm with name: {0} because it does not exist", fsmName);
+            }
+        }
+
+        /// <summary>
+        /// stop fsm and remove all states for that fsm
+        /// </summary>
+        public void ClearStates(string fsmName) {
+            if (!IsFsmExisted(fsmName)) {
+                return;
+            }
+
+            StopStateMachine(fsmName);
+            m_StateMachines[fsmName].ClearStates();
+        }
+
+        public void StopAllStateMachines() {
             m_IsActive = false;
         }
 
-        public void ContinueAllStateMachines() {
+        public void StartAllStateMachines() {
             m_IsActive = true;
         }
-
-        internal override void ShutDown(ShutDownType shutDownType) {
+        
+        internal override void OnReset() {
             m_StateMachines.Clear();
+            m_RemoveQueue.Clear();
         }
     }
 }

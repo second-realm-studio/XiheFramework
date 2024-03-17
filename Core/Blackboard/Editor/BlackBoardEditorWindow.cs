@@ -1,10 +1,10 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Modules.Base;
-using XiheFramework.Utility;
+using XiheFramework.Entry;
+using XiheFramework.Utility.DataStructure;
 
-namespace XiheFramework.Modules.Blackboard.Editor {
+namespace XiheFramework.Core.Blackboard.Editor {
     public class BlackBoardEditorWindow : EditorWindow {
         private int m_IterationIndex;
         private readonly string[] m_Options = { "Group", "Type" };

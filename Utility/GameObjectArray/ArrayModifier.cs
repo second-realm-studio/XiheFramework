@@ -7,11 +7,14 @@ namespace XiheFramework.Utility.GameObjectArray {
 #if UNITY_EDITOR
         public GameObject source;
 
-        [Range(1, 20)] public int countX = 1;
+        [Range(1, 20)]
+        public int countX = 1;
 
-        [Range(1, 20)] public int countY = 1;
+        [Range(1, 20)]
+        public int countY = 1;
 
-        [Range(1, 20)] public int countZ = 1;
+        [Range(1, 20)]
+        public int countZ = 1;
 
         //public bool useRelativeOffset;
         // public Vector3 relativeOffset;

@@ -6,7 +6,8 @@ namespace XiheFramework.Utility.Bezier {
     public class BezierPath : MonoBehaviour {
         public List<CurveInfo> pathPoints = new();
 
-        [Range(1, 20)] public int resolution = 10;
+        [Range(1, 20)]
+        public int resolution = 10;
 
         private readonly List<TransformInfo> m_Result = new();
 
@@ -182,6 +183,10 @@ namespace XiheFramework.Utility.Bezier {
 
         private void ComputePath() {
             m_Result.Clear();
+            if (pathPoints.Count == 0) return;
+            if (pathPoints[0].start==null) return;
+            if (pathPoints[0].handle==null) return;
+
             //start point
             var first = TransformInfo.CreateInstance();
             first.position = pathPoints[0].start.position;

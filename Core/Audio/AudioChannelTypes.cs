@@ -1,4 +1,4 @@
-﻿namespace XiheFramework.Modules.Audio {
+﻿namespace XiheFramework.Core.Audio {
     public enum AudioChannelTypes {
         Master = 0,
         BGM, //background music

@@ -1,6 +1,6 @@
 using System;
 
-namespace XiheFramework.Modules.Localization {
+namespace XiheFramework.Core.Localization {
     [Serializable]
     public enum Languages {
         English = 0,

@@ -1,0 +1,19 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Step
+
+Texture2D<float> InputTexture;
+float Threshold;
+RWTexture2D<float> OutputTexture;
+
+[numthreads(8,8,1)]
+void Step(uint3 id : SV_DispatchThreadID)
+{
+    if (InputTexture[id.xy] > Threshold)
+    {
+        OutputTexture[id.xy] = 1;
+    }
+    else
+    {
+        OutputTexture[id.xy] = 0;
+    }
+}

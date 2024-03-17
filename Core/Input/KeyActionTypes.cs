@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XiheFramework.Modules.Input {
+namespace XiheFramework.Core.Input {
     [Serializable]
     public enum KeyActionTypes {
         MoveForward,

@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 
 namespace XiheFramework.Utility.AStar {
     public class AStarNode : MonoBehaviour {

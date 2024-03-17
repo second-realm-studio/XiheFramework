@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Modules.Base;
-using XiheFramework.Utility;
+using XiheFramework.Core.Base;
+using XiheFramework.Entry;
+using XiheFramework.Utility.DataStructure;
 
-namespace XiheFramework.Modules.Blackboard {
+namespace XiheFramework.Core.Blackboard {
     public class BlackboardModule : GameModule {
-        private readonly Dictionary<string, BlackBoardObject> m_Data = new();
+        public readonly string OnDataChangeEventName = "Blackboard.OnDataChange";
+
+        private readonly Dictionary<string, object> m_Data = new();
 
         private TreeNode<string> m_DataPathTree;
 
@@ -23,7 +27,7 @@ namespace XiheFramework.Modules.Blackboard {
         /// <returns> data </returns>
         public object[] GetDataArray() {
             var result = new List<object>();
-            foreach (var key in m_Data.Keys) result.Add(m_Data[key].entity);
+            foreach (var key in m_Data.Keys) result.Add(m_Data[key]);
 
             return result.ToArray();
         }
@@ -48,12 +52,13 @@ namespace XiheFramework.Modules.Blackboard {
         /// <param name="value">data entity</param>
         /// <param name="targetType">data type</param>
         /// <typeparam name="T">object</typeparam>
-        public void SetData<T>(string dataName, T value, BlackBoardDataType targetType = BlackBoardDataType.Runtime) {
+        public void SetData<T>(string dataName, T value) {
             if (m_Data.ContainsKey(dataName))
-                m_Data[dataName] = new BlackBoardObject(value, targetType);
+                m_Data[dataName] = value;
             else
-                m_Data.Add(dataName, new BlackBoardObject(value, targetType));
+                m_Data.Add(dataName, value);
 
+            Game.Event.Invoke(OnDataChangeEventName, dataName, value);
             UpdateDataPathTree();
         }
 
@@ -73,9 +78,34 @@ namespace XiheFramework.Modules.Blackboard {
         /// <typeparam name="T">output type</typeparam>
         /// <returns></returns>
         public T GetData<T>(string dataName) {
-            if (m_Data.ContainsKey(dataName)) return (T)m_Data[dataName].entity;
+            if (m_Data.ContainsKey(dataName)) {
+                var data = m_Data[dataName];
+                if (data is T result) {
+                    return result;
+                }
 
-            Debug.LogWarning("[BLACKBOARD] data does not exist. dataName: " + dataName);
+                try {
+                    return (T)Convert.ChangeType(data, typeof(T));
+                }
+                catch (InvalidCastException) {
+                    Debug.LogError($"[BLACKBOARD] dataName: {dataName} ({data.GetType().Name}]) can not cast to targetType: {typeof(T)}. InvalidCastException");
+                    // not convertable
+                }
+                catch (FormatException) {
+                    //format error
+                    Debug.LogError($"[BLACKBOARD] dataName: {dataName} ({data.GetType().Name}]) can not cast to targetType: {typeof(T)}. FormatException");
+                }
+                catch (OverflowException) {
+                    // value overflow
+                    Debug.LogError($"[BLACKBOARD] dataName: {dataName} ({data.GetType().Name}]) can not cast to targetType: {typeof(T)}. OverflowException");
+                }
+
+                return default;
+            }
+
+            if (enableDebug) {
+                Debug.LogWarning("[BLACKBOARD] data does not exist. dataName: " + dataName);
+            }
 
             return default;
         }
@@ -85,7 +115,7 @@ namespace XiheFramework.Modules.Blackboard {
         /// </summary>
         /// <param name="dataName">data name, work as indexing key</param>
         /// <returns></returns>
-        public bool ContainsKey(string dataName) {
+        public bool IsDataExisted(string dataName) {
             return m_Data.ContainsKey(dataName);
         }
 
@@ -100,6 +130,11 @@ namespace XiheFramework.Modules.Blackboard {
                 Debug.LogWarningFormat("black board doesn't contain data name : " + dataName);
         }
 
+        public void ClearData() {
+            m_Data.Clear();
+            UpdateDataPathTree();
+        }
+
         private void UpdateDataPathTree() {
             m_DataPathTree = new TreeNode<string>("root");
             foreach (var key in m_Data.Keys) {
@@ -112,8 +147,8 @@ namespace XiheFramework.Modules.Blackboard {
             }
         }
 
-        internal override void ShutDown(ShutDownType shutDownType) {
-            Reset();
+        internal override void OnReset() {
+            ClearData();
         }
     }
 }

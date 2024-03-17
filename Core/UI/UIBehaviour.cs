@@ -1,25 +1,42 @@
 ﻿using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 
-namespace XiheFramework.Modules.UI {
+namespace XiheFramework.Core.UI {
     public abstract class UIBehaviour : MonoBehaviour {
         public string uiName;
+        public bool activeOnStart = false;
 
-        public virtual void Start() {
+        private void Start() {
             Register();
+            OnStart();
         }
 
-        public virtual void Register() {
-            if (uiName == string.Empty) uiName = gameObject.name + gameObject.GetHashCode();
+        private void Register() {
+            if (uiName == string.Empty) uiName = gameObject.name + gameObject.GetInstanceID();
             Game.UI.RegisterUIBehaviour(uiName, this);
+
+            if (activeOnStart) {
+                Active();
+            }
+            else {
+                UnActive();
+            }
         }
 
-        public virtual void Active() {
+        protected virtual void OnStart() { }
+
+        protected virtual void OnActive() { }
+
+        protected virtual void OnUnActive() { }
+
+        public void Active() {
             gameObject.SetActive(true);
+            OnActive();
         }
 
-        public virtual void UnActive() {
+        public void UnActive() {
             gameObject.SetActive(false);
+            OnUnActive();
         }
     }
 }

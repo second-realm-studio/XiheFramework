@@ -1,0 +1,24 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel BoxBlur
+
+Texture2D<float> InputTexture;
+int BlurRadius;
+RWTexture2D<float> OutputTexture;
+
+[numthreads(8,8,1)]
+void BoxBlur(uint3 id : SV_DispatchThreadID)
+{
+    int pixelCount = 0;
+    float sum = 0;
+    for (int i = -BlurRadius; i <= BlurRadius; i++)
+    {
+        for (int j = -BlurRadius; j <= BlurRadius; j++)
+        {
+            sum += InputTexture[id.xy + int2(i, j)];
+            pixelCount++;
+        }
+    }
+
+    float result = sum / pixelCount;
+    OutputTexture[id.xy] = float4(result, 0, 0, 0);
+}

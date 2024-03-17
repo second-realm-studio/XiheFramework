@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XiheFramework.Modules.Serialization {
+namespace XiheFramework.Core.Serialization {
     public static class SerializationUtil {
         //int
         public static string ParseIntToString(int value) {

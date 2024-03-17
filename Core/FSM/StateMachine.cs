@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 using static System.String;
 
-namespace XiheFramework.Modules.FSM {
+namespace XiheFramework.Core.FSM {
     [Serializable]
     public class StateMachine {
         private string m_CurrentState;
@@ -24,9 +24,17 @@ namespace XiheFramework.Modules.FSM {
         public static StateMachine Create() {
             return new StateMachine();
         }
+        
+        public int GetStateCount() {
+            return m_States.Count;
+        }
 
         public void SetDefaultState(string stateName) {
             m_DefaultState = stateName;
+        }
+        
+        public string GetDefaultState() {
+            return m_DefaultState;
         }
 
         public string GetCurrentState() {
@@ -42,6 +50,10 @@ namespace XiheFramework.Modules.FSM {
 
         public void RemoveState(string stateName) {
             if (m_States.ContainsKey(stateName)) m_States.Remove(stateName);
+        }
+
+        public void ClearStates() {
+            m_States.Clear();
         }
 
         public void Start() {

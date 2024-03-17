@@ -1,53 +1,34 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Core.Base;
 
-namespace XiheFramework.Modules.Serialization {
+namespace XiheFramework.Core.Serialization {
     public class SerializationModule : GameModule {
-        private const string suffix = ".saori";
-        private readonly string path = Application.streamingAssetsPath + "/";
-        
+        public string suffix = ".xihe";
+        private readonly string m_Path = Application.streamingAssetsPath + "/";
+
+        private SaveData m_ActiveSaveData;
+
         public void WriteSaveData(string fileName) {
-            //序列化过程（将save转化为字节流）
-            //创建Save对象并保存当前游戏状态
-            //BaseSaveData baseSaveData = Game.Blackboard.CreateSaveData();
-            //创建一个二进制格式化程序
             var bf = new BinaryFormatter();
-            //创建一个文件流
-            var fileStream = File.Create(path + fileName + suffix);
-            //用二进制格式化程序的序列化方法来序列化Save对象,参数：创建的文件流和需要序列化的对象
-            //bf.Serialize(fileStream, baseSaveData);
-            //关闭流
+            var fileStream = File.Create(m_Path + fileName + suffix);
+            bf.Serialize(fileStream, m_ActiveSaveData);
             fileStream.Close();
-
-            /*if (File.Exists(Application.dataPath + "/StreamingFile" + "/byBin.txt"))
-            {
-            //若保存文件存在则执行
-            
-            }*/
         }
 
-        public void ReadSaveData(string fileName) {
-            if (!File.Exists(path + fileName + suffix)) return;
+        public SaveData ReadSaveData(string fileName) {
+            if (!File.Exists(m_Path + fileName + suffix)) return null;
 
-            //反序列化过程
-            //创建一个二进制格式化程序
             var bf = new BinaryFormatter();
-            //打开一个文件流
-            var fileStream =
-                File.Open(path + fileName + suffix, FileMode.Open);
-            //调用格式化程序的反序列化方法，将文件流转化为一个Save对象
-            var saoriSave = (BaseSaveData)bf.Deserialize(fileStream);
-            //关闭文件流
+            var fileStream = File.Open(m_Path + fileName + suffix, FileMode.Open);
+            var saoriSave = (SaveData)bf.Deserialize(fileStream);
             fileStream.Close();
-            //向Blackboard传输save中的数据
-            //Game.Blackboard.LoadSaveData(saoriSave);
+            return saoriSave;
         }
 
-        public bool IfRecoverSaveFile(string fileName) {
-            //m_ReadyToSaveFileName = SaveName;
-            if (File.Exists(path + fileName + suffix)) {
+        public bool IfRecoverSaveFile(string fileName, SaveData saveData) {
+            if (File.Exists(m_Path + fileName + suffix)) {
                 return true;
             }
 
@@ -56,29 +37,19 @@ namespace XiheFramework.Modules.Serialization {
         }
 
         public bool IfLoadFileEmpty(string fileName) {
-            if (File.Exists(path + fileName + suffix)) return true;
-
-            return false;
+            return !File.Exists(m_Path + fileName + suffix);
         }
 
         public string GetSaveInfo(string fileName) {
-            if (File.Exists(path + fileName + suffix)) {
-                //反序列化过程
-                //创建一个二进制格式化程序
+            if (File.Exists(m_Path + fileName + suffix)) {
                 var bf = new BinaryFormatter();
-                //打开一个文件流
-                var fileStream =
-                    File.Open(path + fileName + suffix, FileMode.Open);
-                //调用格式化程序的反序列化方法，将文件流转化为一个Save对象
-                var baseSaveData = (BaseSaveData)bf.Deserialize(fileStream);
-                //关闭文件流
+                var fileStream = File.Open(m_Path + fileName + suffix, FileMode.Open);
+                var baseSaveData = (SaveData)bf.Deserialize(fileStream);
                 fileStream.Close();
-                return baseSaveData.name + "/n" + baseSaveData.time;
+                return baseSaveData.name + "\n" + baseSaveData.time;
             }
 
             return null;
         }
-
-        internal override void ShutDown(ShutDownType shutDownType) { }
     }
 }

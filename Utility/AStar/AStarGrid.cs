@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 
 namespace XiheFramework.Utility.AStar {
     public class AStarGrid : MonoBehaviour {

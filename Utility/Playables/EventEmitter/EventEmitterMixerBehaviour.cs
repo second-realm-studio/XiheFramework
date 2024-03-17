@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using XiheFramework.Modules.Base;
+using XiheFramework.Entry;
 
 namespace XiheFramework.Utility.Playables.EventEmitter {
     public class EventEmitterMixerBehaviour : PlayableBehaviour {

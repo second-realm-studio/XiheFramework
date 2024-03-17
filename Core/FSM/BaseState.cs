@@ -1,4 +1,4 @@
-﻿namespace XiheFramework.Modules.FSM {
+﻿namespace XiheFramework.Core.FSM {
     public abstract class BaseState {
         private readonly StateMachine m_ParentStateMachine;
 

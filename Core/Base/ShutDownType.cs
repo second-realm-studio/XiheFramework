@@ -1,4 +1,4 @@
-﻿namespace XiheFramework.Modules.Base {
+﻿namespace XiheFramework.Core.Base {
     public enum ShutDownType {
         None = 0,
         Retry,

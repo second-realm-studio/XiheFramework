@@ -33,9 +33,21 @@ Manage all UI Canvas states. (Active/Deactive)
 
 ## Tips
 * Create your own ```Game(<Description>)``` class as a partial class within ```XiheFramework.Entry``` namespace as entry points of all game modules.
-## Add to your Unity project
-Add Git Submodule  
-Path: Assets/XiheFramework
+
+## Add to Unity Project
+1. Add As Submodule
+Execute the following Powershell command at the root of your Unity project folder:
+```powershell
+git submodule add https://github.com/sky-haihai/XiheFramework.git Assets/XiheFramework
+```
+2. Direct Clone
+Execute the following Powershell command at your Assets folder:
+```powershell
+git clone https://github.com/sky-haihai/XiheFramework.git
+```
+
+3. Download ZIP
+Download ZIP, unzip everything under ```.../Assets```.
 
 ## Special Thanks
 [Lawrence P](https://github.com/ShenKSPZ)

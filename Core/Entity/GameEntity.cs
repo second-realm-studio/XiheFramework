@@ -1,5 +1,4 @@
 using UnityEngine;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Core.Entity {
     public abstract class GameEntity : MonoBehaviour {
@@ -17,7 +16,7 @@ namespace XiheFramework.Core.Entity {
         }
 
         protected virtual void Start() {
-            Game.Entity.RegisterEntity(this, out entityId, presetId);
+            GameCore.Entity.RegisterEntity(this, out entityId, presetId);
         }
     }
 }

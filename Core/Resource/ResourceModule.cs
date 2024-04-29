@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if USE_ADDRESSABLE
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+#endif
 using UnityEngine.SocialPlatforms;
 using XiheFramework.Core.Base;
 using Object = UnityEngine.Object;
@@ -15,8 +17,12 @@ namespace XiheFramework.Core.Resource {
     public class ResourceModule : GameModule {
         private readonly Dictionary<string, Object> m_CachedAssets = new Dictionary<string, Object>();
 
-        internal override void Setup() {
+        public override void Setup() {
+#if USE_ADDRESSABLE
             Addressables.InitializeAsync(true);
+#else
+            Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
+#endif
         }
 
         #region Sync
@@ -31,6 +37,7 @@ namespace XiheFramework.Core.Resource {
         }
 
         public T LoadAsset<T>(string address) where T : Object {
+#if USE_ADDRESSABLE
             //cached resource
             if (m_CachedAssets.ContainsKey(address)) {
                 var res = m_CachedAssets[address] as T;
@@ -45,10 +52,14 @@ namespace XiheFramework.Core.Resource {
             try {
                 AsyncOperationHandle<T> op = Addressables.LoadAssetAsync<T>(address);
                 return op.WaitForCompletion();
+
             }
             catch (Exception) {
                 return null;
             }
+#else
+            return null;
+#endif
         }
 
         #endregion
@@ -68,6 +79,7 @@ namespace XiheFramework.Core.Resource {
         }
 
         public IEnumerator LoadAssetAsyncCoroutine<T>(string address, Action<T> onLoaded) where T : Object {
+#if USE_ADDRESSABLE
             if (m_CachedAssets.ContainsKey(address)) {
                 var res = m_CachedAssets[address] as T;
                 if (res == null) {
@@ -93,9 +105,14 @@ namespace XiheFramework.Core.Resource {
 
                 Addressables.Release(op);
             }
+#else
+            Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
+            yield break;
+#endif
         }
 
         public IEnumerator LoadAssetsAsyncCoroutine(IEnumerable<string> labels, Action<float> onProgress, Action<IEnumerable<Object>> onLoaded) {
+#if USE_ADDRESSABLE
             var locationOpHandle = Addressables.LoadResourceLocationsAsync(labels, Addressables.MergeMode.Intersection);
             yield return locationOpHandle;
 
@@ -131,16 +148,22 @@ namespace XiheFramework.Core.Resource {
             }
 
             onLoaded?.Invoke(results);
+#else
+            Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
+            yield break;
+#endif
         }
 
         #endregion
-        
-        internal override void OnReset() {
+
+        public override void OnReset() {
+#if USE_ADDRESSABLE
             foreach (var asset in m_CachedAssets) {
                 Addressables.Release(asset.Value);
             }
 
             m_CachedAssets.Clear();
+#endif
         }
     }
 }

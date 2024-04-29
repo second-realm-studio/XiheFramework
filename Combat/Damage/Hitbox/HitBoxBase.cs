@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Damage.DataTypes;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Combat.Damage.Hitbox {
     public abstract class HitBoxBase : MonoBehaviour {
@@ -53,15 +53,15 @@ namespace XiheFramework.Combat.Damage.Hitbox {
             hitBoxCollider.enabled = true;
 
             if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                XiheFramework.Entry.Game.Event.Unsubscribe(Game.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
+                GameCore.Event.Unsubscribe(GameCombat.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
             }
 
-            m_OnProcessedDamageEventHandlerId = XiheFramework.Entry.Game.Event.Subscribe(Game.Damage.OnProcessedDamageEventName, OnProcessedDamage);
+            m_OnProcessedDamageEventHandlerId = GameCore.Event.Subscribe(GameCombat.Damage.OnProcessedDamageEventName, OnProcessedDamage);
         }
 
         public virtual void DeactivateDamageSender() {
             if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                XiheFramework.Entry.Game.Event.Unsubscribe(Game.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
+                GameCore.Event.Unsubscribe(GameCombat.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
             }
 
             if (hitBoxCollider != null) {
@@ -85,9 +85,9 @@ namespace XiheFramework.Combat.Damage.Hitbox {
         }
 
         private void OnDestroy() {
-            if (XiheFramework.Entry.Game.Event != null) {
+            if (GameCore.Event != null) {
                 if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                    XiheFramework.Entry.Game.Event.Unsubscribe(Game.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
+                    GameCore.Event.Unsubscribe(GameCombat.Damage.OnProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
                 }
             }
         }

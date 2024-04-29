@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Buff {
@@ -45,10 +45,10 @@ namespace XiheFramework.Combat.Buff {
                 CurrentStack += deltaStack;
             }
 
-            XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.Buff_CurrentStack(OwnerEntity, this.entityName), CurrentStack);
+            GameCore.Blackboard.SetData(GeneralBlackboardNames.Buff_CurrentStack(OwnerEntity, this.entityName), CurrentStack);
             OnBuffAddStack();
 
-            m_OnSetBuffValueEventHandlerId = XiheFramework.Entry.Game.Event.Subscribe(Game.Buff.OnSetBuffValueEventName, OnSetBuffValue);
+            m_OnSetBuffValueEventHandlerId =GameCore.Event.Subscribe(GameCombat.Buff.OnSetBuffValueEventName, OnSetBuffValue);
 
             m_Update = true;
         }
@@ -132,7 +132,7 @@ namespace XiheFramework.Combat.Buff {
             OnBuffRemoveStack();
 
             if (CurrentStack <= 0) {
-                XiheFramework.Entry.Game.Event.Unsubscribe(Game.Buff.OnSetBuffValueEventName, m_OnSetBuffValueEventHandlerId);
+                GameCore.Event.Unsubscribe(GameCombat.Buff.OnSetBuffValueEventName, m_OnSetBuffValueEventHandlerId);
                 OnBuffExit();
             }
         }

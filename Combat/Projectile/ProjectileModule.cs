@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Projectile {
@@ -9,14 +10,14 @@ namespace XiheFramework.Combat.Projectile {
         private Queue<ProjectileEntity> m_Projectiles = new();
 
         public ProjectileEntity InstantiateProjectile(CombatEntity owner, string projectileName) {
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
             var entity = go.GetComponent<ProjectileEntity>();
             entity.SetOwnerId(owner);
             return entity;
         }
 
         public T InstantiateProjectile<T>(string projectileName) where T : ProjectileEntity {
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
             var entity = go.GetComponent<ProjectileEntity>();
             return entity as T;
         }

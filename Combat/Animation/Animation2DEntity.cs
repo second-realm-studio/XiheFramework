@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Combat.Animation {
     public class Animation2DEntity : CombatEntityBase {
@@ -85,7 +85,7 @@ namespace XiheFramework.Combat.Animation {
             transform.localScale = scale;
             FaceToCamera();
 
-            Game.Event.Invoke(Game.Animation2D.OnAnimationCreated, OwnerCombatEntity.EntityId, EntityId);
+            GameCore.Event.Invoke(GameCombat.Animation2D.OnAnimationCreated, OwnerCombatEntity.EntityId, EntityId);
         }
 
         public void SetFrame(int frame) {
@@ -110,7 +110,7 @@ namespace XiheFramework.Combat.Animation {
             EndBehaviour = endBehaviour;
             StartCoroutine(PlayAnimationCo());
 
-            XiheFramework.Entry.Game.Event.Invoke(Game.Animation2D.OnAnimationPlayed, OwnerCombatEntity.EntityId, EntityId);
+            GameCore.Event.Invoke(GameCombat.Animation2D.OnAnimationPlayed, OwnerCombatEntity.EntityId, EntityId);
         }
 
         public void StopAndDestroy() {
@@ -198,7 +198,7 @@ namespace XiheFramework.Combat.Animation {
             //Debug.Log(AnimationFrameTime);
             while (timer < AnimationFrameTime) {
                 if (!m_Paused) {
-                    timer += Game.LogicTime.ScaledDeltaTime;
+                    timer += GameCore.LogicTime.ScaledDeltaTime;
                 }
 
                 yield return null;

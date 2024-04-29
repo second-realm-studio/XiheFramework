@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XiheFramework.Entry;
 using static System.String;
 
 namespace XiheFramework.Core.FSM {
@@ -74,7 +73,7 @@ namespace XiheFramework.Core.FSM {
 
             m_UpdateToExit = true;
             m_NextState = targetState;
-            if (Game.Fsm.enableDebug) Debug.Log("Change to " + targetState);
+            if (GameCore.Fsm.enableDebug) Debug.Log("Change to " + targetState);
         }
 
         public void Update() {

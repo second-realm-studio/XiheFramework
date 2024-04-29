@@ -2,7 +2,6 @@ using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Damage.DataTypes;
 using XiheFramework.Combat.Damage.Hitbox;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Combat.Projectile {
     public abstract class ProjectileEntity : CombatEntityBase {
@@ -27,7 +26,7 @@ namespace XiheFramework.Combat.Projectile {
                 return;
             }
 
-            Game.Projectile.RegisterProjectile(this);
+            GameCombat.Projectile.RegisterProjectile(this);
 
             System.Action<int> action = _ => { m_IsAirborne = false; };
             action += OnContact;
@@ -82,7 +81,7 @@ namespace XiheFramework.Combat.Projectile {
         protected abstract void OnContact(int layer);
 
         public void DestroyBullet(float delay = 0f) {
-            Game.Projectile.UnregisterProjectile(this);
+            GameCombat.Projectile.UnregisterProjectile(this);
             StopAllCoroutines();
             Destroy(gameObject, delay);
         }

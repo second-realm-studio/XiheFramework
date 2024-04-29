@@ -1,6 +1,5 @@
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Core.LogicTime {
     public class LogicTimeModule : GameModule {
@@ -28,7 +27,7 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScaleInFrame(float timeScale, int duration) {
             GlobalTimeScale = timeScale;
             m_Duration = duration;
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
 
             Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
         }
@@ -36,7 +35,7 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScaleInSecond(float timeScale, float duration) {
             GlobalTimeScale = timeScale;
             m_Duration = (int)(duration * 60f);
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
 
             Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
         }
@@ -44,10 +43,10 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScalePermanent(float timeScale) {
             GlobalTimeScale = timeScale;
             m_Duration = 0;
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
         }
 
-        internal override void OnUpdate() {
+        public override void OnUpdate() {
             if (m_Duration <= 0f) {
                 return;
             }
@@ -59,16 +58,16 @@ namespace XiheFramework.Core.LogicTime {
 
             //end of slow down
             GlobalTimeScale = defaultTimeScale;
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, defaultTimeScale);
+            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, defaultTimeScale);
             m_Duration = 0;
             m_Timer = 0;
         }
 
-        internal override void Setup() {
+        public override void Setup() {
             GlobalTimeScale = defaultTimeScale;
         }
 
-        internal override void OnLateStart() {
+        public override void OnLateStart() {
             GlobalTimeScale = defaultTimeScale;
         }
     }

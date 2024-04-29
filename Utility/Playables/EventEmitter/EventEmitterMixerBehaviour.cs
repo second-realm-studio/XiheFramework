@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Utility.Playables.EventEmitter {
     public class EventEmitterMixerBehaviour : PlayableBehaviour {
@@ -30,9 +30,9 @@ namespace XiheFramework.Utility.Playables.EventEmitter {
 
                     if (!m_InvokedEvents.ContainsKey(i)) {
                         if (string.IsNullOrEmpty(input.argument))
-                            Game.Event.Invoke(input.eventName, m_TrackBinding.gameObject.name);
+                            GameCore.Event.Invoke(input.eventName, m_TrackBinding.gameObject.name);
                         else
-                            Game.Event.Invoke(input.eventName, m_TrackBinding.gameObject.name, input.argument);
+                            GameCore.Event.Invoke(input.eventName, m_TrackBinding.gameObject.name, input.argument);
 
                         Debug.Log("Event " + input.eventName + "sent by timeline binding: " + m_TrackBinding.gameObject.name);
 

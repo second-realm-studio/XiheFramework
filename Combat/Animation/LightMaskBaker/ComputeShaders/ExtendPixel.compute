@@ -17,7 +17,7 @@ void BakeExtendMask(uint3 id : SV_DispatchThreadID)
                 int2 pos = int2(id.x + i, id.y + j);
                 if (distance(pos, id.xy) <= float(ExtendRadius))
                 {
-                    OutputTexture[pos] = float4(1, 0, 0, 0);
+                    OutputTexture[pos] = 1;
                 }
             }
         }

@@ -1,8 +1,10 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+#if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+#endif
 using UnityEngine;
 using XiheFramework.Combat.Animation;
 using XiheFramework.Combat.Base;
@@ -59,8 +61,8 @@ namespace XiheFramework.Combat.Editor {
                 string[] assetPaths = guids.Select(g => AssetDatabase.GUIDToAssetPath(g)).ToArray();
 
                 // get Addressable Asset Settings
+#if USE_ADDRESSABLE
                 AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
-
                 foreach (string assetPath in assetPaths) {
                     var guid = AssetDatabase.AssetPathToGUID(assetPath);
                     CombatEntityBase entity = AssetDatabase.LoadAssetAtPath<CombatEntityBase>(assetPath);
@@ -112,7 +114,11 @@ namespace XiheFramework.Combat.Editor {
                     entry.address = assetName;
                 }
 
+
                 settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, null, true);
+#else
+                Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
+#endif
             }
         }
     }

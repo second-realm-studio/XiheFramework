@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Utility.Playables.DialogueBubble {
     public class DialogueBubbleMixerBehaviour : PlayableBehaviour {
@@ -48,7 +48,7 @@ namespace XiheFramework.Utility.Playables.DialogueBubble {
 
                     if (!m_DialogueBubbles.ContainsKey(i)) {
                         var template =
-                            Game.Blackboard.GetData<DialogueBubble>(input.isLeft ? "DialogueBubbleTemplate_Left" : "DialogueBubbleTemplate_Right");
+                            GameCore.Blackboard.GetData<DialogueBubble>(input.isLeft ? "DialogueBubbleTemplate_Left" : "DialogueBubbleTemplate_Right");
 
                         if (template == null) {
                             Debug.Log("template null");

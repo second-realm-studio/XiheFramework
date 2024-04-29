@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Animation {
@@ -13,7 +14,7 @@ namespace XiheFramework.Combat.Animation {
             //Debug.Log($"{ownerActionEntity.name} play animation {animationName}");
 
             var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
-            XiheFramework.Entry.Game.Resource.InstantiateAssetAsync<GameObject>(animationAddress, go => {
+            GameCore.Resource.InstantiateAssetAsync<GameObject>(animationAddress, go => {
                 var entity = go.GetComponent<Animation2DEntity>();
                 if (ownerActionEntity == null) {
                     Debug.LogWarning($"ownerActionEntity has been destroyed, destroying animation entity {gameObject.name}");
@@ -34,7 +35,7 @@ namespace XiheFramework.Combat.Animation {
 
         public Animation2DEntity Create(CombatEntity owner, string animationName, Vector3 localPosition, Vector3 localScale, bool playFirstFrameAtStart = false) {
             var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(animationAddress);
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(animationAddress);
             var entity = go.GetComponent<Animation2DEntity>();
             entity.Setup(owner, localPosition, localScale, playFirstFrameAtStart);
             return entity;
@@ -42,7 +43,7 @@ namespace XiheFramework.Combat.Animation {
 
         public Animation2DEntity Create(CombatEntity owner, string animationName, bool playFirstFrameAtStart = false) {
             var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(animationAddress);
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(animationAddress);
             var entity = go.GetComponent<Animation2DEntity>();
             entity.Setup(owner, Vector3.zero, Vector3.one, playFirstFrameAtStart);
             return entity;

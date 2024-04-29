@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Utility.Extension;
+using XiheFramework.Core.Utility.Extension;
 
 namespace XiheFramework.Core.Input {
     public class InputModule : GameModule {
@@ -52,7 +52,7 @@ namespace XiheFramework.Core.Input {
             }
         }
 
-        internal override void OnUpdate() {
+        public override void OnUpdate() {
             UpdateMouseDeltaPosition();
         }
 

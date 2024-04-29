@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Core.Entity {
     //TODO: change to hash based id
@@ -24,7 +23,7 @@ namespace XiheFramework.Core.Entity {
                     }
 
                     distributedId = presetId;
-                    Game.Event.InvokeNow(OnEntityRegisteredEventName, entity, presetId);
+                    GameCore.Event.InvokeNow(OnEntityRegisteredEventName, entity, presetId);
                     return;
                 }
 
@@ -34,7 +33,7 @@ namespace XiheFramework.Core.Entity {
 
                 distributedId = m_NextId;
                 m_Entities.Add(m_NextId, entity);
-                Game.Event.InvokeNow(OnEntityRegisteredEventName, entity, m_NextId);
+                GameCore.Event.InvokeNow(OnEntityRegisteredEventName, entity, m_NextId);
             }
         }
 
@@ -51,7 +50,7 @@ namespace XiheFramework.Core.Entity {
             return m_Entities.ContainsKey(entityId);
         }
 
-        internal override void OnReset() {
+        public override void OnReset() {
             m_Entities.Clear();
             m_NextId = 1001;
         }

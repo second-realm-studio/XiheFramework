@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Utility.DataStructure;
+using XiheFramework.Core.Utility.DataStructure;
 using static System.String;
 
 namespace XiheFramework.Core.Event {
@@ -14,7 +14,7 @@ namespace XiheFramework.Core.Event {
 
         private readonly object m_LockRoot = new();
 
-        internal override void OnUpdate() {
+        public override void OnUpdate() {
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
                     var element = m_WaitingList.Dequeue();
@@ -132,7 +132,7 @@ namespace XiheFramework.Core.Event {
             }
         }
 
-        internal override void OnReset() {
+        public override void OnReset() {
             m_CurrentEvents.Clear();
             m_ActiveEventHandlers.Clear();
             lock (m_LockRoot) {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using XiheFramework.Core.Utility;
 
 namespace XiheFramework.Utility.Playables.DialogueBubble {
     public class DialogueBubble : MonoBehaviour {

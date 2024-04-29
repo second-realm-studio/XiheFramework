@@ -1,4 +1,5 @@
 using UnityEngine;
+using XiheFramework.Core;
 using XiheFramework.Core.Entity;
 
 namespace XiheFramework.Combat.Base {
@@ -13,8 +14,8 @@ namespace XiheFramework.Combat.Base {
         protected override void Start() {
             base.Start();
 
-            timeScale = XiheFramework.Entry.Game.LogicTime.GlobalTimeScale;
-            m_OnTimeScaleEventId = XiheFramework.Entry.Game.Event.Subscribe(XiheFramework.Entry.Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
+            timeScale = GameCore.LogicTime.GlobalTimeScale;
+            m_OnTimeScaleEventId = GameCore.Event.Subscribe(GameCore.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
         }
 
         protected virtual void OnSetGlobalTimeScale(object sender, object e) {
@@ -22,8 +23,8 @@ namespace XiheFramework.Combat.Base {
         }
 
         protected virtual void OnDestroy() {
-            if (XiheFramework.Entry.Game.Event) {
-                XiheFramework.Entry.Game.Event.Unsubscribe(XiheFramework.Entry.Game.LogicTime.onSetGlobalTimeScaleEventName, m_OnTimeScaleEventId);
+            if (GameCore.Event) {
+                GameCore.Event.Unsubscribe(GameCore.LogicTime.onSetGlobalTimeScaleEventName, m_OnTimeScaleEventId);
             }
         }
     }

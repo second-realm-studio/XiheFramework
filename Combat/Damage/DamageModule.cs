@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Damage.DataTypes;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Damage {
@@ -26,12 +27,12 @@ namespace XiheFramework.Combat.Damage {
 
         public void RegisterDamage(uint senderId, uint receiverId, float rawDamage, float rawStaminaDamage, RawDamageType rawDamageType, Vector3 force = default,
             float stunDuration = 0f, params string[] damageTags) {
-            if (!XiheFramework.Entry.Game.Entity.IsEntityExisted(senderId)) {
+            if (!GameCore.Entity.IsEntityExisted(senderId)) {
                 Debug.LogError($"[DMG] Damage register failed: senderId {senderId} is not existed");
                 return;
             }
 
-            if (!XiheFramework.Entry.Game.Entity.IsEntityExisted(receiverId)) {
+            if (!GameCore.Entity.IsEntityExisted(receiverId)) {
                 Debug.LogError($"[DMG] Damage register failed: receiverId {receiverId} is not existed");
                 return;
             }
@@ -45,13 +46,13 @@ namespace XiheFramework.Combat.Damage {
         }
 
 
-        internal override void OnLateUpdate() {
+        public override void OnLateUpdate() {
             //TODO: (Maybe) change to concurrent queue
             if (m_DamageQueue.Count > 0) {
                 var damageData = m_DamageQueue.Dequeue();
                 var valid = damageProcessor.Process(damageData, out var outputData);
                 if (valid) {
-                    XiheFramework.Entry.Game.Event.InvokeNow(OnProcessedDamageEventName, damageData.receiverId, outputData);
+                    GameCore.Event.InvokeNow(OnProcessedDamageEventName, damageData.receiverId, outputData);
 
                     if (enableDebug) {
                         Debug.Log(

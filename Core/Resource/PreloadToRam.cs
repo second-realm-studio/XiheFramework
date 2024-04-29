@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Core.Resource {
     public class PreloadToRam : MonoBehaviour {
@@ -10,10 +9,10 @@ namespace XiheFramework.Core.Resource {
         private string m_LevelDataAddress;
 
         private void Start() {
-            var nextLevelName = Game.Blackboard.GetData<string>(Game.Scene.CurrentLevelDataName);
+            var nextLevelName = GameCore.Blackboard.GetData<string>(GameCore.Scene.CurrentLevelDataName);
             m_LevelSceneAddress = nextLevelName;
             m_LevelDataAddress = $"LevelData_{nextLevelName}";
-            Game.Resource.LoadAssetAsync<LevelDataSetting>(m_LevelDataAddress, OnLevelDataLoaded);
+            GameCore.Resource.LoadAssetAsync<LevelDataSetting>(m_LevelDataAddress, OnLevelDataLoaded);
         }
 
         private void OnLevelDataLoaded(LevelDataSetting obj) {
@@ -21,18 +20,18 @@ namespace XiheFramework.Core.Resource {
         }
 
         IEnumerator LoadLabelAsync(IEnumerable<string> label) {
-            var handle = Game.Resource.LoadAssetsAsyncCoroutine(label, OnProgress, OnLoaded);
+            var handle = GameCore.Resource.LoadAssetsAsyncCoroutine(label, OnProgress, OnLoaded);
             yield return handle;
 
-            Game.Scene.LoadSceneAsync(m_LevelSceneAddress, LoadSceneMode.Single, true);
+            GameCore.Scene.LoadSceneAsync(m_LevelSceneAddress, LoadSceneMode.Single, true);
         }
 
         private void OnLoaded(IEnumerable<Object> obj) {
-            Game.Blackboard.RemoveData("PreloadAddressableData.LoadingProgress");
+            GameCore.Blackboard.RemoveData("PreloadAddressableData.LoadingProgress");
         }
 
         private void OnProgress(float obj) {
-            Game.Blackboard.SetData("PreloadAddressableData.LoadingProgress", obj);
+            GameCore.Blackboard.SetData("PreloadAddressableData.LoadingProgress", obj);
         }
     }
 }

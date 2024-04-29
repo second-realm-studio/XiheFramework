@@ -1,12 +1,13 @@
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Particle {
     public class ParticleModule : GameModule {
         public ParticleEntity Create(CombatEntity owner, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool followOwner = true) {
             var particleAddress = ParticleUtil.GetParticleEntityAddress(particleName);
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(particleAddress);
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(particleAddress);
             var entity = go.GetComponent<ParticleEntity>();
             entity.Setup(owner, localPosition, localRotation, localScale, followOwner);
             return entity;
@@ -21,7 +22,7 @@ namespace XiheFramework.Combat.Particle {
         }
 
         public ParticleEntity Play(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             if (!owner) return null;
 
             return Play(owner, particleName, localPosition, localRotation, localScale, loop);

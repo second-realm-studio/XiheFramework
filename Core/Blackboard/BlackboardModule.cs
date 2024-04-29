@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Entry;
-using XiheFramework.Utility.DataStructure;
+using XiheFramework.Core.Utility.DataStructure;
 
 namespace XiheFramework.Core.Blackboard {
     public class BlackboardModule : GameModule {
@@ -58,7 +57,7 @@ namespace XiheFramework.Core.Blackboard {
             else
                 m_Data.Add(dataName, value);
 
-            Game.Event.Invoke(OnDataChangeEventName, dataName, value);
+            GameCore.Event.Invoke(OnDataChangeEventName, dataName, value);
             UpdateDataPathTree();
         }
 
@@ -147,7 +146,7 @@ namespace XiheFramework.Core.Blackboard {
             }
         }
 
-        internal override void OnReset() {
+        public override void OnReset() {
             ClearData();
         }
     }

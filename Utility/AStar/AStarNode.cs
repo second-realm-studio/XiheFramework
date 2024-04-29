@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Utility.AStar {
     public class AStarNode : MonoBehaviour {
@@ -28,7 +28,7 @@ namespace XiheFramework.Utility.AStar {
         }
 
         public void InitNode() {
-            var size = Game.Blackboard.GetData<float>("AStar.NodeSize");
+            var size = GameCore.Blackboard.GetData<float>("AStar.NodeSize");
             m_Size = Math.Abs(size) <= float.Epsilon ? 1f : size;
 
             m_CachedTransform = transform;

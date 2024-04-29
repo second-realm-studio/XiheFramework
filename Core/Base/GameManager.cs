@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Utility;
+using XiheFramework.Core.Utility;
 
 namespace XiheFramework.Core.Base {
     /// <summary>

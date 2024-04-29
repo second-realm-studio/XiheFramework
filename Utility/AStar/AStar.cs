@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using XiheFramework.Core.Utility;
 
 namespace XiheFramework.Utility.AStar {
     public static class AStar {

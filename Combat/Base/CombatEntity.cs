@@ -6,7 +6,7 @@ using XiheFramework.Combat.Action;
 using XiheFramework.Combat.Buff;
 using XiheFramework.Combat.Constants;
 using XiheFramework.Combat.Damage.DataTypes;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Combat.Base {
     public class CombatEntity : CombatEntityBase {
@@ -34,7 +34,7 @@ namespace XiheFramework.Combat.Base {
             set {
                 m_CurrentHp = value;
                 m_CurrentHp = Mathf.Clamp(m_CurrentHp, 0, maxHp);
-                XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentHp(this), m_CurrentHp);
+                GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentHp(this), m_CurrentHp);
             }
         }
 
@@ -47,7 +47,7 @@ namespace XiheFramework.Combat.Base {
                 m_CurrentStamina = value;
                 m_CurrentStamina = Mathf.Clamp(m_CurrentStamina, 0, maxStamina);
                 if (Mathf.Abs(m_CachedCurrentStamina - m_CurrentStamina) > 1f) {
-                    XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentStamina(this), m_CurrentStamina);
+                    GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentStamina(this), m_CurrentStamina);
                     m_CachedCurrentStamina = m_CurrentStamina;
                 }
             }
@@ -65,7 +65,7 @@ namespace XiheFramework.Combat.Base {
             get => m_CurrentLooking;
             set {
                 m_CurrentLooking = value;
-                XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentLooking(this), value);
+                GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentLooking(this), value);
             }
         }
 
@@ -110,19 +110,19 @@ namespace XiheFramework.Combat.Base {
             CharacterController = GetComponent<CharacterController>();
 
             //event
-            XiheFramework.Entry.Game.Event.Subscribe(Game.Action.OnChangeActionEventName, OnChangeAction);
-            XiheFramework.Entry.Game.Event.Subscribe(Game.Damage.OnProcessedDamageEventName, OnDamageProcessed);
-            XiheFramework.Entry.Game.Event.Subscribe(Game.Buff.OnAddBuffEventName, OnAddBuff);
-            XiheFramework.Entry.Game.Event.Subscribe(Game.Buff.OnRemoveBuffEventName, OnRemoveBuff);
+            GameCore.Event.Subscribe(GameCombat.Action.OnChangeActionEventName, OnChangeAction);
+            GameCore.Event.Subscribe(GameCombat.Damage.OnProcessedDamageEventName, OnDamageProcessed);
+            GameCore.Event.Subscribe(GameCombat.Buff.OnAddBuffEventName, OnAddBuff);
+            GameCore.Event.Subscribe(GameCombat.Buff.OnRemoveBuffEventName, OnRemoveBuff);
 
             //load hp and stamina
             CurrentHp = maxHp;
             CurrentStamina = maxStamina;
-            XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxHp(this), maxHp);
-            XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxStamina(this), maxStamina);
+            GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxHp(this), maxHp);
+            GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxStamina(this), maxStamina);
 
             //load entry action
-            Game.Action.ChangeAction(entityId, entryActionName);
+            GameCombat.Action.ChangeAction(entityId, entryActionName);
 
             //entity spawn roots
             actionRoot = new GameObject("_ActionEntities").transform;
@@ -159,7 +159,7 @@ namespace XiheFramework.Combat.Base {
                 return;
             }
 
-            var action = Game.Action.LoadAction(newActionArgs.actionName);
+            var action = GameCombat.Action.LoadAction(newActionArgs.actionName);
             action.Init(this, newActionArgs.args);
 
             if (CurrentActionEntity) {

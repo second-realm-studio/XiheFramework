@@ -12,7 +12,7 @@ namespace XiheFramework.Core.FSM {
         private bool m_IsActive = true;
 
 
-        internal override void OnUpdate() {
+        public override void OnUpdate() {
             if (!m_IsActive) return;
 
             while (m_RemoveQueue.Count > 0) {
@@ -145,7 +145,7 @@ namespace XiheFramework.Core.FSM {
             m_IsActive = true;
         }
         
-        internal override void OnReset() {
+        public override void OnReset() {
             m_StateMachines.Clear();
             m_RemoveQueue.Clear();
         }

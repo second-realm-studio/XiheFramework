@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using XiheFramework.Entry;
 
 namespace XiheFramework.Core.UI {
     public abstract class UIBehaviour : MonoBehaviour {
@@ -13,7 +12,7 @@ namespace XiheFramework.Core.UI {
 
         private void Register() {
             if (uiName == string.Empty) uiName = gameObject.name + gameObject.GetInstanceID();
-            Game.UI.RegisterUIBehaviour(uiName, this);
+            GameCore.UI.RegisterUIBehaviour(uiName, this);
 
             if (activeOnStart) {
                 Active();

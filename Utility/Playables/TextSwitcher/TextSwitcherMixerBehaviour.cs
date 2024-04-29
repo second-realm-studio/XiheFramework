@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UI;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 
 namespace XiheFramework.Utility.Playables.TextSwitcher {
     public class TextSwitcherMixerBehaviour : PlayableBehaviour {
@@ -45,7 +45,7 @@ namespace XiheFramework.Utility.Playables.TextSwitcher {
                     m_TrackBinding.text = GetText(input.text, input.progression, input.speed);
                 }
                 else {
-                    var translated = Game.Localization.GetValue(input.text);
+                    var translated = GameCore.Localization.GetValue(input.text);
                     m_TrackBinding.text = GetText(translated, input.progression, input.speed);
                 }
             }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
-using XiheFramework.Entry;
+using XiheFramework.Core;
 using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Action {
@@ -35,8 +35,7 @@ namespace XiheFramework.Combat.Action {
             OnActionInit();
 
             m_IsInitialized = true;
-
-            XiheFramework.Entry.Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentActionName(owner), entityName);
+            GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentActionName(owner), entityName);
         }
 
         public void Exit() {
@@ -49,7 +48,7 @@ namespace XiheFramework.Combat.Action {
         }
 
         public void ChangeAction(string actionName, params KeyValuePair<string, object>[] args) {
-            Game.Action.ChangeAction(OwnerCombatEntity.GetEntityId(), actionName, args);
+            GameCombat.Action.ChangeAction(OwnerCombatEntity.GetEntityId(), actionName, args);
         }
 
         private void Update() {

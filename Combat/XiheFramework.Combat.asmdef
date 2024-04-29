@@ -1,0 +1,16 @@
+{
+    "name": "XiheFramework.Combat",
+    "rootNamespace": "",
+    "references": [
+        "GUID:db65d8cebe70ac2429abb40eeb8f3a66"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

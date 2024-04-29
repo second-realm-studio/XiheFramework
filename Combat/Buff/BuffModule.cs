@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Buff {
@@ -10,7 +11,12 @@ namespace XiheFramework.Combat.Buff {
         public readonly string OnSetBuffValueEventName = "Buff.OnSetBuffValue";
 
         public void AddBuff(uint ownerId, string buffName, int stack = 1) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
+            if (owner == null) {
+                Debug.LogError($"[BUFF]Owner not found: {ownerId}");
+                return;
+            }
+
             AddBuff(owner, buffName, stack);
         }
 
@@ -37,7 +43,7 @@ namespace XiheFramework.Combat.Buff {
             }
             else {
                 var buffAddress = BuffUtil.GetBuffEntityAddress(buffName);
-                var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(buffAddress);
+                var go = GameCore.Resource.InstantiateAsset<GameObject>(buffAddress);
                 if (go == null) {
                     Debug.LogError("[BUFF] BuffEntity not found: " + buffName);
                     return;
@@ -52,7 +58,7 @@ namespace XiheFramework.Combat.Buff {
                 Debug.Log($"[BUFF]{owner.entityName}[{owner.EntityId}] gained {buffName}({stack})");
             }
 
-            XiheFramework.Entry.Game.Event.InvokeNow(OnAddBuffEventName, owner.GetEntityId(), args);
+            GameCore.Event.InvokeNow(OnAddBuffEventName, owner.GetEntityId(), args);
         }
 
         private int GetDeltaStack(int currentStack, int addStack, int maxStack) {
@@ -70,7 +76,7 @@ namespace XiheFramework.Combat.Buff {
         /// <param name="buffName"></param>
         /// <param name="stack">0: remove all</param>
         public void RemoveBuff(uint ownerId, string buffName, int stack = 1) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             RemoveBuff(owner, buffName, stack);
         }
 
@@ -92,7 +98,7 @@ namespace XiheFramework.Combat.Buff {
                 Debug.Log($"[BUFF]{owner.entityName}[{owner.EntityId}] lost {buffName}({stack})");
             }
 
-            XiheFramework.Entry.Game.Event.InvokeNow(OnRemoveBuffEventName, owner.GetEntityId(), eventArgs);
+            GameCore.Event.InvokeNow(OnRemoveBuffEventName, owner.GetEntityId(), eventArgs);
         }
 
         public void ClearBuff(CombatEntity owner) {
@@ -102,7 +108,7 @@ namespace XiheFramework.Combat.Buff {
         }
 
         public void SetBuffValue(uint ownerId, string buffName, string valueName, object value) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             SetBuffValue(owner, buffName, valueName, value);
         }
 
@@ -113,11 +119,11 @@ namespace XiheFramework.Combat.Buff {
             }
 
             var args = new OnSetBuffValueEventArgs(buffName, valueName, value);
-            XiheFramework.Entry.Game.Event.InvokeNow(OnSetBuffValueEventName, owner.GetEntityId(), args);
+            GameCore.Event.InvokeNow(OnSetBuffValueEventName, owner.GetEntityId(), args);
         }
 
         public bool GetBuffValue<T>(uint ownerId, string buffName, string valueName, out T value) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             return GetBuffValue(owner, buffName, valueName, out value);
         }
 
@@ -144,7 +150,7 @@ namespace XiheFramework.Combat.Buff {
         }
 
         public bool HasBuff(uint ownerId, string buffName) {
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             return owner.HasBuff(buffName);
         }
 
@@ -153,7 +159,7 @@ namespace XiheFramework.Combat.Buff {
                 return 0;
             }
 
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             return owner.GetBuffEntity(buffName).CurrentStack;
         }
 
@@ -162,7 +168,7 @@ namespace XiheFramework.Combat.Buff {
                 return;
             }
 
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             var buffEntity = owner.GetBuffEntity(buffName);
             buffEntity.maxStack = maxStack;
         }
@@ -172,7 +178,7 @@ namespace XiheFramework.Combat.Buff {
                 return 0;
             }
 
-            var owner = XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(ownerId);
+            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
             return owner.GetBuffEntity(buffName).maxStack;
         }
     }

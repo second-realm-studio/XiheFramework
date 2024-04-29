@@ -45,21 +45,21 @@ namespace XiheFramework.Core.Base {
                 m_LateUpdateTimer += 1;
             }
         }
+        
+        public virtual void OnUpdate() { }
 
-        internal virtual void OnUpdate() { }
+        public virtual void OnFixedUpdate() { }
 
-        internal virtual void OnFixedUpdate() { }
-
-        internal virtual void OnLateUpdate() { }
+        public virtual void OnLateUpdate() { }
 
         /// <summary>
         /// Called after all game modules are registered (End of Awake)
         /// Useful for setting up data before other modules trying to access it
         /// </summary>
-        internal virtual void Setup() { }
+        public virtual void Setup() { }
 
-        internal virtual void OnLateStart() { }
+        public virtual void OnLateStart() { }
         
-        internal virtual void OnReset() { }
+        public virtual void OnReset() { }
     }
 }

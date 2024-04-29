@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Action {
@@ -9,8 +10,8 @@ namespace XiheFramework.Combat.Action {
 
         private Dictionary<uint, bool> m_CombatEntitySwitchingStatus = new Dictionary<uint, bool>();
 
-        internal override void Setup() {
-            XiheFramework.Entry.Game.Event.Subscribe(OnChangeActionEventName, OnChangeAction);
+        public override void Setup() {
+            GameCore.Event.Subscribe(OnChangeActionEventName, OnChangeAction);
         }
 
         private void OnChangeAction(object sender, object e) {
@@ -33,15 +34,15 @@ namespace XiheFramework.Combat.Action {
             }
 
             OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(actionName, args);
-            XiheFramework.Entry.Game.Event.Invoke(OnChangeActionEventName, targetEntityId, onChangeActionArgs);
+            GameCore.Event.Invoke(OnChangeActionEventName, targetEntityId, onChangeActionArgs);
 
             if (enableDebug) {
-                Debug.Log($"[Action] {XiheFramework.Entry.Game.Entity.GetEntity<CombatEntity>(targetEntityId).entityName}({targetEntityId}) Change Action: {actionName}");
+                Debug.Log($"[Action] {GameCore.Entity.GetEntity<CombatEntity>(targetEntityId).entityName}({targetEntityId}) Change Action: {actionName}");
             }
         }
 
         public ActionEntity LoadAction(string actionName) {
-            var go = XiheFramework.Entry.Game.Resource.InstantiateAsset<GameObject>(ActionUtil.GetActionEntityAddress(actionName));
+            var go = GameCore.Resource.InstantiateAsset<GameObject>(ActionUtil.GetActionEntityAddress(actionName));
             if (go == null) {
                 Debug.LogError($"{actionName} Action not found");
                 return null;

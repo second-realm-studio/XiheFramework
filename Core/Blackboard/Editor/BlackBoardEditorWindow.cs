@@ -1,8 +1,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Entry;
-using XiheFramework.Utility.DataStructure;
+using XiheFramework.Core.Utility.DataStructure;
 
 namespace XiheFramework.Core.Blackboard.Editor {
     public class BlackBoardEditorWindow : EditorWindow {
@@ -18,7 +17,7 @@ namespace XiheFramework.Core.Blackboard.Editor {
         }
 
         private void OnEnable() {
-            //Game.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
+            //GameCore.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
         }
 
 
@@ -33,12 +32,12 @@ namespace XiheFramework.Core.Blackboard.Editor {
                 return;
             }
 
-            if (Game.Blackboard == null) {
+            if (GameCore.Blackboard == null) {
                 GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
                 return;
             }
 
-            var root = Game.Blackboard.GetDataPaths();
+            var root = GameCore.Blackboard.GetDataPaths();
             if (root == null) {
                 GUILayout.Label("DATA STATUS : DATA NULL", EditorStyles.boldLabel);
                 return;
@@ -52,11 +51,11 @@ namespace XiheFramework.Core.Blackboard.Editor {
 
             m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
 
-            foreach (var key in Game.Blackboard.GetDataPathArray()) {
+            foreach (var key in GameCore.Blackboard.GetDataPathArray()) {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(key, EditorStyles.boldLabel);
-                if (Game.Blackboard.GetData(key) != null)
-                    GUILayout.Label(Game.Blackboard.GetData(key).ToString());
+                if (GameCore.Blackboard.GetData(key) != null)
+                    GUILayout.Label(GameCore.Blackboard.GetData(key).ToString());
                 else
                     GUILayout.Label("NULL");
 
@@ -83,7 +82,7 @@ namespace XiheFramework.Core.Blackboard.Editor {
 
         private void OnBlackBoardChanged(object sender, object e) {
             m_States = new TreeNode<bool>(true);
-            var dataPaths = Game.Blackboard.GetDataPaths();
+            var dataPaths = GameCore.Blackboard.GetDataPaths();
             m_States = CreateStates(m_States, dataPaths);
         }
 
@@ -96,8 +95,8 @@ namespace XiheFramework.Core.Blackboard.Editor {
 
             GUILayout.Label(tab + root.Value);
             if (root.Children.Count == 0) {
-                GUILayout.Label(Game.Blackboard.GetData(root.Value).GetType().ToString());
-                GUILayout.Label(Game.Blackboard.GetData(root.Value).ToString());
+                GUILayout.Label(GameCore.Blackboard.GetData(root.Value).GetType().ToString());
+                GUILayout.Label(GameCore.Blackboard.GetData(root.Value).ToString());
             }
 
             GUILayout.EndHorizontal();

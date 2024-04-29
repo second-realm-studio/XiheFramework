@@ -66,7 +66,7 @@ namespace XiheFramework.Core.UI {
             return Instantiate(uiBehaviour);
         }
 
-        internal override void OnReset() {
+        public override void OnReset() {
             m_UIBehaviours.Clear();
         }
     }

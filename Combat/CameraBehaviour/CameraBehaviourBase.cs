@@ -19,10 +19,10 @@ namespace XiheFramework.Combat.CameraBehaviour {
 
         private void Start() {
             virtualCamera = GetComponent<CinemachineVirtualCameraBase>();
-            Game.Camera.RegisterCameraBehaviour(this);
+            GameCombat.Camera.RegisterCameraBehaviour(this);
             OnCameraBehaviourStart();
 
-            Game.Camera.MainCameraBrain.m_CameraActivatedEvent.AddListener(OnFocusedCameraChanged);
+            GameCombat.Camera.MainCameraBrain.m_CameraActivatedEvent.AddListener(OnFocusedCameraChanged);
         }
 
         private void OnFocusedCameraChanged(ICinemachineCamera incoming, ICinemachineCamera outgoing) {
@@ -35,9 +35,9 @@ namespace XiheFramework.Combat.CameraBehaviour {
         }
 
         private void OnDestroy() {
-            if (!Game.Camera) return;
+            if (!GameCombat.Camera) return;
             OnCameraBehaviourDestroy();
-            Game.Camera.UnregisterCameraBehaviour(this);
+            GameCombat.Camera.UnregisterCameraBehaviour(this);
         }
 
         /// <summary>

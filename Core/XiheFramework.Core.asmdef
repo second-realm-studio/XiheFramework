@@ -1,7 +1,13 @@
 {
     "name": "XiheFramework.Core",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

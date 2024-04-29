@@ -18,7 +18,7 @@ namespace XiheFramework.Combat.CameraBehaviour {
             base.Start();
 
             virtualCamera = GetComponent<CinemachineVirtualCameraBase>();
-            Game.Camera.RegisterCameraEntity(this);
+            GameCombat.Camera.RegisterCameraEntity(this);
         }
 #endif
     }

@@ -65,7 +65,7 @@ namespace XiheFramework.Combat.Animation.TestRoom {
 #endif
             try {
 #if USE_TMP
-                m_Animation2DEntity = Game.Animation2D.Create(owner, animationName);
+                m_Animation2DEntity = GameCombat.Animation2D.Create(owner, animationName);
 #endif
 
 #if USE_TMP

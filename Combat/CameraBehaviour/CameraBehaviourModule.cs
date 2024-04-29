@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.Utility.DataStructure;
 #if USE_CINEMACHINE
 using Cinemachine;
 #endif
@@ -18,7 +19,7 @@ namespace XiheFramework.Combat.CameraBehaviour {
 
 #if USE_CINEMACHINE
         private readonly MultiDictionary<ICinemachineCamera, CameraBehaviourBase> m_CameraBehaviours =
-            new MultiDictionary<ICinemachineCamera, CombatSystem.CameraBehaviour.CameraBehaviourBase>();
+            new MultiDictionary<ICinemachineCamera, CameraBehaviour.CameraBehaviourBase>();
 #endif
         private readonly Queue<uint> m_UnregisterQueue = new();
 

@@ -1,22 +1,24 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace XiheFramework.Core.Entity {
     public abstract class GameEntity : MonoBehaviour {
-        public uint presetId = 0; //0 means no preset
-        protected uint entityId;
+        public int executionOrder;
 
-        public uint EntityId => entityId;
+        public uint EntityId { get; internal set; }
+        public uint OwnerId { get; internal set; }
 
-        public uint GetEntityId() {
-            return entityId;
-        }
+        public virtual void OnInitCallback() { }
+        public virtual void OnUpdateCallback() { }
+        public virtual void OnFixedUpdateCallback() { }
+        public virtual void OnLateUpdateCallback() { }
+        public virtual void OnDestroyCallback() { }
 
-        internal void SetEntityId(uint id) {
-            entityId = id;
-        }
-
-        protected virtual void Start() {
-            GameCore.Entity.RegisterEntity(this, out entityId, presetId);
-        }
+        // private void Start() { }
+        // private void Update() { }
+        // private void FixedUpdate() { }
+        // private void LateUpdate() { }
+        // private void OnDestroy() { }
     }
 }

@@ -6,7 +6,7 @@ using XiheFramework.Core.Base;
 
 namespace XiheFramework.Combat.Damage {
     public class DamageModule : GameModule {
-        public readonly string OnProcessedDamageEventName = "Damage.OnProcessedDamage";
+        public readonly string onProcessedDamageEventName = "Damage.OnProcessedDamage";
 
         public DamageProcessorBase damageProcessor;
 
@@ -27,12 +27,12 @@ namespace XiheFramework.Combat.Damage {
 
         public void RegisterDamage(uint senderId, uint receiverId, float rawDamage, float rawStaminaDamage, RawDamageType rawDamageType, Vector3 force = default,
             float stunDuration = 0f, params string[] damageTags) {
-            if (!GameCore.Entity.IsEntityExisted(senderId)) {
+            if (!Runtime.Game.Entity.IsEntityExisted(senderId)) {
                 Debug.LogError($"[DMG] Damage register failed: senderId {senderId} is not existed");
                 return;
             }
 
-            if (!GameCore.Entity.IsEntityExisted(receiverId)) {
+            if (!Runtime.Game.Entity.IsEntityExisted(receiverId)) {
                 Debug.LogError($"[DMG] Damage register failed: receiverId {receiverId} is not existed");
                 return;
             }
@@ -52,17 +52,17 @@ namespace XiheFramework.Combat.Damage {
                 var damageData = m_DamageQueue.Dequeue();
                 var valid = damageProcessor.Process(damageData, out var outputData);
                 if (valid) {
-                    GameCore.Event.InvokeNow(OnProcessedDamageEventName, damageData.receiverId, outputData);
+                    Runtime.Game.Event.InvokeNow(onProcessedDamageEventName, damageData.receiverId, outputData);
 
                     if (enableDebug) {
                         Debug.Log(
-                            $"[DMG][FNAL]{outputData.senderName}({outputData.senderId})->{outputData.receiverName}({outputData.receiverId}):({outputData.damageType})[{outputData.healthDamage}]HP.[{outputData.staminaDamage}]SP.Force:{outputData.forceDirection * outputData.forceMagnitude}. Stun:{outputData.stunDuration}");
+                            $"[DMG][PROCESSED]{outputData.senderName}({outputData.senderId})->{outputData.receiverName}({outputData.receiverId}):({outputData.damageType})[{outputData.healthDamage}]HP.[{outputData.staminaDamage}]SP.Force:{outputData.forceDirection * outputData.forceMagnitude}. Stun:{outputData.stunDuration}");
                     }
                 }
                 else {
                     if (enableDebug) {
                         Debug.Log(
-                            $"[DMG][FNAL]Damage process failed, RawData:{damageData.senderId}->{damageData.receiverId}:[{damageData.rawHealthDamage}][{damageData.rawDamageType}]HP,[{damageData.rawStaminaDamage}]SP.Force:{damageData.rawDamageForce}");
+                            $"[DMG][PROCESSED]Damage process failed, RawData:{damageData.senderId}->{damageData.receiverId}:[{damageData.rawHealthDamage}][{damageData.rawDamageType}]HP,[{damageData.rawStaminaDamage}]SP.Force:{damageData.rawDamageForce}");
                     }
                 }
             }

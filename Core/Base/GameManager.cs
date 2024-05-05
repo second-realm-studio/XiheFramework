@@ -31,6 +31,10 @@ namespace XiheFramework.Core.Base {
             foreach (var component in m_GameModules.Values) component.OnLateStart();
         }
 
+        private void Update() {
+            
+        }
+
         private void RegisterAllComponent() {
             while (m_RegisterGameModulesQueue.Count > 0) {
                 var module = m_RegisterGameModulesQueue.Dequeue();

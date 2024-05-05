@@ -1,6 +1,7 @@
 using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.CameraBehaviour {
     public class CameraSwitchZone : MonoBehaviour {
@@ -15,9 +16,9 @@ namespace XiheFramework.Combat.CameraBehaviour {
 
             if (other.gameObject.layer == LayerMask.NameToLayer("HurtBox")) {
                 foreach (var id in playerEntityIds) {
-                    var player = GameCore.Entity.GetEntity<CombatEntity>(id);
+                    var player = Game.Entity.GetEntity<CombatEntity>(id);
                     if (other.gameObject == player.gameObject) {
-                        GameCombat.Camera.SetFocusedCamera(cameraEntity.EntityId);
+                        Game.Camera.SetFocusedCamera(cameraEntity.EntityId);
                     }
                 }
             }

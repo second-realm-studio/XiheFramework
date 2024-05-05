@@ -1,5 +1,6 @@
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.LogicTime {
     public class LogicTimeModule : GameModule {
@@ -27,7 +28,7 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScaleInFrame(float timeScale, int duration) {
             GlobalTimeScale = timeScale;
             m_Duration = duration;
-            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
 
             Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
         }
@@ -35,7 +36,7 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScaleInSecond(float timeScale, float duration) {
             GlobalTimeScale = timeScale;
             m_Duration = (int)(duration * 60f);
-            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
 
             Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
         }
@@ -43,7 +44,7 @@ namespace XiheFramework.Core.LogicTime {
         public void SetGlobalTimeScalePermanent(float timeScale) {
             GlobalTimeScale = timeScale;
             m_Duration = 0;
-            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
+            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
         }
 
         public override void OnUpdate() {
@@ -58,7 +59,7 @@ namespace XiheFramework.Core.LogicTime {
 
             //end of slow down
             GlobalTimeScale = defaultTimeScale;
-            GameCore.Event.Invoke(onSetGlobalTimeScaleEventName, null, defaultTimeScale);
+            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, defaultTimeScale);
             m_Duration = 0;
             m_Timer = 0;
         }

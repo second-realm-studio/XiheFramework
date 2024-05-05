@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using XiheFramework.Runtime;
 #if USE_CINEMACHINE
 using Cinemachine;
 #endif
@@ -19,10 +20,10 @@ namespace XiheFramework.Combat.CameraBehaviour {
 
         private void Start() {
             virtualCamera = GetComponent<CinemachineVirtualCameraBase>();
-            GameCombat.Camera.RegisterCameraBehaviour(this);
+            Game.Camera.RegisterCameraBehaviour(this);
             OnCameraBehaviourStart();
 
-            GameCombat.Camera.MainCameraBrain.m_CameraActivatedEvent.AddListener(OnFocusedCameraChanged);
+            Game.Camera.MainCameraBrain.m_CameraActivatedEvent.AddListener(OnFocusedCameraChanged);
         }
 
         private void OnFocusedCameraChanged(ICinemachineCamera incoming, ICinemachineCamera outgoing) {
@@ -35,9 +36,9 @@ namespace XiheFramework.Combat.CameraBehaviour {
         }
 
         private void OnDestroy() {
-            if (!GameCombat.Camera) return;
+            if (!Game.Camera) return;
             OnCameraBehaviourDestroy();
-            GameCombat.Camera.UnregisterCameraBehaviour(this);
+            Game.Camera.UnregisterCameraBehaviour(this);
         }
 
         /// <summary>

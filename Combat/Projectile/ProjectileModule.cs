@@ -3,56 +3,45 @@ using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Projectile {
     public class ProjectileModule : GameModule {
         public int maxProjectileCount = 100;
+
+        public readonly string onProjectileInstantiatedEvtName = "Event.OnProjectileInstantiated";
+        public readonly string onProjectileDestroyedEvtName = "Event.OnProjectileDestroyed";
+
         private Queue<ProjectileEntity> m_Projectiles = new();
 
-        public ProjectileEntity InstantiateProjectile(CombatEntity owner, string projectileName) {
-            var go = GameCore.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
-            var entity = go.GetComponent<ProjectileEntity>();
-            entity.SetOwnerId(owner);
+        public ProjectileEntity InstantiateProjectile(uint ownerId, string projectileName, bool followOwner = false) {
+            var entity = InstantiateProjectile<ProjectileEntity>(ownerId, projectileName, followOwner);
             return entity;
         }
 
-        public T InstantiateProjectile<T>(string projectileName) where T : ProjectileEntity {
-            var go = GameCore.Resource.InstantiateAsset<GameObject>(ProjectileUtil.GetProjectileEntityAddress(projectileName));
-            var entity = go.GetComponent<ProjectileEntity>();
-            return entity as T;
-        }
-
-        public void RegisterProjectile(ProjectileEntity projectile) {
+        public T InstantiateProjectile<T>(uint ownerId, string projectileName, bool followOwner = false) where T : ProjectileEntity {
+            var entity = Game.Entity.InstantiateEntity<T>(ProjectileUtil.GetProjectileEntityAddress(projectileName), ownerId, followOwner);
             if (m_Projectiles.Count >= maxProjectileCount) {
                 var oldProjectile = m_Projectiles.Dequeue();
-                Destroy(oldProjectile.gameObject);
+                Game.Entity.DestroyEntity(oldProjectile.EntityId);
             }
 
-            if (m_Projectiles.Contains(projectile)) {
-                return;
-            }
-
-            m_Projectiles.Enqueue(projectile);
+            m_Projectiles.Enqueue(entity);
+            Game.Event.Invoke(onProjectileInstantiatedEvtName, entity.EntityId);
+            return entity;
         }
 
-        public void UnregisterProjectile(ProjectileEntity projectile) {
-            var result = new List<ProjectileEntity>();
-            while (m_Projectiles.Count > 0) {
-                var p = m_Projectiles.Dequeue();
-                if (p != projectile && p != null) {
-                    result.Add(p);
-                }
-            }
-
-            foreach (var p in result) {
-                m_Projectiles.Enqueue(p);
-            }
+        public void DestroyProjectile(uint projectileEntityId) {
+            Game.Entity.DestroyEntity(projectileEntityId);
+            Game.Event.Invoke(onProjectileDestroyedEvtName, projectileEntityId);
         }
 
-        public ProjectileEntity[] GetProjectilesByOwner(CombatEntity owner) {
+        // ↓↓↓ TODO: optimize!!
+
+        public ProjectileEntity[] GetProjectilesByOwner(uint ownerId) {
             var result = new List<ProjectileEntity>();
             foreach (var projectile in m_Projectiles) {
-                if (projectile.Owner.EntityId == owner.EntityId) {
+                if (projectile.OwnerId == ownerId) {
                     result.Add(projectile);
                 }
             }
@@ -71,10 +60,10 @@ namespace XiheFramework.Combat.Projectile {
             return result.ToArray();
         }
 
-        public T[] GetProjectilesByOwnerAndType<T>(CombatEntity owner) where T : ProjectileEntity {
+        public T[] GetProjectilesByOwnerAndType<T>(uint ownerId) where T : ProjectileEntity {
             var result = new List<T>();
             foreach (var projectile in m_Projectiles) {
-                if (projectile.Owner.EntityId == owner.EntityId && projectile is T tProjectile) {
+                if (projectile.OwnerId == ownerId && projectile is T tProjectile) {
                     result.Add(tProjectile);
                 }
             }

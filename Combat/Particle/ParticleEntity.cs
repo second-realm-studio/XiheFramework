@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Particle {
-    public class ParticleEntity : CombatEntityBase {
-        public CombatEntity OwnerCombatEntity { get; private set; }
-
+    public sealed class ParticleEntity : CombatEntityBase {
         public string particleName;
 
         public ParticleSystem particle;
@@ -13,26 +12,16 @@ namespace XiheFramework.Combat.Particle {
         private List<ParticleSystem.MainModule> m_SubMainModules = new List<ParticleSystem.MainModule>();
         private ParticleSystemRenderer m_ParticleSystemRenderer;
         private Transform m_CachedTransform;
-        private System.Action m_OnStopCallback;
-        private bool m_AllowPlay;
         private bool m_Loop;
 
-        public override string entityName => particleName;
+        public override string EntityName => particleName;
 
-        private void Awake() {
+        public override void OnInitCallback() {
             if (!particle) {
                 particle = GetComponent<ParticleSystem>();
             }
-        }
-
-        protected override void Start() {
-            base.Start();
 
             InitMainModules();
-            if (m_AllowPlay) {
-                OnPlay();
-                m_AllowPlay = false;
-            }
         }
 
 #if UNITY_EDITOR
@@ -42,13 +31,6 @@ namespace XiheFramework.Combat.Particle {
             }
         }
 #endif
-
-        private void Update() {
-            if (m_AllowPlay) {
-                OnPlay();
-                m_AllowPlay = false;
-            }
-        }
 
         protected override void OnSetGlobalTimeScale(object sender, object e) {
             base.OnSetGlobalTimeScale(sender, e);
@@ -60,55 +42,32 @@ namespace XiheFramework.Combat.Particle {
             }
         }
 
-
-        public void Setup(CombatEntity owner, Vector3 position, Quaternion rotation, Vector3 scale, bool followOwner) {
-            if (owner == null) {
-                StopAndDestroy();
-            }
-
+        /// <summary>
+        /// Setup particle entity in local space
+        /// </summary>
+        /// <param name="localPosition"></param>
+        /// <param name="localRotation"></param>
+        /// <param name="localScale"></param>
+        public void Setup(Vector3 localPosition, Quaternion localRotation, Vector3 localScale) {
             particle.Pause(true);
-
-            OwnerCombatEntity = owner;
-            m_CachedTransform = transform;
-            if (followOwner) {
-                m_CachedTransform.SetParent(owner.particleRoot, false);
-                m_CachedTransform.localPosition = position;
-                m_CachedTransform.localRotation = rotation;
-                m_CachedTransform.localScale = scale;
-            }
-            else {
-                m_CachedTransform.position = owner.transform.TransformPoint(position);
-                m_CachedTransform.rotation = rotation;
-                m_CachedTransform.localScale = scale;
-            }
+            var cachedTransform = transform;
+            cachedTransform.localPosition = localPosition;
+            cachedTransform.localRotation = localRotation;
+            cachedTransform.localScale = localScale;
         }
 
         public void Play(bool loop) {
-            m_Loop = loop;
-            m_AllowPlay = true;
-        }
-
-        private void OnPlay() {
-            m_MainModule.loop = m_Loop;
-            m_SubMainModules.ForEach(subMainModule => subMainModule.loop = m_Loop);
+            m_MainModule.loop = loop;
+            m_SubMainModules.ForEach(subMainModule => subMainModule.loop = loop);
             particle.Play(true);
         }
-
-        public void StopAndDestroy() {
-            Destroy(gameObject);
-        }
-
-        public void SetOnStopCallback(System.Action onStop) {
-            m_OnStopCallback = onStop;
-        }
-
+        
         public void SetMaterial(Material material) {
             m_ParticleSystemRenderer.material = material;
         }
-
+        
         private void OnParticleSystemStopped() {
-            StopAndDestroy();
-            m_OnStopCallback?.Invoke();
+            Game.Particle.DestroyParticle(EntityId);
         }
 
         private void InitMainModules() {

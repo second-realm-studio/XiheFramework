@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using XiheFramework.Core.Utility.DataStructure;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Event.Editor {
     public class EventEditorWindow : EditorWindow {
@@ -33,18 +34,18 @@ namespace XiheFramework.Core.Event.Editor {
                 return;
             }
 
-            if (GameCore.Event == null) {
+            if (Game.Event == null) {
                 GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
                 return;
             }
 
-            var events = GameCore.Event.GetEvents();
+            var events = Game.Event.GetEvents();
             if (events == null) {
                 GUILayout.Label("DATA STATUS : EVENTS NULL", EditorStyles.boldLabel);
                 return;
             }
 
-            var handlers = GameCore.Event.GetHandlers();
+            var handlers = Game.Event.GetHandlers();
             if (handlers == null) {
                 GUILayout.Label("DATA STATUS : HANDLERS NULL", EditorStyles.boldLabel);
                 return;

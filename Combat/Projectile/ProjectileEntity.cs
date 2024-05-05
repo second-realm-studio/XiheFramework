@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Damage.DataTypes;
-using XiheFramework.Combat.Damage.Hitbox;
+using XiheFramework.Combat.Damage.HitBox;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Projectile {
     public abstract class ProjectileEntity : CombatEntityBase {
-        public CombatEntity Owner { get; private set; }
-        public HitBoxBase hitbox;
+        public HitBoxEntityBase hitBox;
         public float lifeTime = 5f;
 
         public Vector3 StartPoint { get; private set; }
@@ -15,30 +16,18 @@ namespace XiheFramework.Combat.Projectile {
         private bool m_IsAirborne;
         private float m_LifeTimer;
 
-        public void SetOwnerId(CombatEntity owner) {
-            Owner = owner;
-            hitbox.SetOwnerId(owner);
-        }
-
         public void Launch(Vector3 startPoint, Vector3 endPoint, System.Action<DamageEventArgs> onDamageCallback) {
-            if (this == null) {
-                DestroyBullet();
-                return;
-            }
-
-            GameCombat.Projectile.RegisterProjectile(this);
-
             System.Action<int> action = _ => { m_IsAirborne = false; };
             action += OnContact;
-            hitbox.SetHitCallback(action);
+            hitBox.SetHitCallback(action);
 
             StartPoint = startPoint;
             EndPoint = endPoint;
 
-            hitbox.DeactivateDamageSender();
+            hitBox.DeactivateHitBox();
             onDamageCallback += OnDamage;
-            hitbox.SetDamageCallback(onDamageCallback);
-            hitbox.ActivateDamageSender();
+            hitBox.SetDamageCallback(onDamageCallback);
+            hitBox.ActivateHitBox();
 
             OnLaunch();
 
@@ -46,17 +35,23 @@ namespace XiheFramework.Combat.Projectile {
             m_LifeTimer = 0f;
         }
 
-        public void Update() {
+        public override void OnUpdateCallback() {
             if (!m_IsAirborne) {
                 return;
             }
 
-            m_LifeTimer += scaledDeltaTime;
+            m_LifeTimer += ScaledDeltaTime;
             OnAirborne(m_LifeTimer);
 
             if (m_LifeTimer >= lifeTime) {
-                DestroyBullet();
+                Game.Projectile.DestroyProjectile(EntityId);
             }
+        }
+        
+        public override void OnDestroyCallback() {
+            base.OnDestroyCallback();
+            
+            StopAllCoroutines();
         }
 
         /// <summary>
@@ -80,15 +75,9 @@ namespace XiheFramework.Combat.Projectile {
         /// </summary>
         protected abstract void OnContact(int layer);
 
-        public void DestroyBullet(float delay = 0f) {
-            GameCombat.Projectile.UnregisterProjectile(this);
-            StopAllCoroutines();
-            Destroy(gameObject, delay);
-        }
-
 #if UNITY_EDITOR
         private void OnValidate() {
-            hitbox = GetComponentInChildren<HitBoxBase>();
+            hitBox = GetComponentInChildren<HitBoxEntityBase>();
         }
 #endif
     }

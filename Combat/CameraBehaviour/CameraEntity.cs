@@ -1,4 +1,5 @@
 ﻿using XiheFramework.Core.Entity;
+using XiheFramework.Runtime;
 #if USE_CINEMACHINE
 using Cinemachine;
 #endif
@@ -14,11 +15,9 @@ namespace XiheFramework.Combat.CameraBehaviour {
             }
         }
 
-        protected override void Start() {
-            base.Start();
-
+        public override void OnInitCallback() {
             virtualCamera = GetComponent<CinemachineVirtualCameraBase>();
-            GameCombat.Camera.RegisterCameraEntity(this);
+            Game.Camera.RegisterCameraEntity(this);
         }
 #endif
     }

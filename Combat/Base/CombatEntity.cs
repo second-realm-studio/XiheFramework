@@ -1,21 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XiheFramework.Combat.Action;
+using XiheFramework.Combat.Animation2D;
 using XiheFramework.Combat.Buff;
 using XiheFramework.Combat.Constants;
 using XiheFramework.Combat.Damage.DataTypes;
-using XiheFramework.Core;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Base {
-    public class CombatEntity : CombatEntityBase {
+    public sealed class CombatEntity : CombatEntityBase {
         public string combatEntityName;
         public float maxHp;
         public float maxStamina;
         public string entryActionName;
 
-        public override string entityName {
+        public override string EntityName {
             get {
                 if (string.IsNullOrEmpty(combatEntityName)) {
                     combatEntityName = gameObject.name + " " + GetInstanceID();
@@ -28,18 +28,22 @@ namespace XiheFramework.Combat.Base {
         #region Basic Stats
 
         private float m_CurrentHp;
+        private float m_CachedCurrentHp; //buffer the change until it's greater than 1 to reduce the frequency of setting blackboard data
 
         public float CurrentHp {
             get => m_CurrentHp;
             set {
                 m_CurrentHp = value;
                 m_CurrentHp = Mathf.Clamp(m_CurrentHp, 0, maxHp);
-                GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentHp(this), m_CurrentHp);
+                if (Mathf.Abs(m_CachedCurrentHp - m_CurrentHp) > 1f) {
+                    Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentHp(this), m_CurrentHp);
+                    m_CachedCurrentHp = m_CurrentHp;
+                }
             }
         }
 
         private float m_CurrentStamina;
-        private float m_CachedCurrentStamina;
+        private float m_CachedCurrentStamina; //buffer the change until it's greater than 1 to reduce the frequency of setting blackboard data
 
         public float CurrentStamina {
             get => m_CurrentStamina;
@@ -47,7 +51,7 @@ namespace XiheFramework.Combat.Base {
                 m_CurrentStamina = value;
                 m_CurrentStamina = Mathf.Clamp(m_CurrentStamina, 0, maxStamina);
                 if (Mathf.Abs(m_CachedCurrentStamina - m_CurrentStamina) > 1f) {
-                    GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentStamina(this), m_CurrentStamina);
+                    Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentStamina(this), m_CurrentStamina);
                     m_CachedCurrentStamina = m_CurrentStamina;
                 }
             }
@@ -65,118 +69,102 @@ namespace XiheFramework.Combat.Base {
             get => m_CurrentLooking;
             set {
                 m_CurrentLooking = value;
-                GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentLooking(this), value);
+                Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentLooking(this), value);
             }
         }
+
+        #endregion
+
+        #region Action
+
+        public ActionEntity CurrentActionEntity { get; private set; }
+
+        #endregion
+
+        #region Animations
+
+        private List<uint> m_AnimationEntities = new List<uint>();
+
+        public uint[] AnimationArray => m_AnimationEntities.ToArray();
 
         #endregion
 
         #region Buffs
 
-        private Dictionary<string, Buff.BuffEntity> m_BuffEntities = new Dictionary<string, Buff.BuffEntity>();
-        public string[] BuffArray => m_BuffEntities.Keys.ToArray();
+        private List<uint> m_BuffEntities = new List<uint>();
 
-        public Buff.BuffEntity GetBuffEntity(string buffName) {
-            return m_BuffEntities.ContainsKey(buffName) ? m_BuffEntities[buffName] : null;
-        }
-
-        public bool HasBuff(string buffName) => m_BuffEntities.ContainsKey(buffName);
+        public uint[] BuffArray => m_BuffEntities.ToArray();
 
         #endregion
-
-        public Action.ActionEntity CurrentActionEntity { get; private set; }
 
         public CharacterController CharacterController { get; private set; }
 
-        #region Entity Root Transforms
-
-        [HideInInspector]
-        public Transform actionRoot;
-
-        [HideInInspector]
-        public Transform animationRoot;
-
-        [HideInInspector]
-        public Transform buffRoot;
-
-        [HideInInspector]
-        public Transform particleRoot;
-
-        #endregion
-
-        protected override void Start() {
-            base.Start();
-
+        public override void OnInitCallback() {
             CharacterController = GetComponent<CharacterController>();
 
             //event
-            GameCore.Event.Subscribe(GameCombat.Action.OnChangeActionEventName, OnChangeAction);
-            GameCore.Event.Subscribe(GameCombat.Damage.OnProcessedDamageEventName, OnDamageProcessed);
-            GameCore.Event.Subscribe(GameCombat.Buff.OnAddBuffEventName, OnAddBuff);
-            GameCore.Event.Subscribe(GameCombat.Buff.OnRemoveBuffEventName, OnRemoveBuff);
+            Game.Event.Subscribe(Game.Action.onChangeActionEventName, OnChangeAction);
+            Game.Event.Subscribe(Game.Damage.onProcessedDamageEventName, OnDamageProcessed);
+            Game.Event.Subscribe(Game.Animation2D.onAnimationCreate, OnAnimationCreated);
+            Game.Event.Subscribe(Game.Animation2D.onAnimationDestroy, OnAnimationDestroyed);
+            Game.Event.Subscribe(Game.Buff.onBuffCreatedEvtName, OnAddBuff);
+            Game.Event.Subscribe(Game.Buff.onBuffDestroyedEvtName, OnRemoveBuff);
 
             //load hp and stamina
             CurrentHp = maxHp;
             CurrentStamina = maxStamina;
-            GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxHp(this), maxHp);
-            GameCore.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxStamina(this), maxStamina);
+            Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxHp(this), maxHp);
+            Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_MaxStamina(this), maxStamina);
 
             //load entry action
-            GameCombat.Action.ChangeAction(entityId, entryActionName);
-
-            //entity spawn roots
-            actionRoot = new GameObject("_ActionEntities").transform;
-            actionRoot.SetParent(transform);
-            actionRoot.localPosition = Vector3.zero;
-            actionRoot.localRotation = Quaternion.identity;
-            actionRoot.localScale = Vector3.one;
-
-            animationRoot = new GameObject("_AnimationEntities").transform;
-            animationRoot.SetParent(transform);
-            animationRoot.localPosition = Vector3.zero;
-            animationRoot.localRotation = Quaternion.identity;
-            animationRoot.localScale = Vector3.one;
-
-            buffRoot = new GameObject("_BuffEntities").transform;
-            buffRoot.SetParent(transform);
-            buffRoot.localPosition = Vector3.zero;
-            buffRoot.localRotation = Quaternion.identity;
-            buffRoot.localScale = Vector3.one;
-
-            particleRoot = new GameObject("_ParticleEntities").transform;
-            particleRoot.SetParent(transform);
-            particleRoot.localPosition = Vector3.zero;
-            particleRoot.localRotation = Quaternion.identity;
-            particleRoot.localScale = Vector3.one;
+            Game.Action.ChangeAction(EntityId, entryActionName);
         }
 
+        private void OnAnimationDestroyed(object sender, object e) {
+            if (sender is not uint target || (uint?)target != EntityId) {
+                return;
+            }
+
+            if (e is not uint animationEntityId) {
+                return;
+            }
+
+            if (m_AnimationEntities.Contains(animationEntityId)) {
+                m_AnimationEntities.Remove(animationEntityId);
+            }
+        }
+
+        private void OnAnimationCreated(object sender, object e) {
+            if (sender is not uint target || (uint?)target != EntityId) {
+                return;
+            }
+
+            if (e is not uint animationEntityId) {
+                return;
+            }
+
+            m_AnimationEntities.Add(animationEntityId);
+        }
+        
         private void OnChangeAction(object sender, object e) {
-            if (sender is not uint target || (uint?)target != entityId) {
+            if (sender is not uint target || (uint?)target != EntityId) {
                 return;
             }
 
-            if (e is not OnChangeActionArgs newActionArgs) {
+            if (e is not OnChangeActionArgs actionArgs) {
                 return;
             }
-
-            var action = GameCombat.Action.LoadAction(newActionArgs.actionName);
-            action.Init(this, newActionArgs.args);
 
             if (CurrentActionEntity) {
-                CurrentActionEntity.Exit();
-                StartCoroutine(UnloadLastActionAfterOneFrame(CurrentActionEntity));
+                //add unload queue
+                Game.Entity.DestroyEntity(CurrentActionEntity.EntityId);
             }
 
-            CurrentActionEntity = action;
-        }
-
-        private IEnumerator UnloadLastActionAfterOneFrame(Action.ActionEntity action) {
-            yield return null;
-            action.Unload();
+            CurrentActionEntity = Game.Entity.GetEntity<ActionEntity>(actionArgs.actionEntityId);
         }
 
         private void OnAddBuff(object sender, object e) {
-            if (sender is not uint target || (uint?)target != entityId) {
+            if (sender is not uint target || (uint?)target != EntityId) {
                 return;
             }
 
@@ -185,31 +173,26 @@ namespace XiheFramework.Combat.Base {
                 return;
             }
 
-            if (!m_BuffEntities.ContainsKey(eventArgs.buffName)) {
-                m_BuffEntities.Add(eventArgs.buffName, eventArgs.buffEntity);
+            if (!m_BuffEntities.Contains(eventArgs.buffEntityId)) {
+                m_BuffEntities.Add(eventArgs.buffEntityId);
             }
-
-            m_BuffEntities[eventArgs.buffName].OnBuffAdd(this, eventArgs.deltaStack);
         }
 
         private void OnRemoveBuff(object sender, object e) {
-            if (sender is not uint target || target != entityId) {
+            if (sender is not uint target || target != EntityId) {
                 return;
             }
 
-            var eventArgs = e as OnRemoveBuffEventArgs;
-            if (eventArgs == null) {
-                return;
-            }
+            var args = e as OnRemoveBuffEventArgs;
+            if (args == null) return;
 
-            m_BuffEntities[eventArgs.buffName].OnBuffRemove(eventArgs.stack);
-            if (m_BuffEntities[eventArgs.buffName] == null || m_BuffEntities[eventArgs.buffName].CurrentStack == 0) {
-                m_BuffEntities.Remove(eventArgs.buffName);
+            if (m_BuffEntities.Contains(args.buffEntityId)) {
+                m_BuffEntities.Remove(args.buffEntityId);
             }
         }
 
         private void OnDamageProcessed(object sender, object e) {
-            if (sender is not uint target || target != entityId) {
+            if (sender is not uint target || target != EntityId) {
                 return;
             }
 

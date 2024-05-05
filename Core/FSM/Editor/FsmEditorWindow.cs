@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using XiheFramework.Core.Utility.DataStructure;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM.Editor {
     public class FsmEditorWindow : EditorWindow {
@@ -32,12 +33,12 @@ namespace XiheFramework.Core.FSM.Editor {
                 return;
             }
 
-            if (GameCore.Fsm == null) {
+            if (Game.Fsm == null) {
                 GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
                 return;
             }
 
-            var data = GameCore.Fsm.GetData();
+            var data = Game.Fsm.GetData();
             //var root = Game.Blackboard.GetDataPaths();
             if (data == null) {
                 GUILayout.Label("DATA STATUS : DATA NULL", EditorStyles.boldLabel);

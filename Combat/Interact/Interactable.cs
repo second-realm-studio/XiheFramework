@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Interact {
     public class Interactable : MonoBehaviour {
         private Action<CombatEntity> m_OnInteract;
 
         private void Start() {
-            GameCombat.Interact.RegisterInteractableObject(this);
+            Game.Interact.RegisterInteractableObject(this);
         }
 
         public void Interact(CombatEntity entity) {
@@ -27,8 +28,8 @@ namespace XiheFramework.Combat.Interact {
         }
 
         private void OnDestroy() {
-            if (GameCombat.Interact) {
-                GameCombat.Interact.UnregisterInteractableObject(this);
+            if (Game.Interact) {
+                Game.Interact.UnregisterInteractableObject(this);
             }
         }
     }

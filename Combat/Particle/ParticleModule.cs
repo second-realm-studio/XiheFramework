@@ -1,37 +1,41 @@
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Particle {
     public class ParticleModule : GameModule {
-        public ParticleEntity Create(CombatEntity owner, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool followOwner = true) {
+        public readonly string onParticleCreate = "Particle.OnParticleCreate";
+        public readonly string onParticlePlay = "Particle.OnParticlePlay";
+        public readonly string onParticleDestroy = "Particle.OnParticleDestroy";
+
+        public ParticleEntity CreateParticleEntity(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale,
+            bool followOwner = true) {
             var particleAddress = ParticleUtil.GetParticleEntityAddress(particleName);
-            var go = GameCore.Resource.InstantiateAsset<GameObject>(particleAddress);
-            var entity = go.GetComponent<ParticleEntity>();
-            entity.Setup(owner, localPosition, localRotation, localScale, followOwner);
-            return entity;
+            var particleEntity = Game.Entity.InstantiateEntity<ParticleEntity>(particleAddress, ownerId, followOwner, 0);
+            particleEntity.Setup(localPosition, localRotation, localScale);
+            Game.Event.Invoke(onParticleCreate, ownerId, particleEntity.EntityId);
+            return particleEntity;
         }
 
-        public ParticleEntity Play(CombatEntity owner, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop,
+        public void SetParticlePause(uint particleEntityId, bool pause) {
+            var particleEntity = Game.Entity.GetEntity<ParticleEntity>(particleEntityId);
+            if (particleEntity) {
+                particleEntity.particle.Pause(pause);
+            }
+        }
+
+        public ParticleEntity PlayParticle(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop,
             bool followOwner = true) {
-            var particle = Create(owner, particleName, localPosition, localRotation, localScale, followOwner);
+            var particle = CreateParticleEntity(ownerId, particleName, localPosition, localRotation, localScale, followOwner);
             particle.Play(loop);
+            Game.Event.Invoke(onParticlePlay, ownerId, particle.EntityId);
 
             return particle;
         }
 
-        public ParticleEntity Play(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop) {
-            var owner = GameCore.Entity.GetEntity<CombatEntity>(ownerId);
-            if (!owner) return null;
-
-            return Play(owner, particleName, localPosition, localRotation, localScale, loop);
-        }
-
-        public void DestroyParticle(ParticleEntity particle) {
-            if (particle != null) {
-                particle.StopAndDestroy();
-            }
+        public void DestroyParticle(uint particleEntityId) {
+            Game.Entity.DestroyEntity(particleEntityId);
+            Game.Event.Invoke(onParticleDestroy, particleEntityId);
         }
     }
 }

@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace XiheFramework.Combat.Action {
     [Serializable]
     public struct OnChangeActionArgs {
-        public string actionName;
+        public uint actionEntityId;
+        public string actionEntityName;
         public KeyValuePair<string, object>[] args;
 
-        public OnChangeActionArgs(string actionName, KeyValuePair<string, object>[] args) {
-            this.actionName = actionName;
+        public OnChangeActionArgs(uint actionEntityId, string actionEntityName, KeyValuePair<string, object>[] args) {
+            this.actionEntityId = actionEntityId;
+            this.actionEntityName = actionEntityName;
             this.args = args;
         }
     }

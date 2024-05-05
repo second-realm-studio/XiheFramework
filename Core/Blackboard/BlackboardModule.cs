@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Utility.DataStructure;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Blackboard {
     public class BlackboardModule : GameModule {
@@ -57,7 +58,7 @@ namespace XiheFramework.Core.Blackboard {
             else
                 m_Data.Add(dataName, value);
 
-            GameCore.Event.Invoke(OnDataChangeEventName, dataName, value);
+            Game.Event.Invoke(OnDataChangeEventName, dataName, value);
             UpdateDataPathTree();
         }
 

@@ -3,15 +3,45 @@ using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Action {
     public class ActionModule : GameModule {
-        public readonly string OnChangeActionEventName = "Action.OnChangeAction";
+        public readonly string onChangeActionEventName = "Action.OnChangeAction";
 
         private Dictionary<uint, bool> m_CombatEntitySwitchingStatus = new Dictionary<uint, bool>();
 
+        public void ChangeAction(uint ownerEntityId, string actionName, params KeyValuePair<string, object>[] args) {
+            if (m_CombatEntitySwitchingStatus.ContainsKey(ownerEntityId)) {
+                if (m_CombatEntitySwitchingStatus[ownerEntityId] == true) {
+                    return;
+                }
+
+                m_CombatEntitySwitchingStatus[ownerEntityId] = true;
+            }
+            else {
+                m_CombatEntitySwitchingStatus.Add(ownerEntityId, true);
+            }
+
+            var action = Game.Entity.InstantiateEntity<ActionEntity>(ActionUtil.GetActionEntityAddress(actionName));
+            if (action == null) {
+                Debug.LogError($"{actionName} Action not found");
+                return;
+            }
+
+            action.OwnerId = ownerEntityId;
+            action.SetArguments(args);
+
+            OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(action.EntityId, actionName, args);
+            Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
+
+            if (enableDebug) {
+                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<CombatEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionName}");
+            }
+        }
+
         public override void Setup() {
-            GameCore.Event.Subscribe(OnChangeActionEventName, OnChangeAction);
+            Game.Event.Subscribe(onChangeActionEventName, OnChangeAction);
         }
 
         private void OnChangeAction(object sender, object e) {
@@ -19,41 +49,6 @@ namespace XiheFramework.Combat.Action {
             if (m_CombatEntitySwitchingStatus.ContainsKey(id)) {
                 m_CombatEntitySwitchingStatus[id] = false;
             }
-        }
-
-        public void ChangeAction(uint targetEntityId, string actionName, params KeyValuePair<string, object>[] args) {
-            if (m_CombatEntitySwitchingStatus.ContainsKey(targetEntityId)) {
-                if (m_CombatEntitySwitchingStatus[targetEntityId] == true) {
-                    return;
-                }
-
-                m_CombatEntitySwitchingStatus[targetEntityId] = true;
-            }
-            else {
-                m_CombatEntitySwitchingStatus.Add(targetEntityId, true);
-            }
-
-            OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(actionName, args);
-            GameCore.Event.Invoke(OnChangeActionEventName, targetEntityId, onChangeActionArgs);
-
-            if (enableDebug) {
-                Debug.Log($"[Action] {GameCore.Entity.GetEntity<CombatEntity>(targetEntityId).entityName}({targetEntityId}) Change Action: {actionName}");
-            }
-        }
-
-        public ActionEntity LoadAction(string actionName) {
-            var go = GameCore.Resource.InstantiateAsset<GameObject>(ActionUtil.GetActionEntityAddress(actionName));
-            if (go == null) {
-                Debug.LogError($"{actionName} Action not found");
-                return null;
-            }
-
-            var entity = go.GetComponent<ActionEntity>();
-            if (entity == null) {
-                Debug.LogError($"{actionName} Action prefab found, but ActionEntity script not found");
-            }
-
-            return entity;
         }
     }
 }

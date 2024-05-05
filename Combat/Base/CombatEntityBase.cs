@@ -1,31 +1,27 @@
 using UnityEngine;
-using XiheFramework.Core;
 using XiheFramework.Core.Entity;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Base {
     public abstract class CombatEntityBase : GameEntity {
-        public abstract string entityName { get; }
+        public abstract string EntityName { get; }
 
         protected float timeScale = 1f;
-        protected float scaledDeltaTime => Time.deltaTime * timeScale;
+        protected float ScaledDeltaTime => Time.deltaTime * timeScale;
 
         private string m_OnTimeScaleEventId;
 
-        protected override void Start() {
-            base.Start();
+        public override void OnInitCallback() {
+            timeScale = Game.LogicTime.GlobalTimeScale;
+            m_OnTimeScaleEventId = Game.Event.Subscribe(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
+        }
 
-            timeScale = GameCore.LogicTime.GlobalTimeScale;
-            m_OnTimeScaleEventId = GameCore.Event.Subscribe(GameCore.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
+        public override void OnDestroyCallback() {
+            Game.Event.Unsubscribe(Game.LogicTime.onSetGlobalTimeScaleEventName, m_OnTimeScaleEventId);
         }
 
         protected virtual void OnSetGlobalTimeScale(object sender, object e) {
             timeScale = (float)e;
-        }
-
-        protected virtual void OnDestroy() {
-            if (GameCore.Event) {
-                GameCore.Event.Unsubscribe(GameCore.LogicTime.onSetGlobalTimeScaleEventName, m_OnTimeScaleEventId);
-            }
         }
     }
 }

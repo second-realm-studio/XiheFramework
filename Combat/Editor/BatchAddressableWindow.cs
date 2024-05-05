@@ -6,7 +6,7 @@ using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 #endif
 using UnityEngine;
-using XiheFramework.Combat.Animation;
+using XiheFramework.Combat.Animation2D;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Particle;
 using XiheFramework.Combat.Projectile;
@@ -71,7 +71,7 @@ namespace XiheFramework.Combat.Editor {
                         continue;
                     }
 
-                    if (string.IsNullOrEmpty(entity.entityName)) {
+                    if (string.IsNullOrEmpty(entity.EntityName)) {
                         settings.RemoveAssetEntry(guid);
                         continue;
                     }
@@ -107,7 +107,7 @@ namespace XiheFramework.Combat.Editor {
                         group = settings.CreateGroup(groupName, false, false, true, null);
                     }
 
-                    string assetName = groupName + "_" + entity.entityName;
+                    string assetName = groupName + "_" + entity.EntityName;
 
                     // actually set address
                     AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);

@@ -3,6 +3,7 @@ using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Action {
@@ -10,6 +11,8 @@ namespace XiheFramework.Combat.Action {
         public readonly string onChangeActionEventName = "Action.OnChangeAction";
 
         private Dictionary<uint, bool> m_CombatEntitySwitchingStatus = new Dictionary<uint, bool>();
+
+        private Dictionary<uint, uint> m_CurrentActions = new Dictionary<uint, uint>();
 
         public void ChangeAction(uint ownerEntityId, string actionName, params KeyValuePair<string, object>[] args) {
             if (m_CombatEntitySwitchingStatus.ContainsKey(ownerEntityId)) {
@@ -23,7 +26,21 @@ namespace XiheFramework.Combat.Action {
                 m_CombatEntitySwitchingStatus.Add(ownerEntityId, true);
             }
 
+            if (m_CurrentActions.ContainsKey(ownerEntityId)) {
+                var currentActionId = m_CurrentActions[ownerEntityId];
+                if (currentActionId != 0) {
+                    Game.Entity.DestroyEntity(currentActionId);
+                }
+
+                m_CurrentActions[ownerEntityId] = 0;
+            }
+            else {
+                m_CurrentActions.Add(ownerEntityId, 0);
+            }
+
             var action = Game.Entity.InstantiateEntity<ActionEntity>(ActionUtil.GetActionEntityAddress(actionName));
+            m_CurrentActions[ownerEntityId] = action.EntityId;
+
             if (action == null) {
                 Debug.LogError($"{actionName} Action not found");
                 return;
@@ -37,6 +54,13 @@ namespace XiheFramework.Combat.Action {
 
             if (enableDebug) {
                 Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<CombatEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionName}");
+            }
+        }
+
+        public void SetCurrentActionArgument(uint ownerEntityId, string key, object value) {
+            if (!m_CurrentActions.TryGetValue(ownerEntityId, out var actionId)) return;
+            if (actionId != 0) {
+                Game.Entity.GetEntity<ActionEntity>(actionId).SetArguments(new KeyValuePair<string, object>(key, value));
             }
         }
 

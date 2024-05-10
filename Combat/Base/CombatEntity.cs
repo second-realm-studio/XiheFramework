@@ -77,7 +77,7 @@ namespace XiheFramework.Combat.Base {
 
         #region Action
 
-        public ActionEntity CurrentActionEntity { get; private set; }
+        public uint CurrentActionEntityId { get; internal set; }
 
         #endregion
 
@@ -103,7 +103,6 @@ namespace XiheFramework.Combat.Base {
             CharacterController = GetComponent<CharacterController>();
 
             //event
-            Game.Event.Subscribe(Game.Action.onChangeActionEventName, OnChangeAction);
             Game.Event.Subscribe(Game.Damage.onProcessedDamageEventName, OnDamageProcessed);
             Game.Event.Subscribe(Game.Animation2D.onAnimationCreate, OnAnimationCreated);
             Game.Event.Subscribe(Game.Animation2D.onAnimationDestroy, OnAnimationDestroyed);
@@ -144,23 +143,6 @@ namespace XiheFramework.Combat.Base {
             }
 
             m_AnimationEntities.Add(animationEntityId);
-        }
-        
-        private void OnChangeAction(object sender, object e) {
-            if (sender is not uint target || (uint?)target != EntityId) {
-                return;
-            }
-
-            if (e is not OnChangeActionArgs actionArgs) {
-                return;
-            }
-
-            if (CurrentActionEntity) {
-                //add unload queue
-                Game.Entity.DestroyEntity(CurrentActionEntity.EntityId);
-            }
-
-            CurrentActionEntity = Game.Entity.GetEntity<ActionEntity>(actionArgs.actionEntityId);
         }
 
         private void OnAddBuff(object sender, object e) {

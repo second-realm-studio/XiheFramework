@@ -28,16 +28,16 @@ namespace XiheFramework.Core.Console {
         }
 
         private void Update() {
-            if (Game.Input.GetButtonDown("OpenDevConsole")) {
+            if (Game.SystemInput.GetButtonDown("OpenDevConsole")) {
                 Debug.Log("Open Dev Console");
                 m_IsOpen = !m_IsOpen;
                 consolePanel.SetActive(m_IsOpen);
-                Game.Input.controllers.maps.SetMapsEnabled(!m_IsOpen, 0);
-                Game.Input.controllers.maps.SetMapsEnabled(m_IsOpen, 1);
+                Game.SystemInput.controllers.maps.SetMapsEnabled(!m_IsOpen, 0);
+                Game.SystemInput.controllers.maps.SetMapsEnabled(m_IsOpen, 1);
                 Game.LogicTime.SetGlobalTimeScalePermanent(m_IsOpen?0f:1f);
             }
 
-            if (m_IsOpen && Game.Input.GetButtonDown("ExecuteCommand")) {
+            if (m_IsOpen && Game.SystemInput.GetButtonDown("ExecuteCommand")) {
                 EventSystem.current.SetSelectedGameObject(inputField.gameObject);
                 var succeed = CommandFactory.ExecuteCommand(inputField.text);
                 if (succeed) {

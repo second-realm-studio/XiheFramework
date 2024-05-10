@@ -39,7 +39,8 @@ namespace XiheFramework.Runtime {
         public static LogicTimeModule LogicTime => GameManager.GetModule<LogicTimeModule>();
 
 #if USE_REWIRED
-        public static Player Input => ReInput.players.GetPlayers()[0];
+        public static Player Input(int playerInputId) => ReInput.players.GetPlayers()[playerInputId];
+        public static Player SystemInput => ReInput.players.GetSystemPlayer();
 #endif
 
         public static T GetModule<T>() where T : GameModule {

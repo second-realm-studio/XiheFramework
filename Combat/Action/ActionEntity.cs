@@ -47,7 +47,7 @@ namespace XiheFramework.Combat.Action {
         /// <summary>
         /// called one frame after OnActionExit(), useful to destroy any visual impact of the action, such as animation, particle, sound, etc.
         /// </summary>
-        protected abstract void OnActionUnload();
+        //protected abstract void OnActionUnload();
 
         public void ChangeAction(string actionName, params KeyValuePair<string, object>[] args) {
             Game.Action.ChangeAction(OwnerCombatEntity.EntityId, actionName, args);

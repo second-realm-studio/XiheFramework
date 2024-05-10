@@ -1,12 +1,12 @@
 using XiheFramework.Combat.Action;
 using XiheFramework.Combat.Animation2D;
 using XiheFramework.Combat.Buff;
-using XiheFramework.Combat.CameraBehaviour;
 using XiheFramework.Combat.Damage;
 using XiheFramework.Combat.Interact;
 using XiheFramework.Combat.Particle;
 using XiheFramework.Combat.Projectile;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.CameraBehaviour;
 
 namespace XiheFramework.Runtime {
     public static partial class Game {

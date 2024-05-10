@@ -1,10 +1,8 @@
-﻿using XiheFramework.Core.Entity;
+﻿using Cinemachine;
+using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
-#if USE_CINEMACHINE
-using Cinemachine;
-#endif
 
-namespace XiheFramework.Combat.CameraBehaviour {
+namespace XiheFramework.Core.CameraBehaviour {
     public class CameraEntity : GameEntity {
 #if USE_CINEMACHINE
         public CinemachineVirtualCameraBase virtualCamera;

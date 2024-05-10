@@ -1,12 +1,10 @@
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Utility.DataStructure;
-#if USE_CINEMACHINE
-using Cinemachine;
-#endif
 
-namespace XiheFramework.Combat.CameraBehaviour {
+namespace XiheFramework.Core.CameraBehaviour {
     public class CameraBehaviourModule : GameModule {
         public int focusedPriority = 100;
         public int unfocusedPriority = 0;

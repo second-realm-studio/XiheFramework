@@ -1,10 +1,8 @@
-﻿using UnityEngine;
+﻿using Cinemachine;
+using UnityEngine;
 using XiheFramework.Runtime;
-#if USE_CINEMACHINE
-using Cinemachine;
-#endif
 
-namespace XiheFramework.Combat.CameraBehaviour {
+namespace XiheFramework.Core.CameraBehaviour {
 #if USE_CINEMACHINE
     [RequireComponent(typeof(CinemachineVirtualCamera))]
 #endif

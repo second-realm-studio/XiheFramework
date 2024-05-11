@@ -15,6 +15,7 @@ namespace XiheFramework.Combat.Particle {
         private Transform m_CachedTransform;
         private bool m_Loop;
 
+        public override string EntityGroupName => "ParticleEntity";
         public override string EntityAddressName => particleName;
 
         public override void OnInitCallback() {

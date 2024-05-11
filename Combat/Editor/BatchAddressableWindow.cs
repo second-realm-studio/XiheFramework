@@ -78,8 +78,7 @@ namespace XiheFramework.Combat.Editor {
                         continue;
                     }
 
-                    string groupName = "Default";
-                    groupName = entity.GetType().Name;
+                    string groupName = entity.EntityGroupName;
 
                     //find group
                     AddressableAssetGroup group = settings.FindGroup(groupName);

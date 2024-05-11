@@ -8,17 +8,13 @@ using XiheFramework.Runtime;
 using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Action {
-    public abstract class ActionEntity: TimeBasedGameEntity {
-        
+    public abstract class ActionEntity : TimeBasedGameEntity {
         private float m_TimeScale;
 
         protected Dictionary<string, object> Arguments { get; private set; }
 
         public override void OnInitCallback() {
-            Arguments = new Dictionary<string, object>();
             OnActionInit();
-            var owner = Game.Entity.GetEntity<CombatEntity>(OwnerId);
-            Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentActionName(owner), EntityAddressName);
         }
 
         public override void OnUpdateCallback() {
@@ -54,7 +50,13 @@ namespace XiheFramework.Combat.Action {
         }
 
         public void SetArguments(params KeyValuePair<string, object>[] args) {
-            Arguments.Clear();
+            if (Arguments == null) {
+                Arguments = new Dictionary<string, object>();
+            }
+            else {
+                Arguments.Clear();
+            }
+
             foreach (var arg in args) {
                 Arguments.Add(arg.Key, arg.Value);
             }

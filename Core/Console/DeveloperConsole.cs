@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DevConsole;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,6 +11,7 @@ namespace XiheFramework.Core.Console {
         public TMP_InputField inputField;
         public TextMeshProUGUI outputText;
         public Button clearButton;
+        public Button helpButton;
 
         private bool m_IsOpen;
         private List<string> m_Logs = new List<string>();
@@ -25,16 +25,22 @@ namespace XiheFramework.Core.Console {
                 m_Logs.Clear();
                 outputText.text = string.Empty;
             });
+
+            helpButton.onClick.AddListener(() => {
+                var commands = CommandFactory.PrintAllCommands();
+                m_Logs.Add("Commands:");
+                m_Logs.AddRange(commands);
+                outputText.text = string.Join("\n", m_Logs);
+            });
         }
 
         private void Update() {
             if (Game.SystemInput.GetButtonDown("OpenDevConsole")) {
-                Debug.Log("Open Dev Console");
                 m_IsOpen = !m_IsOpen;
+                Debug.Log("Dev Console: " + (m_IsOpen ? "Open" : "Close"));
+
                 consolePanel.SetActive(m_IsOpen);
-                Game.SystemInput.controllers.maps.SetMapsEnabled(!m_IsOpen, 0);
-                Game.SystemInput.controllers.maps.SetMapsEnabled(m_IsOpen, 1);
-                Game.LogicTime.SetGlobalTimeScalePermanent(m_IsOpen?0f:1f);
+                Game.LogicTime.SetGlobalTimeScalePermanent(m_IsOpen ? 0f : 1f);
             }
 
             if (m_IsOpen && Game.SystemInput.GetButtonDown("ExecuteCommand")) {

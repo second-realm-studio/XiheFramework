@@ -22,11 +22,13 @@ namespace XiheFramework.Core.Entity {
         /// <param name="ownerEntityId"> owner Id, 0 if no owner</param>
         /// <param name="setParent"></param>
         /// <param name="presetId"></param>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="onLoadCallback"></param>
         /// <returns></returns>
-        public T InstantiateEntity<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0) where T : GameEntity {
+        public T InstantiateEntity<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0, Action<T> onLoadCallback = null)
+            where T : GameEntity {
             lock (m_LockRoot) {
                 var entity = Game.Resource.InstantiateAsset<GameObject>(entityAddress).GetComponent<T>();
+                onLoadCallback?.Invoke(entity);
                 SetUpGameEntity(entity, presetId, ownerEntityId, setParent);
                 return entity;
             }
@@ -36,8 +38,8 @@ namespace XiheFramework.Core.Entity {
             where T : GameEntity {
             Game.Resource.InstantiateAssetAsync<GameObject>(entityAddress, go => {
                 var entity = go.GetComponent<T>();
-                SetUpGameEntity(entity, presetId, ownerEntityId, setParent);
                 onLoadCallback?.Invoke(entity);
+                SetUpGameEntity(entity, presetId, ownerEntityId, setParent);
             });
         }
 
@@ -84,8 +86,11 @@ namespace XiheFramework.Core.Entity {
         }
 
         public override void OnUpdate() {
-            foreach (var entity in m_Entities) {
-                entity.Value.OnUpdateCallback();
+            var cache = new List<uint>(m_Entities.Keys);
+            foreach (var entity in cache) {
+                if (m_Entities.ContainsKey(entity)) {
+                    m_Entities[entity].OnUpdateCallback();
+                }
             }
         }
 
@@ -123,7 +128,7 @@ namespace XiheFramework.Core.Entity {
             }
 
             m_Entities.Add(finalId, entity);
-            entity.EntityId = presetId;
+            entity.EntityId = finalId;
             entity.OwnerId = ownerEntityId;
             if (setParent && ownerEntityId != 0) {
                 entity.transform.SetParent(GetEntity<GameEntity>(ownerEntityId).transform, true);

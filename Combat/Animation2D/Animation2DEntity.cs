@@ -16,6 +16,7 @@ namespace XiheFramework.Combat.Animation2D {
         public MeshRenderer mainMeshRenderer;
         public Vector3 offset;
 
+        public override string EntityGroupName => "Animation2DEntity";
         public override string EntityAddressName => animationName;
 
         //properties

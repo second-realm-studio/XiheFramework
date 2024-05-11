@@ -4,9 +4,11 @@ using UnityEngine.Serialization;
 
 namespace XiheFramework.Core.Entity {
     public abstract class GameEntity : MonoBehaviour {
-        public int executionOrder;
+        // public int executionOrder;
 
         public uint EntityId { get; internal set; }
+
+        public abstract string EntityGroupName { get; }
         
         /// <summary>
         /// Indexing name for Addressable

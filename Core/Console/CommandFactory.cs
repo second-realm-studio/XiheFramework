@@ -1,22 +1,41 @@
 ﻿using System;
-using System.Windows.Input;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace DevConsole {
+namespace XiheFramework.Core.Console {
     public static class CommandFactory {
         public static bool ExecuteCommand(string commandString) {
             var parts = commandString.Split(' ');
             var commandName = parts[0];
-            var commandType = Type.GetType($"DevConsole.Commands.{commandName}Command");
-            if (commandType == null) {
-                return false;
+            //search all assemblies for the command
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                var commandType = assembly.GetType($"DevCommands.{commandName}Command");
+                if (commandType != null) {
+                    var command = (IDevConsoleCommand)Activator.CreateInstance(commandType);
+
+                    var args = new string[parts.Length - 1];
+                    Array.Copy(parts, 1, args, 0, args.Length);
+
+                    return command.Execute(args);
+                }
             }
 
-            var command = (IDevConsoleCommand)Activator.CreateInstance(commandType);
+            Debug.LogError($"Command {commandName} not found");
+            return false;
+        }
 
-            var args = new string[parts.Length - 1];
-            Array.Copy(parts, 1, args, 0, args.Length);
+        public static string[] PrintAllCommands() {
+            //search all assemblies for the command
+            var result = new List<string>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                foreach (var type in assembly.GetTypes()) {
+                    if (type.GetInterface("IDevConsoleCommand") != null) {
+                        result.Add(type.Name);
+                    }
+                }
+            }
 
-            return command.Execute(args);
+            return result.ToArray();
         }
     }
 }

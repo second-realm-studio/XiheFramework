@@ -10,11 +10,11 @@ namespace XiheFramework.Combat.Action {
     public class ActionModule : GameModule {
         public readonly string onChangeActionEventName = "Action.OnChangeAction";
 
-        private Dictionary<uint, bool> m_OwnerSwitchingActionStatus = new Dictionary<uint, bool>();//prevent multiple action switch at the same frame.
+        private Dictionary<uint, bool> m_OwnerSwitchingActionStatus = new Dictionary<uint, bool>(); //prevent multiple action switch at the same frame.
 
         private Dictionary<uint, uint> m_CurrentActions = new Dictionary<uint, uint>();
 
-        public void ChangeAction(uint ownerEntityId, string actionName, params KeyValuePair<string, object>[] args) {
+        public void ChangeAction(uint ownerEntityId, string actionAddress, params KeyValuePair<string, object>[] args) {
             if (m_OwnerSwitchingActionStatus.ContainsKey(ownerEntityId)) {
                 if (m_OwnerSwitchingActionStatus[ownerEntityId] == true) {
                     return;
@@ -38,22 +38,19 @@ namespace XiheFramework.Combat.Action {
                 m_CurrentActions.Add(ownerEntityId, 0);
             }
 
-            var action = Game.Entity.InstantiateEntity<ActionEntity>(ActionUtil.GetActionEntityAddress(actionName));
+            var action = Game.Entity.InstantiateEntity<ActionEntity>(actionAddress, ownerEntityId, true, 0u, entity => { entity.SetArguments(args); });
             m_CurrentActions[ownerEntityId] = action.EntityId;
 
             if (action == null) {
-                Debug.LogError($"{actionName} Action not found");
+                Debug.LogError($"{actionAddress} Action not found");
                 return;
             }
 
-            action.OwnerId = ownerEntityId;
-            action.SetArguments(args);
-
-            OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(action.EntityId, actionName, args);
+            OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(action.EntityId, actionAddress, args);
             Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
 
             if (enableDebug) {
-                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityAddressName}({ownerEntityId}) Change Action: {actionName}");
+                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityAddressName}({ownerEntityId}) Change Action: {actionAddress}");
             }
         }
 

@@ -16,6 +16,8 @@ namespace XiheFramework.Combat.Base {
         public float maxStamina;
         public string entryActionName;
 
+        public override string EntityGroupName => "CombatEntity";
+
         public override string EntityAddressName {
             get {
                 if (string.IsNullOrEmpty(combatEntityName)) {

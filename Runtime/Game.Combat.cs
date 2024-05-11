@@ -6,12 +6,10 @@ using XiheFramework.Combat.Interact;
 using XiheFramework.Combat.Particle;
 using XiheFramework.Combat.Projectile;
 using XiheFramework.Core.Base;
-using XiheFramework.Core.CameraBehaviour;
 
 namespace XiheFramework.Runtime {
     public static partial class Game {
         public static BuffModule Buff => GameManager.GetModule<BuffModule>();
-        public static CameraBehaviourModule Camera => GameManager.GetModule<CameraBehaviourModule>();
         public static DamageModule Damage => GameManager.GetModule<DamageModule>();
         public static ActionModule Action => GameManager.GetModule<ActionModule>();
         public static Animation2DModule Animation2D => GameManager.GetModule<Animation2DModule>();

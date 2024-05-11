@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Buff {
-    public abstract class BuffEntity : CombatEntityBase {
+    public abstract class BuffEntity : TimeBasedGameEntity {
 
         /// <summary>
         /// 0=infinite

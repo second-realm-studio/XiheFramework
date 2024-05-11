@@ -4,12 +4,14 @@ using UnityEditor;
 #if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+using XiheFramework.Core.Entity;
 #endif
 using UnityEngine;
 using XiheFramework.Combat.Animation2D;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Particle;
 using XiheFramework.Combat.Projectile;
+using XiheFramework.Core.LogicTime;
 
 namespace XiheFramework.Combat.Editor {
     public class BatchAddressableWindow : EditorWindow {
@@ -65,7 +67,7 @@ namespace XiheFramework.Combat.Editor {
                 AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
                 foreach (string assetPath in assetPaths) {
                     var guid = AssetDatabase.AssetPathToGUID(assetPath);
-                    CombatEntityBase entity = AssetDatabase.LoadAssetAtPath<CombatEntityBase>(assetPath);
+                    GameEntity entity = AssetDatabase.LoadAssetAtPath<GameEntity>(assetPath);
                     if (entity == null) {
                         settings.RemoveAssetEntry(guid);
                         continue;
@@ -77,29 +79,7 @@ namespace XiheFramework.Combat.Editor {
                     }
 
                     string groupName = "Default";
-                    if (entity is Action.ActionEntity) {
-                        groupName = "ActionEntity";
-                    }
-
-                    if (entity is Animation2DEntity) {
-                        groupName = "Animation2DEntity";
-                    }
-
-                    if (entity is Buff.BuffEntity) {
-                        groupName = "BuffEntity";
-                    }
-
-                    if (entity is ParticleEntity) {
-                        groupName = "ParticleEntity";
-                    }
-
-                    if (entity is CombatEntity) {
-                        groupName = "CombatEntity";
-                    }
-
-                    if (entity is ProjectileEntity) {
-                        groupName = "ProjectileEntity";
-                    }
+                    groupName = entity.GetType().Name;
 
                     //find group
                     AddressableAssetGroup group = settings.FindGroup(groupName);

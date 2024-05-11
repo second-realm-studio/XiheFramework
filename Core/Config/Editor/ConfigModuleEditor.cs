@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
-using XiheFramework.Core.Config.Entry;
 
 namespace XiheFramework.Core.Config.Editor {
     [CustomEditor(typeof(ConfigModule))]
     public class ConfigModuleEditor : UnityEditor.Editor {
         private ConfigModule m_Target;
 
-        private string[] m_ConfigEntryTypes;
+        private Type[] m_ConfigEntryTypes = new Type[] { typeof(bool), typeof(float), typeof(int), typeof(UnityEngine.Object), typeof(string), typeof(Vector2), typeof(Vector3) };
 
         private void OnEnable() {
             m_Target = (ConfigModule)target;
-            m_ConfigEntryTypes = GetAllConfigEntryTypes();
         }
 
         public override void OnInspectorGUI() {
@@ -35,7 +33,6 @@ namespace XiheFramework.Core.Config.Editor {
             EditorGUILayout.BeginVertical(GUILayout.MinWidth(30));
             EditorGUILayout.EndVertical();
 
-
             EditorGUILayout.EndHorizontal();
 
             for (LinkedListNode<ConfigModule.ConfigSetting> node = m_Target.configSettings.First; node != null; node = node.Next) {
@@ -43,8 +40,8 @@ namespace XiheFramework.Core.Config.Editor {
 
                 //type
                 var selectedId = 0;
-                if (!string.IsNullOrEmpty(node.Value.configType)) {
-                    if (m_ConfigEntryTypes.Contains(node.Value.configType)) {
+                if (node.Value.configType != null) {
+                    if (m_ConfigEntryTypes.Contains(node.Value.configType.Name)) {
                         selectedId = Array.IndexOf(m_ConfigEntryTypes, node.Value.configType);
                     }
                 }
@@ -57,56 +54,74 @@ namespace XiheFramework.Core.Config.Editor {
 
                 //path
                 EditorGUILayout.BeginVertical(GUILayout.MinWidth(100));
-                node.Value.configEntry.configPath = EditorGUILayout.TextField(node.Value.configEntry.configPath);
+                node.Value.configPath = EditorGUILayout.TextField(node.Value.configPath);
                 EditorGUILayout.EndVertical();
 
                 //value
                 EditorGUILayout.BeginVertical(GUILayout.MinWidth(100));
-                Debug.Log(node.Value.configType);
 
-                switch (node.Value.configType) {
-                    case "Bool":
-                        node.Value.configEntry = new BoolConfigEntry();
-                        var boolEntry = (BoolConfigEntry)(node.Value.configEntry);
-                        boolEntry.value = EditorGUILayout.Toggle(boolEntry.value);
-                        break;
-                    case "Float":
-                        node.Value.configEntry = new FloatConfigEntry();
-                        var floatEntry = (FloatConfigEntry)(node.Value.configEntry);
-                        floatEntry.value = EditorGUILayout.FloatField(floatEntry.value);
-                        break;
-                    case "Int":
-                        node.Value.configEntry = new IntConfigEntry();
-                        var intEntry = (IntConfigEntry)(node.Value.configEntry);
-                        intEntry.value = EditorGUILayout.IntField(intEntry.value);
-                        break;
-                    case "Object":
-                        node.Value.configEntry = new ObjectConfigEntry();
-                        var objectEntry = (ObjectConfigEntry)(node.Value.configEntry);
-                        objectEntry.value = EditorGUILayout.ObjectField((UnityEngine.Object)objectEntry.value, typeof(UnityEngine.Object), true);
-                        break;
-                    case "String":
-                        node.Value.configEntry = new StringConfigEntry();
-                        var stringEntry = (StringConfigEntry)(node.Value.configEntry);
-                        stringEntry.value = EditorGUILayout.TextField(stringEntry.value);
-                        break;
-                    case "Vector2":
-                        node.Value.configEntry = new Vector2ConfigEntry();
-                        var vector2Entry = (Vector2ConfigEntry)(node.Value.configEntry);
-                        EditorGUILayout.BeginVertical();
-                        EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
-                        EditorGUILayout.LabelField("X", GUILayout.Width(10));
-                        vector2Entry.x = EditorGUILayout.FloatField(vector2Entry.x);
-                        EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
-                        EditorGUILayout.LabelField("Y", GUILayout.Width(10));
-                        vector2Entry.y = EditorGUILayout.FloatField(vector2Entry.y);
-                        EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.EndVertical();
-                        break;
-                    default:
-                        break;
-                }
+                // switch (node.Value.configType) {
+                //     case "Bool":
+                //         if (node.Value.configValue is not BoolConfigEntry) {
+                //             node.Value.configEntry = new BoolConfigEntry();
+                //         }
+                //
+                //         var boolEntry = (BoolConfigEntry)(node.Value.configEntry);
+                //         boolEntry.value = EditorGUILayout.Toggle(boolEntry.value);
+                //         break;
+                //     case "Float":
+                //         if (node.Value.configEntry is not FloatConfigEntry) node.Value.configEntry = new FloatConfigEntry();
+                //         var floatEntry = (FloatConfigEntry)(node.Value.configEntry);
+                //         floatEntry.value = EditorGUILayout.FloatField(floatEntry.value);
+                //         break;
+                //     case "Int":
+                //         if (node.Value.configEntry is not IntConfigEntry) node.Value.configEntry = new IntConfigEntry();
+                //         var intEntry = (IntConfigEntry)(node.Value.configEntry);
+                //         intEntry.value = EditorGUILayout.IntField(intEntry.value);
+                //         break;
+                //     case "Object":
+                //         if (node.Value.configEntry is not ObjectConfigEntry) node.Value.configEntry = new ObjectConfigEntry();
+                //         var objectEntry = (ObjectConfigEntry)(node.Value.configEntry);
+                //         objectEntry.value = EditorGUILayout.ObjectField((UnityEngine.Object)objectEntry.value, typeof(UnityEngine.Object), true);
+                //         break;
+                //     case "String":
+                //         if (node.Value.configEntry is not StringConfigEntry) node.Value.configEntry = new StringConfigEntry();
+                //         var stringEntry = (StringConfigEntry)(node.Value.configEntry);
+                //         stringEntry.value = EditorGUILayout.TextField(stringEntry.value);
+                //         break;
+                //     case "Vector2":
+                //         if (node.Value.configEntry is not Vector2ConfigEntry) node.Value.configEntry = new Vector2ConfigEntry();
+                //         var vector2Entry = (Vector2ConfigEntry)(node.Value.configEntry);
+                //         EditorGUILayout.BeginVertical();
+                //         EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
+                //         EditorGUILayout.LabelField("X", GUILayout.Width(10));
+                //         vector2Entry.value.x = EditorGUILayout.FloatField(vector2Entry.value.x);
+                //         EditorGUILayout.EndHorizontal();
+                //         EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
+                //         EditorGUILayout.LabelField("Y", GUILayout.Width(10));
+                //         vector2Entry.value.y = EditorGUILayout.FloatField(vector2Entry.value.y);
+                //         EditorGUILayout.EndHorizontal();
+                //         EditorGUILayout.EndVertical();
+                //         break;
+                //     case "Vector3":
+                //         if (node.Value.configEntry is not Vector3ConfigEntry) node.Value.configEntry = new Vector3ConfigEntry();
+                //         var vector3Entry = (Vector3ConfigEntry)(node.Value.configEntry);
+                //         EditorGUILayout.BeginVertical();
+                //         EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
+                //         EditorGUILayout.LabelField("X", GUILayout.Width(10));
+                //         vector3Entry.value.x = EditorGUILayout.FloatField(vector3Entry.value.x);
+                //         EditorGUILayout.EndHorizontal();
+                //         EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
+                //         EditorGUILayout.LabelField("Y", GUILayout.Width(10));
+                //         vector3Entry.value.y = EditorGUILayout.FloatField(vector3Entry.value.y);
+                //         EditorGUILayout.EndHorizontal();
+                //         EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(10));
+                //         EditorGUILayout.LabelField("Z", GUILayout.Width(10));
+                //         vector3Entry.value.z = EditorGUILayout.FloatField(vector3Entry.value.z);
+                //         EditorGUILayout.EndHorizontal();
+                //         EditorGUILayout.EndVertical();
+                //         break;
+                // }
 
                 EditorGUILayout.EndVertical();
 
@@ -131,22 +146,22 @@ namespace XiheFramework.Core.Config.Editor {
             }
         }
 
-        private string[] GetAllConfigEntryTypes() {
-            var types = new List<string>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies) {
-                var assemblyTypes = assembly.GetTypes();
-                foreach (var type in assemblyTypes) {
-                    if (type.IsSubclassOf(typeof(ConfigEntryBase))) {
-                        var fullName = type.Name;
-                        var displayName = fullName.Replace("ConfigEntry", "");
-                        types.Add(displayName);
-                    }
-                }
-            }
-
-            return types.ToArray();
-        }
+        // private string[] GetAllConfigEntryTypes() {
+        //     var types = new List<string>();
+        //     var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        //     foreach (var assembly in assemblies) {
+        //         var assemblyTypes = assembly.GetTypes();
+        //         foreach (var type in assemblyTypes) {
+        //             if (type.IsSubclassOf(typeof(ConfigEntry))) {
+        //                 var fullName = type.Name;
+        //                 var displayName = fullName.Replace("ConfigEntry", "");
+        //                 types.Add(displayName);
+        //             }
+        //         }
+        //     }
+        //
+        //     return types.ToArray();
+        // }
 
         private string TrimConfigTypeName(string typeName) {
             return typeName.Replace("ConfigEntry", "");

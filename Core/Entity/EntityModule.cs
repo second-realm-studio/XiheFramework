@@ -15,17 +15,26 @@ namespace XiheFramework.Core.Entity {
 
         private readonly object m_LockRoot = new();
 
-        public T InstantiateEntity<T>(string entityName, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0) where T : GameEntity {
+        /// <summary>
+        /// instantiate entity
+        /// </summary>
+        /// <param name="entityAddress"> addressable address </param>
+        /// <param name="ownerEntityId"> owner Id, 0 if no owner</param>
+        /// <param name="setParent"></param>
+        /// <param name="presetId"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T InstantiateEntity<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0) where T : GameEntity {
             lock (m_LockRoot) {
-                var entity = Game.Resource.InstantiateAsset<GameObject>(entityName).GetComponent<T>();
+                var entity = Game.Resource.InstantiateAsset<GameObject>(entityAddress).GetComponent<T>();
                 SetUpGameEntity(entity, presetId, ownerEntityId, setParent);
                 return entity;
             }
         }
 
-        public void InstantiateEntityAsync<T>(string entityName, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0, Action<T> onLoadCallback = null)
+        public void InstantiateEntityAsync<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0, Action<T> onLoadCallback = null)
             where T : GameEntity {
-            Game.Resource.InstantiateAssetAsync<GameObject>(entityName, go => {
+            Game.Resource.InstantiateAssetAsync<GameObject>(entityAddress, go => {
                 var entity = go.GetComponent<T>();
                 SetUpGameEntity(entity, presetId, ownerEntityId, setParent);
                 onLoadCallback?.Invoke(entity);
@@ -96,7 +105,7 @@ namespace XiheFramework.Core.Entity {
         }
 
         void SetUpGameEntity(GameEntity entity, uint presetId, uint ownerEntityId, bool setParent) {
-            uint finalId = 0;
+            uint finalId = 1;
             if (presetId != 0) {
                 if (m_Entities.ContainsKey(presetId)) {
                     m_Entities[presetId].OnDestroyCallback();
@@ -116,7 +125,7 @@ namespace XiheFramework.Core.Entity {
             m_Entities.Add(finalId, entity);
             entity.EntityId = presetId;
             entity.OwnerId = ownerEntityId;
-            if (setParent) {
+            if (setParent && ownerEntityId != 0) {
                 entity.transform.SetParent(GetEntity<GameEntity>(ownerEntityId).transform, true);
             }
 

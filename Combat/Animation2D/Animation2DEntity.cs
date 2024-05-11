@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Core;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Animation2D {
-    public sealed class Animation2DEntity : CombatEntityBase {
+    public sealed class Animation2DEntity : TimeBasedGameEntity {
         public string animationName;
 
         // public SpriteAnimation currentAnimation;

@@ -23,6 +23,10 @@ namespace XiheFramework.Core.Audio {
             AkSoundEngine.SetRTPCValue(variableName, value, target);
         }
 
+        public void SetState(string stateGroupName, string state) {
+            AkSoundEngine.SetState(stateGroupName, state);
+        }
+
         //  public void SetVariable(AK.Wwise.RTPC rtpc,object value, GameObject target){
         //      rtpc.SetValue("GameParameter", value, gameObject);
         //  }

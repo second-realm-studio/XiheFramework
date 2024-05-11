@@ -7,6 +7,12 @@ namespace XiheFramework.Core.Entity {
         public int executionOrder;
 
         public uint EntityId { get; internal set; }
+        
+        /// <summary>
+        /// Indexing name for Addressable
+        /// </summary>
+        public abstract string EntityName { get; }
+
         public uint OwnerId { get; internal set; }
 
         public virtual void OnInitCallback() { }

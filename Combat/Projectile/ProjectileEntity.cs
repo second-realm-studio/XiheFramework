@@ -3,10 +3,11 @@ using UnityEngine.Serialization;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Damage.DataTypes;
 using XiheFramework.Combat.Damage.HitBox;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Projectile {
-    public abstract class ProjectileEntity : CombatEntityBase {
+    public abstract class ProjectileEntity : TimeBasedGameEntity {
         public HitBoxEntityBase hitBox;
         public float lifeTime = 5f;
 

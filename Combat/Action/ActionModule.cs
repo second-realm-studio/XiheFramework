@@ -10,20 +10,20 @@ namespace XiheFramework.Combat.Action {
     public class ActionModule : GameModule {
         public readonly string onChangeActionEventName = "Action.OnChangeAction";
 
-        private Dictionary<uint, bool> m_CombatEntitySwitchingStatus = new Dictionary<uint, bool>();
+        private Dictionary<uint, bool> m_OwnerSwitchingActionStatus = new Dictionary<uint, bool>();//prevent multiple action switch at the same frame.
 
         private Dictionary<uint, uint> m_CurrentActions = new Dictionary<uint, uint>();
 
         public void ChangeAction(uint ownerEntityId, string actionName, params KeyValuePair<string, object>[] args) {
-            if (m_CombatEntitySwitchingStatus.ContainsKey(ownerEntityId)) {
-                if (m_CombatEntitySwitchingStatus[ownerEntityId] == true) {
+            if (m_OwnerSwitchingActionStatus.ContainsKey(ownerEntityId)) {
+                if (m_OwnerSwitchingActionStatus[ownerEntityId] == true) {
                     return;
                 }
 
-                m_CombatEntitySwitchingStatus[ownerEntityId] = true;
+                m_OwnerSwitchingActionStatus[ownerEntityId] = true;
             }
             else {
-                m_CombatEntitySwitchingStatus.Add(ownerEntityId, true);
+                m_OwnerSwitchingActionStatus.Add(ownerEntityId, true);
             }
 
             if (m_CurrentActions.ContainsKey(ownerEntityId)) {
@@ -53,7 +53,7 @@ namespace XiheFramework.Combat.Action {
             Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
 
             if (enableDebug) {
-                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<CombatEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionName}");
+                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionName}");
             }
         }
 
@@ -70,8 +70,8 @@ namespace XiheFramework.Combat.Action {
 
         private void OnChangeAction(object sender, object e) {
             var id = (uint)sender;
-            if (m_CombatEntitySwitchingStatus.ContainsKey(id)) {
-                m_CombatEntitySwitchingStatus[id] = false;
+            if (m_OwnerSwitchingActionStatus.ContainsKey(id)) {
+                m_OwnerSwitchingActionStatus[id] = false;
             }
         }
     }

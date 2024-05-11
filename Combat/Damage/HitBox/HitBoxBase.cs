@@ -3,10 +3,11 @@ using UnityEngine;
 using XiheFramework.Combat.Base;
 using XiheFramework.Combat.Damage.DataTypes;
 using XiheFramework.Core.Entity;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Damage.HitBox {
-    public abstract class HitBoxEntityBase : CombatEntityBase {
+    public abstract class HitBoxEntityBase : TimeBasedGameEntity {
         public float healthDamage;
         public float staminaDamage;
         public Vector3 forceDir;

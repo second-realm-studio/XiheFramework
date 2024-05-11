@@ -6,10 +6,11 @@ using XiheFramework.Combat.Animation2D;
 using XiheFramework.Combat.Buff;
 using XiheFramework.Combat.Constants;
 using XiheFramework.Combat.Damage.DataTypes;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Base {
-    public sealed class CombatEntity : CombatEntityBase {
+    public sealed class CombatEntity : TimeBasedGameEntity {
         public string combatEntityName;
         public float maxHp;
         public float maxStamina;

@@ -2,9 +2,8 @@ using UnityEngine;
 using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
 
-namespace XiheFramework.Combat.Base {
-    public abstract class CombatEntityBase : GameEntity {
-        public abstract string EntityName { get; }
+namespace XiheFramework.Core.LogicTime {
+    public abstract class TimeBasedGameEntity : GameEntity {
 
         protected float timeScale = 1f;
         protected float ScaledDeltaTime => Time.deltaTime * timeScale;

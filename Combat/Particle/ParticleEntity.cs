@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Combat.Base;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Particle {
-    public sealed class ParticleEntity : CombatEntityBase {
+    public sealed class ParticleEntity : TimeBasedGameEntity {
         public string particleName;
 
         public ParticleSystem particle;

@@ -53,7 +53,7 @@ namespace XiheFramework.Combat.Action {
             Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
 
             if (enableDebug) {
-                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionName}");
+                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityAddressName}({ownerEntityId}) Change Action: {actionName}");
             }
         }
 

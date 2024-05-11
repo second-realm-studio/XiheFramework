@@ -16,7 +16,7 @@ namespace XiheFramework.Combat.Animation2D {
         public MeshRenderer mainMeshRenderer;
         public Vector3 offset;
 
-        public override string EntityName => animationName;
+        public override string EntityAddressName => animationName;
 
         //properties
         public Material MainMaterial { get; private set; }
@@ -117,7 +117,7 @@ namespace XiheFramework.Combat.Animation2D {
 
         public void RegisterEvent(int frame, System.Action callback) {
             if (frame > TotalFrameCount - 1 || frame < 0) {
-                Debug.LogWarning($"{EntityName} frame {frame} out of range");
+                Debug.LogWarning($"{EntityAddressName} frame {frame} out of range");
             }
 
             if (m_EventMap.ContainsKey(frame)) {

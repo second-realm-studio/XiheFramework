@@ -3,16 +3,8 @@
 namespace XiheFramework.Core.Config {
     [Serializable]
     public class ConfigEntry {
-        public Type configType;
-        public string configPath;
-        public object configValue;
-
-        public ConfigEntry() { }
-
-        public ConfigEntry(Type configType, string configPath, object configValue) {
-            this.configType = configType;
-            this.configPath = configPath;
-            this.configValue = configValue;
-        }
+        public string path;
+        public ConfigType type;
+        public string value;
     }
 }

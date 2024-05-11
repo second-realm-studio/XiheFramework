@@ -16,7 +16,7 @@ namespace XiheFramework.Combat.Base {
         public float maxStamina;
         public string entryActionName;
 
-        public override string EntityName {
+        public override string EntityAddressName {
             get {
                 if (string.IsNullOrEmpty(combatEntityName)) {
                     combatEntityName = gameObject.name + " " + GetInstanceID();

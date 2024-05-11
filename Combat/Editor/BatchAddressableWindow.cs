@@ -73,7 +73,7 @@ namespace XiheFramework.Combat.Editor {
                         continue;
                     }
 
-                    if (string.IsNullOrEmpty(entity.EntityName)) {
+                    if (string.IsNullOrEmpty(entity.EntityAddressName)) {
                         settings.RemoveAssetEntry(guid);
                         continue;
                     }
@@ -87,7 +87,7 @@ namespace XiheFramework.Combat.Editor {
                         group = settings.CreateGroup(groupName, false, false, true, null);
                     }
 
-                    string assetName = groupName + "_" + entity.EntityName;
+                    string assetName = groupName + "_" + entity.EntityAddressName;
 
                     // actually set address
                     AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);

@@ -18,7 +18,7 @@ namespace XiheFramework.Combat.Action {
             Arguments = new Dictionary<string, object>();
             OnActionInit();
             var owner = Game.Entity.GetEntity<CombatEntity>(OwnerId);
-            Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentActionName(owner), EntityName);
+            Game.Blackboard.SetData(GeneralBlackboardNames.CombatEntity_CurrentActionName(owner), EntityAddressName);
         }
 
         public override void OnUpdateCallback() {

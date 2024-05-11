@@ -11,7 +11,7 @@ namespace XiheFramework.Core.Entity {
         /// <summary>
         /// Indexing name for Addressable
         /// </summary>
-        public abstract string EntityName { get; }
+        public abstract string EntityAddressName { get; }
 
         public uint OwnerId { get; internal set; }
 

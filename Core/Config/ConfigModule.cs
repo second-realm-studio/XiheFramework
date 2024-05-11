@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Core.Config {
     public class ConfigModule : GameModule {
-        public LinkedList<ConfigSetting> configSettings = new LinkedList<ConfigSetting>();
-
+        public TextAsset configJsonAsset;
         private Dictionary<string, ConfigEntry> m_ConfigEntries = new Dictionary<string, ConfigEntry>();
 
         public void AddConfig(ConfigEntry configEntry) {
-            if (m_ConfigEntries.ContainsKey(configEntry.configPath)) {
-                m_ConfigEntries[configEntry.configPath] = configEntry;
+            if (!m_ConfigEntries.ContainsKey(configEntry.path)) {
+                m_ConfigEntries.Add(configEntry.path, configEntry);
+                Debug.Log($"Add Config: {configEntry.path} to {configEntry.value.ToString()}");
             }
             else {
-                m_ConfigEntries.Add(configEntry.configPath, configEntry);
-                Debug.Log($"Add Config: {configEntry.configPath}");
+                m_ConfigEntries[configEntry.path] = configEntry;
+                Debug.Log($"Update Config: {configEntry.path} to {configEntry.value.ToString()}");
             }
         }
 
@@ -26,26 +27,23 @@ namespace XiheFramework.Core.Config {
             }
         }
 
-        public T FetchConfig<T>(string configPath) where T : ConfigEntry {
+        public T FetchConfig<T>(string configPath) {
             if (m_ConfigEntries.TryGetValue(configPath, out var entry)) {
-                return entry as T;
+                if (entry is T value) {
+                    return value;
+                }
+
+                Debug.LogError($"Config: {configPath} Type Mismatch. Actual Type: {entry.value.GetType().Name}");
             }
 
-            return null;
+            return default;
         }
 
         public override void Setup() {
-            foreach (var setting in configSettings) {
-                var entry = new ConfigEntry(setting.configType, setting.configPath, setting.configValue);
-                AddConfig(entry);
+            var data = JsonUtility.FromJson<ConfigData>(configJsonAsset.text);
+            foreach (var setting in data.entries) {
+                AddConfig(setting);
             }
-        }
-
-        [Serializable]
-        public class ConfigSetting {
-            public Type configType;
-            public string configPath;
-            public object configValue;
         }
     }
 }

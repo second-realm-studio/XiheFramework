@@ -29,7 +29,7 @@ namespace XiheFramework.Combat.Buff {
             int buffIndex = -1;
             for (var i = 0; i < currentBuffsArray.Length; i++) {
                 var entity = currentBuffsArray[i];
-                if (entity.EntityName == buffName) {
+                if (entity.EntityAddressName == buffName) {
                     buffIndex = i;
                     break;
                 }
@@ -68,7 +68,7 @@ namespace XiheFramework.Combat.Buff {
             }
 
             if (enableDebug) {
-                Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] gained {buffName}({stack})");
+                Debug.Log($"[BUFF]{owner.EntityAddressName}[{owner.EntityId}] gained {buffName}({stack})");
             }
         }
 
@@ -100,7 +100,7 @@ namespace XiheFramework.Combat.Buff {
                 var eventArgs = new OnBuffDestroyEventArgs(buffEntity.EntityId, buffName);
                 Game.Event.InvokeNow(onBuffDestroyedEvtName, owner.EntityId, eventArgs);
                 if (enableDebug) {
-                    Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] lost {buffName}");
+                    Debug.Log($"[BUFF]{owner.EntityAddressName}[{owner.EntityId}] lost {buffName}");
                 }
             }
             else {
@@ -109,7 +109,7 @@ namespace XiheFramework.Combat.Buff {
                 var eventArgs = new OnRemoveBuffEventArgs(buffEntity.EntityId, buffName, stack, buffEntity.CurrentStack - stack);
                 Game.Event.InvokeNow(onBuffRemovedEvtName, owner.EntityId, eventArgs);
                 if (enableDebug) {
-                    Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] removed {stack}stacks of {buffName}");
+                    Debug.Log($"[BUFF]{owner.EntityAddressName}[{owner.EntityId}] removed {stack}stacks of {buffName}");
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace XiheFramework.Combat.Buff {
             var owner = Runtime.Game.Entity.GetEntity<CombatEntity>(ownerId);
             var buffs = GetBuffEntityArray(ownerId);
             foreach (var buff in buffs) {
-                if (buff.EntityName == buffName) return buff;
+                if (buff.EntityAddressName == buffName) return buff;
             }
 
             return null;
@@ -133,7 +133,7 @@ namespace XiheFramework.Combat.Buff {
 
         public void ClearBuff(uint ownerId) {
             foreach (var buffEntity in GetBuffEntityArray(ownerId)) {
-                RemoveBuff(ownerId, buffEntity.EntityName, 0);
+                RemoveBuff(ownerId, buffEntity.EntityAddressName, 0);
             }
         }
 

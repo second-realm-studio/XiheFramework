@@ -17,12 +17,13 @@ namespace XiheFramework.Core.Base {
 
         private readonly Queue<GameModule> m_RegisterGameModulesQueue = new();
 
+        private bool m_OnInitEventInvoked = false;
+
         private void Awake() {
             Application.targetFrameRate = frameRate;
 
             RegisterAllComponent();
             foreach (var component in m_GameModules.Values) component.Setup();
-
             Debug.LogFormat("XiheFramework Initialized");
         }
 
@@ -31,8 +32,15 @@ namespace XiheFramework.Core.Base {
 
             //late start for all modules
             foreach (var component in m_GameModules.Values) component.OnLateStart();
+        }
+
+        private void Update() {
+            if (m_OnInitEventInvoked) {
+                return;
+            }
 
             Game.Event.Invoke(onXiheFrameworkInitialized);
+            m_OnInitEventInvoked = true;
         }
 
         private void RegisterAllComponent() {

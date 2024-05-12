@@ -94,6 +94,24 @@ namespace XiheFramework.Core.Entity {
             }
         }
 
+        public override void OnFixedUpdate() {
+            var cache = new List<uint>(m_Entities.Keys);
+            foreach (var entity in cache) {
+                if (m_Entities.ContainsKey(entity)) {
+                    m_Entities[entity].OnFixedUpdateCallback();
+                }
+            }
+        }
+
+        public override void OnLateUpdate() {
+            var cache = new List<uint>(m_Entities.Keys);
+            foreach (var entity in cache) {
+                if (m_Entities.ContainsKey(entity)) {
+                    m_Entities[entity].OnLateUpdateCallback();
+                }
+            }
+        }
+
         public override void OnReset() {
             var destroyQueue = new Queue<GameEntity>();
             foreach (var entity in m_Entities.Values) {

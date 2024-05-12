@@ -12,11 +12,11 @@ namespace XiheFramework.Core.Config {
         public void AddConfig(ConfigEntry configEntry) {
             if (!m_ConfigEntries.ContainsKey(configEntry.path)) {
                 m_ConfigEntries.Add(configEntry.path, configEntry);
-                Debug.Log($"Add Config: {configEntry.path} to {configEntry.value.ToString()}");
+                Debug.Log($"Add Config: {configEntry.path} to {configEntry.value}");
             }
             else {
                 m_ConfigEntries[configEntry.path] = configEntry;
-                Debug.Log($"Update Config: {configEntry.path} to {configEntry.value.ToString()}");
+                Debug.Log($"Update Config: {configEntry.path} to {configEntry.value}");
             }
         }
 

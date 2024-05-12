@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
@@ -29,11 +30,7 @@ namespace XiheFramework.Core.Config {
 
         public T FetchConfig<T>(string configPath) {
             if (m_ConfigEntries.TryGetValue(configPath, out var entry)) {
-                if (entry is T value) {
-                    return value;
-                }
-
-                Debug.LogError($"Config: {configPath} Type Mismatch. Actual Type: {entry.value.GetType().Name}");
+                return entry.value is T value ? value : default;
             }
 
             return default;

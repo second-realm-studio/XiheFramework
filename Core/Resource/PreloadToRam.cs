@@ -10,7 +10,7 @@ namespace XiheFramework.Core.Resource {
         private string m_LevelDataAddress;
 
         private void Start() {
-            var nextLevelName = Game.Blackboard.GetData<string>(Game.Scene.CurrentLevelDataName);
+            var nextLevelName = Game.Blackboard.GetData<string>(Game.Scene.currentLevelDataName);
             m_LevelSceneAddress = nextLevelName;
             m_LevelDataAddress = $"LevelData_{nextLevelName}";
             Game.Resource.LoadAssetAsync<LevelDataSetting>(m_LevelDataAddress, OnLevelDataLoaded);

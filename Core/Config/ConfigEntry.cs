@@ -5,6 +5,6 @@ namespace XiheFramework.Core.Config {
     public class ConfigEntry {
         public string path;
         public ConfigType type;
-        public string value;
+        public object value;
     }
 }

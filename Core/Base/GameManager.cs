@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Utility;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Base {
     /// <summary>
     /// Game manager for XiheFramework, work as a Singleton
     /// </summary>
     public class GameManager : Singleton<GameManager> {
+        public static string onXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
         private const int FrameAtSceneId = 0;
         public int frameRate = 60;
 
@@ -29,10 +31,8 @@ namespace XiheFramework.Core.Base {
 
             //late start for all modules
             foreach (var component in m_GameModules.Values) component.OnLateStart();
-        }
 
-        private void Update() {
-            
+            Game.Event.Invoke(onXiheFrameworkInitialized);
         }
 
         private void RegisterAllComponent() {

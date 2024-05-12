@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 #if USE_ADDRESSABLE
 using UnityEngine.AddressableAssets;
@@ -10,7 +11,7 @@ using XiheFramework.Core.Base;
 
 namespace XiheFramework.Core.Scene {
     public class SceneModule : GameModule {
-        public readonly string CurrentLevelDataName = "Game.CurrentLevel";
+        public readonly string currentLevelDataName = "Game.CurrentLevel";
         public string menuLevelAddress;
         public bool loadMenuOnSetup;
 
@@ -26,9 +27,11 @@ namespace XiheFramework.Core.Scene {
         /// <param name="sceneAddress"></param>
         /// <param name="loadSceneMode"></param>
         /// <param name="activateOnLoad"></param>
-        public void LoadSceneAsync(string sceneAddress, LoadSceneMode loadSceneMode, bool activateOnLoad) {
+        /// <param name="onSceneLoadComplete"></param>
+        public void LoadSceneAsync(string sceneAddress, LoadSceneMode loadSceneMode, bool activateOnLoad, Action<AsyncOperationHandle<SceneInstance>> onSceneLoadComplete = null) {
 #if USE_ADDRESSABLE
-            Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
+            var hanlde = Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
+            hanlde.Completed += onSceneLoadComplete;
 #endif
         }
     }

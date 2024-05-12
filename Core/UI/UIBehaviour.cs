@@ -14,13 +14,6 @@ namespace XiheFramework.Core.UI {
         private void Register() {
             if (uiName == string.Empty) uiName = gameObject.name + gameObject.GetInstanceID();
             Game.UI.RegisterUIBehaviour(uiName, this);
-
-            if (activeOnStart) {
-                Active();
-            }
-            else {
-                UnActive();
-            }
         }
 
         protected virtual void OnStart() { }
@@ -30,12 +23,10 @@ namespace XiheFramework.Core.UI {
         protected virtual void OnUnActive() { }
 
         public void Active() {
-            gameObject.SetActive(true);
             OnActive();
         }
 
         public void UnActive() {
-            gameObject.SetActive(false);
             OnUnActive();
         }
     }

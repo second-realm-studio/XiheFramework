@@ -13,6 +13,13 @@ namespace XiheFramework.Core.UI {
             }
 
             m_UIBehaviours.Add(behaviourName, behaviour);
+
+            if (behaviour.activeOnStart) {
+                ActivateUI(behaviourName);
+            }
+            else {
+                UnactivateUI(behaviourName);
+            }
         }
 
         /// <summary>
@@ -29,6 +36,7 @@ namespace XiheFramework.Core.UI {
                 return false;
             }
 
+            m_UIBehaviours[behaviourName].gameObject.SetActive(true);
             m_UIBehaviours[behaviourName].Active();
             return true;
         }
@@ -37,6 +45,7 @@ namespace XiheFramework.Core.UI {
             if (!m_UIBehaviours.ContainsKey(behaviourName)) return false;
 
             m_UIBehaviours[behaviourName].UnActive();
+            m_UIBehaviours[behaviourName].gameObject.SetActive(false);
             return true;
         }
 

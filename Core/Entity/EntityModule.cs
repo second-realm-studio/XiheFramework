@@ -47,8 +47,11 @@ namespace XiheFramework.Core.Entity {
             lock (m_LockRoot) {
                 if (m_Entities.ContainsKey(entityId)) {
                     var entity = m_Entities[entityId];
-                    entity.OnDestroyCallback();
-                    Destroy(entity.gameObject);
+                    if (entity != null) {
+                        entity.OnDestroyCallback();
+                        Destroy(entity.gameObject);
+                    }
+
                     m_Entities.Remove(entityId);
                     Game.Event.Invoke(onEntityDestroyedEvtName, entityId);
                 }

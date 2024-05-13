@@ -43,6 +43,10 @@ namespace XiheFramework.Core.UI {
 
         public bool UnactivateUI(string behaviourName) {
             if (!m_UIBehaviours.ContainsKey(behaviourName)) return false;
+            if (m_UIBehaviours[behaviourName] == null) {
+                m_UIBehaviours.Remove(behaviourName);
+                return false;
+            }
 
             m_UIBehaviours[behaviourName].UnActive();
             m_UIBehaviours[behaviourName].gameObject.SetActive(false);

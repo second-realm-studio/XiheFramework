@@ -7,7 +7,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Blackboard {
     public class BlackboardModule : GameModule {
-        public readonly string OnDataChangeEventName = "Blackboard.OnDataChange";
+        public readonly string onDataChangeEventName = "Blackboard.OnDataChange";
 
         private readonly Dictionary<string, object> m_Data = new();
 
@@ -58,7 +58,7 @@ namespace XiheFramework.Core.Blackboard {
             else
                 m_Data.Add(dataName, value);
 
-            Game.Event.Invoke(OnDataChangeEventName, dataName, value);
+            Game.Event.Invoke(onDataChangeEventName, dataName, value);
             UpdateDataPathTree();
         }
 

@@ -98,6 +98,9 @@ namespace XiheFramework.Core.Event {
                         var eventPair = new EventPair(sender, eventArg, handler);
                         lock (m_LockRoot) {
                             m_WaitingList.Enqueue(eventPair);
+                            if (enableDebug) {
+                                Debug.Log($"[Event] Invoke: {eventName} with handler: {handler.Method.Name} [{handlerId}]");
+                            }
                         }
                     }
                 }

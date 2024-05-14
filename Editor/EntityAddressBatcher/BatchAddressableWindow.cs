@@ -4,14 +4,10 @@ using UnityEditor;
 #if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
-using XiheFramework.Core.Entity;
 #endif
+
+using XiheFramework.Core.Entity;
 using UnityEngine;
-using XiheFramework.Combat.Animation2D;
-using XiheFramework.Combat.Base;
-using XiheFramework.Combat.Particle;
-using XiheFramework.Combat.Projectile;
-using XiheFramework.Core.LogicTime;
 
 namespace XiheFramework.Combat.Editor {
     public class BatchAddressableWindow : EditorWindow {

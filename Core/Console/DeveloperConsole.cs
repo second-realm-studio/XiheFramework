@@ -17,8 +17,6 @@ namespace XiheFramework.Core.Console {
         private List<string> m_Logs = new List<string>();
 
         private void Start() {
-            DontDestroyOnLoad(gameObject);
-
             consolePanel.SetActive(m_IsOpen);
 
             clearButton.onClick.AddListener(() => {

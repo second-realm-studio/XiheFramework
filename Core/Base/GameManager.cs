@@ -9,9 +9,9 @@ namespace XiheFramework.Core.Base {
     /// Game manager for XiheFramework, work as a Singleton
     /// </summary>
     public class GameManager : Singleton<GameManager> {
-        public static string onXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
-        private const int FrameAtSceneId = 0;
+        public static readonly string OnXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
         public int frameRate = 60;
+        public bool dontDestroyOnLoad = true;
 
         private readonly Dictionary<Type, GameModule> m_GameModules = new();
 
@@ -28,7 +28,9 @@ namespace XiheFramework.Core.Base {
         }
 
         private void Start() {
-            DontDestroyOnLoad(gameObject);
+            if (dontDestroyOnLoad) {
+                DontDestroyOnLoad(gameObject);
+            }
 
             //late start for all modules
             foreach (var component in m_GameModules.Values) component.OnLateStart();
@@ -39,7 +41,7 @@ namespace XiheFramework.Core.Base {
                 return;
             }
 
-            Game.Event.Invoke(onXiheFrameworkInitialized);
+            Game.Event.Invoke(OnXiheFrameworkInitialized);
             m_OnInitEventInvoked = true;
         }
 

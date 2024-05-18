@@ -6,7 +6,7 @@ namespace XiheFramework.Core.LogicTime {
     public abstract class TimeBasedGameEntity : GameEntity {
 
         protected float timeScale = 1f;
-        protected float ScaledDeltaTime => Time.deltaTime * timeScale;
+        protected float ScaledDeltaTime => Time.unscaledDeltaTime * timeScale;
 
         private string m_OnTimeScaleEventId;
 

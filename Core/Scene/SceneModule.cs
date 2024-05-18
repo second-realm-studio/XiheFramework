@@ -30,8 +30,8 @@ namespace XiheFramework.Core.Scene {
         /// <param name="onSceneLoadComplete"></param>
         public void LoadSceneAsync(string sceneAddress, LoadSceneMode loadSceneMode, bool activateOnLoad, Action<AsyncOperationHandle<SceneInstance>> onSceneLoadComplete = null) {
 #if USE_ADDRESSABLE
-            var hanlde = Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
-            hanlde.Completed += onSceneLoadComplete;
+            var handle = Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
+            handle.Completed += onSceneLoadComplete;
 #endif
         }
     }

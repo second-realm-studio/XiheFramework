@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Combat.Animation2D.LightMaskBaker.Scripts.Editor {
+namespace XiheFramework.Editor.Combat.Animation2D.LightMaskBaker.Scripts {
     public class ShadowMaskBakerWindow : EditorWindow {
         private Texture2D m_SourceTexture;
         private ComputeShader m_ExtendShader;
@@ -21,7 +21,7 @@ namespace XiheFramework.Combat.Animation2D.LightMaskBaker.Scripts.Editor {
         private RenderTexture m_ResultTexture;
         private RenderTexture m_Outline;
 
-        [MenuItem("Xihe/Shadow Mask Baker")]
+        [MenuItem("XiheFramework/Shadow Mask Baker")]
         public static void ShowWindow() {
             GetWindow<ShadowMaskBakerWindow>("Outline Shadow Baker");
         }

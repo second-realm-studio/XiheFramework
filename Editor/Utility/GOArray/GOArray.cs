@@ -1,9 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Utility.GameObjectArray {
+namespace XiheFramework.Editor.Utility.GoArray {
     [ExecuteInEditMode]
-    public class ArrayModifier : MonoBehaviour {
+    public class GOArray : MonoBehaviour {
 #if UNITY_EDITOR
         public GameObject source;
 

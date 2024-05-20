@@ -7,17 +7,23 @@ using XiheFramework.Core.Base;
 
 namespace XiheFramework.Core.Config {
     public class ConfigModule : GameModule {
-        public TextAsset configJsonAsset;
+        public List<PresetConfigEntry> configSettings = new List<PresetConfigEntry>();
+
         private Dictionary<string, ConfigEntry> m_ConfigEntries = new Dictionary<string, ConfigEntry>();
 
         public void AddConfig(ConfigEntry configEntry) {
             if (!m_ConfigEntries.ContainsKey(configEntry.path)) {
                 m_ConfigEntries.Add(configEntry.path, configEntry);
-                Debug.Log($"Add Config: {configEntry.path} to {configEntry.value}");
+                if (enableDebug) {
+                    Debug.Log($"[CFG]Add Config: {configEntry.path} to {configEntry.value}");
+                }
             }
             else {
+                var oldType = m_ConfigEntries[configEntry.path].type;
+                var oldValue = m_ConfigEntries[configEntry.path].value;
                 m_ConfigEntries[configEntry.path] = configEntry;
-                Debug.Log($"Update Config: {configEntry.path} to {configEntry.value}");
+                Debug.LogWarning(
+                    $"[CFG]Duplicated Config. Replacing Config:\"{configEntry.path}\" from [{oldType}] {oldValue} to [{configEntry.type}] {configEntry.value}");
             }
         }
 
@@ -37,9 +43,17 @@ namespace XiheFramework.Core.Config {
         }
 
         public override void Setup() {
-            var data = JsonUtility.FromJson<ConfigData>(configJsonAsset.text);
-            foreach (var setting in data.entries) {
-                AddConfig(setting);
+            foreach (var setting in configSettings) {
+                var newEntry = new ConfigEntry {
+                    path = setting.path,
+                    type = setting.type,
+                    value = setting.GetValue()
+                };
+                AddConfig(newEntry);
+            }
+
+            if (enableDebug) {
+                Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
             }
         }
     }

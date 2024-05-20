@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Combat.Animation2D.LightMaskBaker.Scripts {
+namespace XiheFramework.Editor.Combat.Animation2D.LightMaskBaker.Scripts {
     public static class BakeHelper {
         public static void BakeRawEdge(ComputeShader shader, Texture source, float alphaThreshold, int extendRadius, ComputeShader blurShader, int blurRadius, int blurIteration,
             ComputeShader stepShader, float stepThreshold,

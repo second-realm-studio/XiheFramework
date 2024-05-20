@@ -4,8 +4,8 @@ using UnityEngine;
 using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
-namespace XiheFramework.Core.Blackboard.Editor {
-    public class BlackBoardEditorWindow : EditorWindow {
+namespace XiheFramework.Editor.Core.Blackboard {
+    public class BlackboardDebugWindow : EditorWindow {
         private int m_IterationIndex;
         private readonly string[] m_Options = { "Group", "Type" };
         private Vector2 m_ScrollPos;
@@ -13,18 +13,16 @@ namespace XiheFramework.Core.Blackboard.Editor {
 
         private TreeNode<bool> m_States;
 
+        [MenuItem("XiheFramework/BlackBoard Debug Window")]
+        private static void Init() {
+            // Get existing open window or if none, make a new one:
+            var window = (BlackboardDebugWindow)GetWindow(typeof(BlackboardDebugWindow));
+            window.Show();
+        }
+
         private void Update() {
             Repaint();
         }
-
-        private void OnEnable() {
-            //GameCore.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
-        }
-
-
-        // private void OnSelectionChange() {
-        //     Repaint();
-        // }
 
         private void OnGUI() {
             if (!Application.isPlaying) {
@@ -74,12 +72,6 @@ namespace XiheFramework.Core.Blackboard.Editor {
             EditorGUILayout.EndScrollView();
         }
 
-        [MenuItem("Xihe/BlackBoard Debug Window")]
-        private static void Init() {
-            // Get existing open window or if none, make a new one:
-            var window = (BlackBoardEditorWindow)GetWindow(typeof(BlackBoardEditorWindow));
-            window.Show();
-        }
 
         private void OnBlackBoardChanged(object sender, object e) {
             m_States = new TreeNode<bool>(true);

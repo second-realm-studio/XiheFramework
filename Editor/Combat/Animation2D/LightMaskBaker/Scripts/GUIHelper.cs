@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Combat.Animation2D.LightMaskBaker.Scripts.Editor {
+namespace XiheFramework.Editor.Combat.Animation2D.LightMaskBaker.Scripts {
     public static class GUIHelper {
         public static T TextureField<T>(string name, T texture, float width = 70f, float height = 70f) where T : Texture {
             GUILayout.BeginVertical();

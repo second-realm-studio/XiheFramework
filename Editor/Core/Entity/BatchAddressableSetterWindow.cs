@@ -1,19 +1,16 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
-#if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
-#endif
-
-using XiheFramework.Core.Entity;
 using UnityEngine;
+using XiheFramework.Core.Entity;
 
-namespace XiheFramework.Combat.Editor {
-    public class BatchAddressableWindow : EditorWindow {
-        [MenuItem("Window/Batch Addressable")]
+namespace XiheFramework.Editor.Core.Entity {
+    public class BatchAddressableSetterWindow : EditorWindow {
+        [MenuItem("XiheFramework/Batch Addressable Address Setter")]
         public static void ShowWindow() {
-            GetWindow(typeof(BatchAddressableWindow));
+            GetWindow(typeof(BatchAddressableSetterWindow));
         }
 
         void OnGUI() {

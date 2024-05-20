@@ -2,7 +2,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace XiheFramework.Combat.Animation2D.LightMaskBaker.Scripts {
+namespace XiheFramework.Editor.Combat.Animation2D.LightMaskBaker.Scripts {
     public static class TextureHelper {
         public enum SaveTextureFileFormat {
             EXR,

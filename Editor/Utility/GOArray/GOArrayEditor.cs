@@ -1,13 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Utility.GameObjectArray.Editor {
-    [CustomEditor(typeof(ArrayModifier))]
-    public class ArrayModifierEditor : UnityEditor.Editor {
-        private ArrayModifier m_Target;
+namespace XiheFramework.Editor.Utility.GoArray {
+    [CustomEditor(typeof(GOArray))]
+    public class GOArrayEditor : UnityEditor.Editor {
+        private GOArray m_Target;
 
         private void OnEnable() {
-            m_Target = (ArrayModifier)target;
+            m_Target = (GOArray)target;
         }
 
         public override void OnInspectorGUI() {

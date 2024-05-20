@@ -3,8 +3,8 @@ using UnityEngine;
 using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
-namespace XiheFramework.Core.Event.Editor {
-    public class EventEditorWindow : EditorWindow {
+namespace XiheFramework.Editor.Core.Event {
+    public class EventDebugWindow : EditorWindow {
         private int m_IterationIndex;
 
         //string[] m_Options = {"Group", "Type"};
@@ -14,19 +14,17 @@ namespace XiheFramework.Core.Event.Editor {
 
         private TreeNode<bool> m_States;
 
+        [MenuItem("XiheFramework/Events Debug Window")]
+        private static void Init() {
+            // Get existing open window or if none, make a new one:
+            var window = (EventDebugWindow)GetWindow(typeof(EventDebugWindow));
+            window.Show();
+        }
+
         private void Update() {
             Repaint();
         }
-
-        private void OnEnable() {
-            //Game.Event.Subscribe("BlackBoardChanged", OnBlackBoardChanged);
-        }
-
-
-        // private void OnSelectionChange() {
-        //     Repaint();
-        // }
-
+        
         private void OnGUI() {
             if (!Application.isPlaying) {
                 GUILayout.Label("DATA STATUS : NOT IN PLAY MODE", EditorStyles.boldLabel);
@@ -82,26 +80,9 @@ namespace XiheFramework.Core.Event.Editor {
             GUILayout.Label(handlers.Count.ToString(), EditorStyles.boldLabel);
             GUILayout.EndHorizontal();
 
-            // GUILayout.BeginHorizontal();
-            // GUILayout.Label("Handler Id", EditorStyles.boldLabel);
-            // GUILayout.EndHorizontal();
-
-            // foreach (var key in handlers.Keys) {
-            //     GUILayout.BeginHorizontal();
-            //     GUILayout.Label(key, EditorStyles.boldLabel);
-            //     GUILayout.EndHorizontal();
-            // }
-
             GUILayout.Space(10f);
 
             EditorGUILayout.EndScrollView();
-        }
-
-        [MenuItem("Xihe/Events Debug Window")]
-        private static void Init() {
-            // Get existing open window or if none, make a new one:
-            var window = (EventEditorWindow)GetWindow(typeof(EventEditorWindow));
-            window.Show();
         }
     }
 }

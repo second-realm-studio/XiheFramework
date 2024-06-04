@@ -14,7 +14,8 @@ namespace XiheFramework.Core.Scene {
         public readonly string currentLevelDataName = "Game.CurrentLevel";
         public string menuLevelAddress;
         public bool loadMenuOnSetup;
-
+        
+#if USE_ADDRESSABLE
         public override void OnLateStart() {
             if (loadMenuOnSetup) {
                 LoadSceneAsync(menuLevelAddress, LoadSceneMode.Single, true);
@@ -29,10 +30,11 @@ namespace XiheFramework.Core.Scene {
         /// <param name="activateOnLoad"></param>
         /// <param name="onSceneLoadComplete"></param>
         public void LoadSceneAsync(string sceneAddress, LoadSceneMode loadSceneMode, bool activateOnLoad, Action<AsyncOperationHandle<SceneInstance>> onSceneLoadComplete = null) {
-#if USE_ADDRESSABLE
+
             var handle = Addressables.LoadSceneAsync(sceneAddress, loadSceneMode, activateOnLoad);
             handle.Completed += onSceneLoadComplete;
-#endif
+
         }
+#endif
     }
 }

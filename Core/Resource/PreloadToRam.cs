@@ -24,7 +24,9 @@ namespace XiheFramework.Core.Resource {
             var handle = Game.Resource.LoadAssetsAsyncCoroutine(label, OnProgress, OnLoaded);
             yield return handle;
 
+#if USE_ADDRESSABLE
             Game.Scene.LoadSceneAsync(m_LevelSceneAddress, LoadSceneMode.Single, true);
+#endif
         }
 
         private void OnLoaded(IEnumerable<Object> obj) {

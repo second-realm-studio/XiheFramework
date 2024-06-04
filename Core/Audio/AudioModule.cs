@@ -6,6 +6,7 @@ namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
         private List<uint> m_PlayingEvents = new();
 
+#if USE_WWISE
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null, AkCallbackManager.EventCallback callback = null) {
             var id = audioEvent.Post(container, (uint)AkCallbackType.AK_EndOfEvent, callback);
             m_PlayingEvents.Add(id);
@@ -26,6 +27,8 @@ namespace XiheFramework.Core.Audio {
         public void SetState(string stateGroupName, string state) {
             AkSoundEngine.SetState(stateGroupName, state);
         }
+
+#endif
 
         //  public void SetVariable(AK.Wwise.RTPC rtpc,object value, GameObject target){
         //      rtpc.SetValue("GameParameter", value, gameObject);

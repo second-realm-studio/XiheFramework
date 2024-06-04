@@ -33,6 +33,7 @@ namespace XiheFramework.Core.Console {
         }
 
         private void Update() {
+#if USE_REWIRED
             if (Game.SystemInput.GetButtonDown("OpenDevConsole")) {
                 m_IsOpen = !m_IsOpen;
                 Debug.Log("Dev Console: " + (m_IsOpen ? "Open" : "Close"));
@@ -55,6 +56,7 @@ namespace XiheFramework.Core.Console {
 
                 inputField.text = string.Empty;
             }
+#endif
         }
     }
 }

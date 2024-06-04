@@ -1,8 +1,10 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+#if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+#endif
 using UnityEngine;
 using XiheFramework.Core.Entity;
 

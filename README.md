@@ -7,12 +7,12 @@ A Unity-based game framework for agile development designed to be used by small 
 1. Add As Submodule
 Execute the following Powershell command at the root of your Unity project folder:
 ```PowerShell
-git submodule add https://github.com/sky-haihai/XiheFramework.git Assets/XiheFramework
+git submodule add https://github.com/second-realm-studio/XiheFramework.git Assets/XiheFramework
 ```
 2. Direct Clone
 Execute the following Powershell command at your Assets folder:
 ```PowerShell
-git clone https://github.com/sky-haihai/XiheFramework.git
+git clone https://github.com/second-realm-studio/XiheFramework.git
 ```
 3. Download ZIP
 Download ZIP, and unzip everything under ```.../Assets```.

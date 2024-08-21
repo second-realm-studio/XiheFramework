@@ -1,65 +1,45 @@
 using System;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Combat.Damage.DataTypes;
+using XiheFramework.Combat.Damage.Interfaces;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
+using XiheFramework.Core.Utility.Extension;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Damage.HitBox {
-    public abstract class HitBoxEntityBase : TimeBasedGameEntity {
-        public float healthDamage;
-        public float staminaDamage;
-        public Vector3 forceDir;
-        public float forceMagnitude;
-        public RawDamageType rawDamageType;
-        public float stunDuration;
-        public Collider hitBoxCollider;
-        public string[] damageTags;
+    public abstract class HitBoxBase : MonoBehaviour {
+        public Action<IDamageData> OnDamageDealt { get; set; }
+        public Action<Collider> OnHit { get; set; }
+        public uint OwnerId { get; private set; }
 
+        public Collider hitBoxCollider;
         public LayerMask damageLayerMask;
         public LayerMask hitLayerMask;
 
-        private Action<DamageEventArgs> m_OnDamaged;
-        protected Action<int> onHit;
+        protected abstract void OnContactCallback(Collider other);
+        protected abstract void OnDamageDealtCallback(IDamageData damageData);
+        protected abstract IDamageData GetDamageData(uint senderId, uint receiverId);
 
-        private string m_OnProcessedDamageEventHandlerId;
-
-        public void SetHitCallback(Action<int> onHitCallback) {
-            onHit = onHitCallback;
-        }
-
-        public void SetDamageCallback(Action<DamageEventArgs> onDamageCallback) {
-            m_OnDamaged = onDamageCallback;
-        }
-
-        public virtual void ActivateHitBox() {
+        public virtual void EnableHitBox(uint owner) {
+            OwnerId = owner;
             hitBoxCollider.enabled = true;
-
-            if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                Game.Event.Unsubscribe(Game.Damage.onProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
-            }
-
-            m_OnProcessedDamageEventHandlerId = Game.Event.Subscribe(Game.Damage.onProcessedDamageEventName, OnProcessedDamage);
         }
 
-        public virtual void DeactivateHitBox() {
-            if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                Game.Event.Unsubscribe(Game.Damage.onProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
-            }
-
+        public virtual void DisableHitBox() {
             if (hitBoxCollider != null) {
                 hitBoxCollider.enabled = false;
             }
         }
 
-        public void ClearOnDamagedCallback() {
-            m_OnDamaged = null;
+        public void ClearOnHit() {
+            OnHit = null;
         }
 
-        public override void OnInitCallback() {
-            base.OnInitCallback();
+        public void ClearOnDamageDealt() {
+            OnDamageDealt = null;
+        }
 
+        private void Awake() {
             if (hitBoxCollider == null) {
                 hitBoxCollider = GetComponent<Collider>();
             }
@@ -67,23 +47,32 @@ namespace XiheFramework.Combat.Damage.HitBox {
             hitBoxCollider.enabled = false;
         }
 
-        public override void OnDestroyCallback() {
-            base.OnDestroyCallback();
-
-            if (!String.IsNullOrEmpty(m_OnProcessedDamageEventHandlerId)) {
-                Game.Event.Unsubscribe(Game.Damage.onProcessedDamageEventName, m_OnProcessedDamageEventHandlerId);
+        private void OnTriggerEnter(Collider other) {
+            if (hitLayerMask.Includes(other.gameObject.layer)) {
+                OnContactCallback(other);
+                OnHit?.Invoke(other);
             }
-        }
 
-        private void OnProcessedDamage(object sender, object e) {
-            if (sender is not uint) {
+            var hurtBox = other.GetComponentInParent<HurtBox>();
+
+            if (hurtBox == null) {
                 return;
             }
 
-            var args = (DamageEventArgs)e;
-            if (args.senderId == OwnerId) {
-                m_OnDamaged?.Invoke(args);
+            if (damageLayerMask.Includes(other.gameObject.layer)) {
+                var data = GetDamageData(OwnerId, hurtBox.owner.EntityId);
+                OnDamageDealtCallback(data);
+                OnDamageDealt?.Invoke(data);
+                Game.Damage.RegisterDamage(data);
             }
         }
+
+#if UNITY_EDITOR
+        private void OnValidate() {
+            if (hitBoxCollider == null) {
+                hitBoxCollider = GetComponent<Collider>();
+            }
+        }
+#endif
     }
 }

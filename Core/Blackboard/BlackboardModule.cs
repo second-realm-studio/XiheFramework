@@ -150,5 +150,11 @@ namespace XiheFramework.Core.Blackboard {
         public override void OnReset() {
             ClearData();
         }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Blackboard = this;
+        }
     }
 }

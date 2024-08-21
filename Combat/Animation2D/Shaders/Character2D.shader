@@ -1,6 +1,7 @@
-Shader "CombatSystem/Character2D" {
+Shader "XiheFramework/Character2D" {
     Properties {
         [MainTexture] _MainTex("Sheet Texture", 2D) = "white" {}
+        _TintColor("Tint Color", Color) = (1, 1, 1, 1)
         _Columns("Columns", Float) = 1
         _Rows("Rows", Float) = 1
         _Frame("Frame", Float) = 0
@@ -22,7 +23,6 @@ Shader "CombatSystem/Character2D" {
     SubShader {
         Tags {
             "RenderType" = "Opaque"
-            "RenderPipeline" = "UniversalRenderPipeline"
         }
 
         Pass {
@@ -50,13 +50,9 @@ Shader "CombatSystem/Character2D" {
 
             // Includes
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
             // The structure definition defines which variables it contains.
             // This example uses the Attributes structure as an input structure in
@@ -81,6 +77,7 @@ Shader "CombatSystem/Character2D" {
             //Properties
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_TexelSize;
+                float4 _TintColor;
                 float _Columns;
                 float _Rows;
                 float _Frame;
@@ -182,7 +179,6 @@ Shader "CombatSystem/Character2D" {
                 OUT.positionWS = TransformObjectToWorld(IN.positionOS.xyz);
                 OUT.uv0 = IN.uv0.xy;
                 OUT.normalWS = normalize(TransformObjectToWorldNormal(IN.normalOS));
-
                 OUT.positionHCS.z += lerp(0, _MaxOffsetZ, _CurrentBaseZ - OUT.positionHCS.z);
                 OUT.positionWST = TransformHClipToWorld(OUT.positionHCS);
 
@@ -231,6 +227,7 @@ Shader "CombatSystem/Character2D" {
 
                 float3 resultColor = lerp((color * _ShadowColor).rgb, color.rgb * (1 + addLightColor * addShadowMask * _AdditionalLightsColorInfluence), lightMask);
                 resultColor *= GetMainLight().color;
+                resultColor *= _TintColor.rgb;
 
                 float4 result = float4(resultColor, color.a);
                 return result;
@@ -273,6 +270,7 @@ Shader "CombatSystem/Character2D" {
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_TexelSize;
+                float4 _TintColor;
                 float _Columns;
                 float _Rows;
                 float _Frame;
@@ -305,7 +303,7 @@ Shader "CombatSystem/Character2D" {
             v2f ShadowVertex(appdata v)
             {
                 v2f o;
-                o.positionHCS = TransformObjectToHClip(v.vertex);
+                o.positionHCS = TransformObjectToHClip(v.vertex.xyz);
                 o.uv = v.uv;
                 return o;
             }

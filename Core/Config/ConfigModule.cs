@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Config {
     public class ConfigModule : GameModule {
@@ -54,6 +55,12 @@ namespace XiheFramework.Core.Config {
             if (enableDebug) {
                 Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
             }
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Config = this;
         }
     }
 }

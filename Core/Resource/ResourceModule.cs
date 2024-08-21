@@ -8,6 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 #endif
 using UnityEngine.SocialPlatforms;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 using Object = UnityEngine.Object;
 
 namespace XiheFramework.Core.Resource {
@@ -52,9 +53,9 @@ namespace XiheFramework.Core.Resource {
             try {
                 AsyncOperationHandle<T> op = Addressables.LoadAssetAsync<T>(address);
                 return op.WaitForCompletion();
-
             }
-            catch (Exception) {
+            catch (Exception e) {
+                Debug.LogError(e);
                 return null;
             }
 #else
@@ -67,35 +68,33 @@ namespace XiheFramework.Core.Resource {
 
         #region Async
 
-        public void InstantiateAssetAsync<T>(string address, Action<T> callback) where T : Object {
+        public void InstantiateAssetAsync<T>(string address, Action<T> onInstantiated) where T : Object {
             LoadAssetAsync<T>(address, o => {
-                var go = GameObject.Instantiate(o);
-                callback?.Invoke(go);
+                var go = Instantiate(o);
+                onInstantiated?.Invoke(go);
             });
         }
 
-        public void LoadAssetAsync<T>(string address, Action<T> callback) where T : Object {
-            StartCoroutine(LoadAssetAsyncCoroutine<T>(address, callback));
+        public void LoadAssetAsync<T>(string address, Action<T> onLoaded) where T : Object {
+            StartCoroutine(LoadAssetAsyncCoroutine<T>(address, onLoaded));
         }
 
         public IEnumerator LoadAssetAsyncCoroutine<T>(string address, Action<T> onLoaded) where T : Object {
 #if USE_ADDRESSABLE
-            if (m_CachedAssets.ContainsKey(address)) {
-                var res = m_CachedAssets[address] as T;
-                if (res == null) {
-                    Debug.LogError("[RESOURCE]LoadAsync failed: " + address + " exists but is not a " + typeof(T).Name);
-                }
-
-                onLoaded?.Invoke(res);
+            var alreadyCached = m_CachedAssets.ContainsKey(address) && m_CachedAssets[address] != null && m_CachedAssets[address] is T;
+            if (alreadyCached) {
+                onLoaded?.Invoke((T)m_CachedAssets[address]);
             }
             else {
+                if (m_CachedAssets.ContainsKey(address)) {
+                    m_CachedAssets.Remove(address);
+                }
+
                 AsyncOperationHandle<T> op = Addressables.LoadAssetAsync<T>(address);
                 yield return op;
 
                 if (op.Status == AsyncOperationStatus.Succeeded) {
-                    if (!m_CachedAssets.ContainsKey(address)) {
-                        m_CachedAssets.Add(address, op.Result);
-                    }
+                    m_CachedAssets.Add(address, op.Result);
                 }
                 else {
                     Debug.LogError("[RESOURCE]LoadAsync failed: " + address + ". Msg:" + op.OperationException);
@@ -164,6 +163,18 @@ namespace XiheFramework.Core.Resource {
 
             m_CachedAssets.Clear();
 #endif
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Resource = this;
+        }
+
+        public void DebugPlayerEntity() {
+            if (m_CachedAssets.ContainsKey("PlayerEntity_StandardPlayer")) {
+                Debug.Log(m_CachedAssets["PlayerEntity_StandardPlayer"] == null ? " Player null" : "Player not null");
+            }
         }
     }
 }

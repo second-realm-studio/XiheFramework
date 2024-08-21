@@ -115,7 +115,7 @@ namespace XiheFramework.Editor.Core.Config {
             if (Application.isPlaying) {
                 EditorGUILayout.HelpBox("Changes made during Play Mode will not be saved", MessageType.Warning);
             }
-            
+
             if (m_Target == null) {
                 EditorGUILayout.HelpBox("Open Config Editor from ConfigModule", MessageType.Warning);
                 return;
@@ -129,10 +129,12 @@ namespace XiheFramework.Editor.Core.Config {
                 EditorGUILayout.HelpBox("Open Config Editor from ConfigModule", MessageType.Error);
                 return;
             }
-
-            m_ConfigSettings.serializedObject.Update();
-            m_ReorderableList.DoLayoutList();
-            m_ConfigSettings.serializedObject.ApplyModifiedProperties();
+            
+            if (m_ConfigSettings.serializedObject != null) {
+                m_ConfigSettings.serializedObject.Update();
+                m_ReorderableList.DoLayoutList();
+                m_ConfigSettings.serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 }

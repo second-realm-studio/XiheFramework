@@ -37,10 +37,7 @@ namespace XiheFramework.Core.Base {
         }
 
         private void Update() {
-            if (m_OnInitEventInvoked) {
-                return;
-            }
-
+            if (m_OnInitEventInvoked) return;
             Game.Event.Invoke(OnXiheFrameworkInitialized);
             m_OnInitEventInvoked = true;
         }

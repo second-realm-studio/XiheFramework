@@ -7,13 +7,13 @@ using System.IO;
 
 namespace XiheFramework.Editor.Utility.XiheWizard {
     public class XiheFrameworkWizard : UnityEditor.EditorWindow {
-        private bool useAddressable = false;
-        private bool useCinemachine = false;
-        private bool useRewired = false;
-        private bool useTMP = false;
-        private bool useWwise = false;
+        private bool m_UseAddressable = false;
+        private bool m_UseCinemachine = false;
+        private bool m_UseRewired = false;
+        private bool m_UseTMP = false;
+        private bool m_UseWwise = false;
 
-        private string asmdefPath = "Assets/XiheFramework/XiheFramework.asmdef";
+        private string m_AsmdefPath = "Assets/XiheFramework/XiheFramework.asmdef";
 
         [MenuItem("XiheFramework/Setup Wizard", priority = -1)]
         public static void ShowWindow() {
@@ -34,7 +34,7 @@ namespace XiheFramework.Editor.Utility.XiheWizard {
 
             GUILayout.Space(10);
             GUILayout.Label("ASMDEF File Path:", EditorStyles.boldLabel);
-            asmdefPath = GUILayout.TextField(asmdefPath);
+            m_AsmdefPath = GUILayout.TextField(m_AsmdefPath);
             GUILayout.Space(10);
 
             GUILayout.Label("Enable AFTER Importing Plugins:", EditorStyles.boldLabel);
@@ -42,38 +42,48 @@ namespace XiheFramework.Editor.Utility.XiheWizard {
             // Display checkboxes and check for changes
             bool anyChange = false;
 
-            bool newUseAddressable = GUILayout.Toggle(useAddressable, "USE_ADDRESSABLE");
-            if (newUseAddressable != useAddressable) {
-                useAddressable = newUseAddressable;
+            bool newUseAddressable = GUILayout.Toggle(m_UseAddressable, "USE_ADDRESSABLE");
+            if (newUseAddressable != m_UseAddressable) {
+                m_UseAddressable = newUseAddressable;
                 anyChange = true;
             }
 
-            bool newUseCinemachine = GUILayout.Toggle(useCinemachine, "USE_CINEMACHINE");
-            if (newUseCinemachine != useCinemachine) {
-                useCinemachine = newUseCinemachine;
+            bool newUseCinemachine = GUILayout.Toggle(m_UseCinemachine, "USE_CINEMACHINE");
+            if (newUseCinemachine != m_UseCinemachine) {
+                m_UseCinemachine = newUseCinemachine;
                 anyChange = true;
             }
 
-            bool newUseRewired = GUILayout.Toggle(useRewired, "USE_REWIRED");
-            if (newUseRewired != useRewired) {
-                useRewired = newUseRewired;
+            bool newUseRewired = GUILayout.Toggle(m_UseRewired, "USE_REWIRED");
+            if (newUseRewired != m_UseRewired) {
+                m_UseRewired = newUseRewired;
                 anyChange = true;
             }
 
-            bool newUseTMP = GUILayout.Toggle(useTMP, "USE_TMP");
-            if (newUseTMP != useTMP) {
-                useTMP = newUseTMP;
+            bool newUseTMP = GUILayout.Toggle(m_UseTMP, "USE_TMP");
+            if (newUseTMP != m_UseTMP) {
+                m_UseTMP = newUseTMP;
                 anyChange = true;
             }
 
-            bool newUseWwise = GUILayout.Toggle(useWwise, "USE_WWISE");
-            if (newUseWwise != useWwise) {
-                useWwise = newUseWwise;
+            bool newUseWwise = GUILayout.Toggle(m_UseWwise, "USE_WWISE");
+            if (newUseWwise != m_UseWwise) {
+                m_UseWwise = newUseWwise;
                 anyChange = true;
             }
 
             if (anyChange) {
                 ApplySymbols();
+            }
+
+            GUILayout.Space(10);
+            if (GUILayout.Button("Create Game Folders")) {
+                var folderList = new List<string> { "ArtResources", "AddressableResources", "Scripts", "Scenes", "Settings" };
+                foreach (var folder in folderList) {
+                    if (!AssetDatabase.IsValidFolder("Assets/" + folder)) {
+                        AssetDatabase.CreateFolder("Assets", folder);
+                    }
+                }
             }
         }
 
@@ -85,11 +95,11 @@ namespace XiheFramework.Editor.Utility.XiheWizard {
             List<string> newSymbols = currentSymbols.Split(';').ToList();
 
             // Update the symbols managed by XiheFramework
-            UpdateSymbol(newSymbols, useAddressable, "USE_ADDRESSABLE");
-            UpdateSymbol(newSymbols, useCinemachine, "USE_CINEMACHINE");
-            UpdateSymbol(newSymbols, useRewired, "USE_REWIRED");
-            UpdateSymbol(newSymbols, useTMP, "USE_TMP");
-            UpdateSymbol(newSymbols, useWwise, "USE_WWISE");
+            UpdateSymbol(newSymbols, m_UseAddressable, "USE_ADDRESSABLE");
+            UpdateSymbol(newSymbols, m_UseCinemachine, "USE_CINEMACHINE");
+            UpdateSymbol(newSymbols, m_UseRewired, "USE_REWIRED");
+            UpdateSymbol(newSymbols, m_UseTMP, "USE_TMP");
+            UpdateSymbol(newSymbols, m_UseWwise, "USE_WWISE");
 
             var symbolString = string.Join(";", newSymbols.ToArray());
 
@@ -100,7 +110,8 @@ namespace XiheFramework.Editor.Utility.XiheWizard {
         private void UpdateSymbol(List<string> symbols, bool isEnabled, string symbol) {
             if (isEnabled && !symbols.Contains(symbol)) {
                 symbols.Add(symbol);
-            } else if (!isEnabled && symbols.Contains(symbol)) {
+            }
+            else if (!isEnabled && symbols.Contains(symbol)) {
                 symbols.Remove(symbol);
             }
         }
@@ -109,11 +120,11 @@ namespace XiheFramework.Editor.Utility.XiheWizard {
             string currentSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
             List<string> splitSymbols = currentSymbols.Split(';').ToList();
 
-            useAddressable = splitSymbols.Contains("USE_ADDRESSABLE");
-            useCinemachine = splitSymbols.Contains("USE_CINEMACHINE");
-            useRewired = splitSymbols.Contains("USE_REWIRED");
-            useTMP = splitSymbols.Contains("USE_TMP");
-            useWwise = splitSymbols.Contains("USE_WWISE");
+            m_UseAddressable = splitSymbols.Contains("USE_ADDRESSABLE");
+            m_UseCinemachine = splitSymbols.Contains("USE_CINEMACHINE");
+            m_UseRewired = splitSymbols.Contains("USE_REWIRED");
+            m_UseTMP = splitSymbols.Contains("USE_TMP");
+            m_UseWwise = splitSymbols.Contains("USE_WWISE");
         }
     }
 }

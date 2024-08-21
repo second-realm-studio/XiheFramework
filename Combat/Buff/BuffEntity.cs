@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.LogicTime;
-using XiheFramework.Runtime;
-using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Buff {
     public abstract class BuffEntity : TimeBasedGameEntity {
+        public override string EntityGroupName => "BuffEntity";
 
         /// <summary>
         /// 0=infinite
@@ -37,6 +34,10 @@ namespace XiheFramework.Combat.Buff {
 
         public override void OnDestroyCallback() {
             OnBuffDestroy();
+        }
+
+        public bool HasBuffValue(string valueName) {
+            return m_BuffValues.ContainsKey(valueName);
         }
 
         public void SetBuffValue(string valueName, object value) {
@@ -80,7 +81,7 @@ namespace XiheFramework.Combat.Buff {
         /// Callback on buff added to combat entity for the first time
         /// </summary>
         public abstract void OnBuffEnter();
-        
+
         public abstract void OnBuffAddStack();
 
         public abstract void OnBuffSetValue(string valueName, object value);

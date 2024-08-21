@@ -87,5 +87,11 @@ namespace XiheFramework.Core.LogicTime {
         public override void OnLateStart() {
             GlobalTimeScale = defaultTimeScale;
         }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.LogicTime = this;
+        }
     }
 }

@@ -1,9 +1,6 @@
 using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Runtime;
 #if USE_TMP
 #endif
@@ -20,7 +17,7 @@ namespace XiheFramework.Combat.Animation2D.TestRoom {
         public Slider speedSlider;
 
 
-        public CombatEntity owner;
+        public uint ownerId;
 
         private Animation2DEntity m_Animation2DEntity;
 
@@ -66,7 +63,7 @@ namespace XiheFramework.Combat.Animation2D.TestRoom {
 #endif
             try {
 #if USE_TMP
-                m_Animation2DEntity = Game.Animation2D.InstantiateAnimationEntity(owner.EntityId, animationName);
+                m_Animation2DEntity = Game.Animation2D.InstantiateAnimationEntity(ownerId, animationName);
 #endif
 
 #if USE_TMP

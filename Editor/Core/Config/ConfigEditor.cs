@@ -21,7 +21,7 @@ namespace XiheFramework.Editor.Core.Config {
             EditorGUILayout.PropertyField(m_Target.FindProperty("enableDebug"));
             m_Target.ApplyModifiedProperties();
 
-            if (GUILayout.Button("Open Config Editor", GUILayout.Height(50))) {
+            if (GUILayout.Button("Open Config Editor", GUILayout.Height(40))) {
                 ConfigEditorWindow.ShowWindow(m_Target);
             }
         }

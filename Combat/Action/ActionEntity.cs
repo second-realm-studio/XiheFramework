@@ -1,16 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
-using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
-using GeneralBlackboardNames = XiheFramework.Combat.Constants.GeneralBlackboardNames;
 
 namespace XiheFramework.Combat.Action {
     public abstract class ActionEntity : TimeBasedGameEntity {
-        private float m_TimeScale;
-
+        public override string EntityGroupName => "ActionEntity";
         protected Dictionary<string, object> Arguments { get; private set; }
 
         public override void OnInitCallback() {
@@ -41,12 +36,8 @@ namespace XiheFramework.Combat.Action {
         /// </summary>
         protected abstract void OnActionExit();
 
-        /// <summary>
-        /// called one frame after OnActionExit(), useful to destroy any visual impact of the action, such as animation, particle, sound, etc.
-        /// </summary>
-        //protected abstract void OnActionUnload();
         public void ChangeAction(string actionName, params KeyValuePair<string, object>[] args) {
-            Game.Action.ChangeAction(OwnerId, actionName, args);
+            Game.Action.ChangeAction(OwnerId, $"{EntityGroupName}_{actionName}", args);
         }
 
         public void SetArguments(params KeyValuePair<string, object>[] args) {

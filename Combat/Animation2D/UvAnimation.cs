@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace XiheFramework.Combat.Animation2D {
-    [CreateAssetMenu(fileName = "New FlipBook Animation", menuName = "Terra/Animation/FlipBook Animation", order = 1)]
+    [CreateAssetMenu(fileName = "New FlipBook Animation", menuName = "XiheFramework/Animation/FlipBook Animation", order = 1)]
     public class UvAnimation : ScriptableObject {
         public Texture2D texture;
         public Texture2D shadowTexture;

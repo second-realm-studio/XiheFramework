@@ -1,4 +1,5 @@
-﻿using XiheFramework.Core.Audio;
+﻿using UnityEngine.SceneManagement;
+using XiheFramework.Core.Audio;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Blackboard;
 using XiheFramework.Core.Config;
@@ -20,28 +21,16 @@ namespace XiheFramework.Runtime {
     /// shortcut to get all component
     /// </summary>
     public static partial class Game {
-        public static AudioModule Audio => GameManager.GetModule<AudioModule>();
-        public static EventModule Event => GameManager.GetModule<EventModule>();
-
-        public static BlackboardModule Blackboard => GameManager.GetModule<BlackboardModule>();
-        
-        public static ConfigModule Config => GameManager.GetModule<ConfigModule>();
-
-        public static SerializationModule Serialization => GameManager.GetModule<SerializationModule>();
-
-        public static ResourceModule Resource => GameManager.GetModule<ResourceModule>();
-
-        public static UIModule UI => GameManager.GetModule<UIModule>();
-
-        public static LocalizationModule Localization => GameManager.GetModule<LocalizationModule>();
-
-        public static StateMachineModule Fsm => GameManager.GetModule<StateMachineModule>();
-
-        public static SceneModule Scene => GameManager.GetModule<SceneModule>();
-
-        public static EntityModule Entity => GameManager.GetModule<EntityModule>();
-
-        public static LogicTimeModule LogicTime => GameManager.GetModule<LogicTimeModule>();
+        public static AudioModule Audio { get; internal set; }
+        public static EventModule Event { get; internal set; }
+        public static BlackboardModule Blackboard { get; internal set; }
+        public static ConfigModule Config { get; internal set; }
+        public static ResourceModule Resource { get; internal set; }
+        public static UIModule UI { get; internal set; }
+        public static StateMachineModule Fsm { get; internal set; }
+        public static SceneModule Scene { get; internal set; }
+        public static EntityModule Entity { get; internal set; }
+        public static LogicTimeModule LogicTime { get; internal set; }
 
 #if USE_REWIRED
         public static Player Input(int playerInputId) => ReInput.players.GetPlayers()[playerInputId];

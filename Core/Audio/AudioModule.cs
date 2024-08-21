@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
@@ -30,21 +31,18 @@ namespace XiheFramework.Core.Audio {
 
 #endif
 
-        //  public void SetVariable(AK.Wwise.RTPC rtpc,object value, GameObject target){
-        //      rtpc.SetValue("GameParameter", value, gameObject);
-        //  }
-        //
-        //  public void SetVariableGlobal(AK.Wwise.RTPC rtpc,object value){
-        //      rtpc.SetGlobalValue("GameParameter", value);
-        //  }
-        //
-        //  public void TriggerSwitch(string switchName,string targetStateName, GameObject target){
-        //      AkSoundEngine.SetSwitch(string switchName, string targetStateName, GameObject target);
-        //  }
-        //
-        // // TODO: add switch direct reference support
-        // public void TriggerSwitch(AK.Wwise.Switch switch,string targetStateName){
-        //     switch.Set
-        // }
+        public void PlayViaUnity(uint ownerId, AudioClip audioClip, Vector3 worldPosition, bool loop) {
+            var audioEntity = Game.Entity.InstantiateEntity<AudioEntity>("AudioEntity_StandardAudioEntity", ownerId, true, 0u, null);
+            audioEntity.transform.position = worldPosition;
+            audioEntity.AudioClip = audioClip;
+            audioEntity.Loop = loop;
+            audioEntity.Play();
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Audio = this;
+        }
     }
 }

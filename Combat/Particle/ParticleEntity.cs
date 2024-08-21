@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
 using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Particle {
     public sealed class ParticleEntity : TimeBasedGameEntity {
-        public string particleName;
-
         public ParticleSystem particle;
         private ParticleSystem.MainModule m_MainModule;
         private List<ParticleSystem.MainModule> m_SubMainModules = new List<ParticleSystem.MainModule>();
@@ -16,7 +13,6 @@ namespace XiheFramework.Combat.Particle {
         private bool m_Loop;
 
         public override string EntityGroupName => "ParticleEntity";
-        public override string EntityAddressName => particleName;
 
         public override void OnInitCallback() {
             if (!particle) {

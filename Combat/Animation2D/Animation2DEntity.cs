@@ -2,22 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.LogicTime;
-using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Animation2D {
     public sealed class Animation2DEntity : TimeBasedGameEntity {
-        public string animationName;
-
-        // public SpriteAnimation currentAnimation;
         public UvAnimation uvAnimation;
         public MeshRenderer mainMeshRenderer;
         public Vector3 offset;
 
         public override string EntityGroupName => "Animation2DEntity";
-        public override string EntityAddressName => animationName;
 
         //properties
         public Material MainMaterial { get; private set; }
@@ -60,7 +53,7 @@ namespace XiheFramework.Combat.Animation2D {
         public void Setup(bool playFirstFrameAtStart = false) {
             MainMaterial = mainMeshRenderer.material;
             if (uvAnimation == null) {
-                Debug.LogError($"{this.animationName} uvAnimation is null");
+                Debug.LogError($"{this.EntityName} uvAnimation is null");
                 return;
             }
 
@@ -83,7 +76,7 @@ namespace XiheFramework.Combat.Animation2D {
 
             FaceToCamera();
         }
-        
+
         public void Play(EndBehaviour endBehaviour, int frameInterval) {
             mainMeshRenderer.enabled = true;
             m_FrameInterval = Mathf.Max(0, frameInterval);
@@ -93,6 +86,7 @@ namespace XiheFramework.Combat.Animation2D {
 
         public void SetFrame(int frame) {
             m_CurrentFrame = Mathf.Clamp(frame, 0, LastFrame);
+            MainMaterial.SetInt(CurrentFramePropertyId, m_CurrentFrame);
         }
 
         public void SetFlip(bool right) {
@@ -106,7 +100,7 @@ namespace XiheFramework.Combat.Animation2D {
                 MainMaterial.DisableKeyword(FlipKeywordId);
             }
         }
-        
+
         public void SetPause(bool isPaused) {
             if (isPaused) {
                 m_Paused = true;
@@ -118,7 +112,7 @@ namespace XiheFramework.Combat.Animation2D {
 
         public void RegisterEvent(int frame, System.Action callback) {
             if (frame > TotalFrameCount - 1 || frame < 0) {
-                Debug.LogWarning($"{EntityAddressName} frame {frame} out of range");
+                Debug.LogWarning($"{EntityName} frame {frame} out of range");
             }
 
             if (m_EventMap.ContainsKey(frame)) {
@@ -152,7 +146,7 @@ namespace XiheFramework.Combat.Animation2D {
         }
 
         private void FaceToCamera() {
-            if (Camera.main != null) transform.localRotation = UnityEngine.Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up);
+            if (Camera.main != null) transform.rotation = UnityEngine.Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up);
         }
 
         IEnumerator PlayAnimationCo() {

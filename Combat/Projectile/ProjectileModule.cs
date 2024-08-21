@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
@@ -69,6 +66,12 @@ namespace XiheFramework.Combat.Projectile {
             }
 
             return result.ToArray();
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Projectile = this;
         }
     }
 }

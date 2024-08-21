@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
     public class UIModule : GameModule {
@@ -14,12 +16,12 @@ namespace XiheFramework.Core.UI {
 
             m_UIBehaviours.Add(behaviourName, behaviour);
 
-            if (behaviour.activeOnStart) {
-                ActivateUI(behaviourName);
-            }
-            else {
-                UnactivateUI(behaviourName);
-            }
+            // if (behaviour.activeOnStart) {
+            //     ActivateUI(behaviourName);
+            // }
+            // else {
+            //     UnactivateUI(behaviourName);
+            // }
         }
 
         /// <summary>
@@ -75,12 +77,37 @@ namespace XiheFramework.Core.UI {
             return false;
         }
 
-        public T InstantiateUIBehaviour<T>(T uiBehaviour) where T : UIBehaviour {
-            return Instantiate(uiBehaviour);
+        /// <summary>
+        /// Instantiate UI Behaviour, Important: This method is not allowed to be called in any callbacks, call Async version if in callback
+        /// </summary>
+        /// <param name="address"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T InstantiateUIBehaviour<T>(string address) where T : UIBehaviour {
+            GameObject obj = Game.Resource.InstantiateAsset<GameObject>(address);
+            T uiBehaviour = obj.GetComponent<T>();
+            return uiBehaviour;
+        }
+
+        public UIBehaviour InstantiateUIBehaviour(string address) {
+            return InstantiateUIBehaviour<UIBehaviour>(address);
+        }
+
+        public void InstantiateUIBehaviourAsync<T>(string address, Action<T> onInstantiated) where T : UIBehaviour {
+            Game.Resource.InstantiateAssetAsync<GameObject>(address, (obj) => {
+                T uiBehaviour = obj.GetComponent<T>();
+                onInstantiated?.Invoke(uiBehaviour);
+            });
         }
 
         public override void OnReset() {
             m_UIBehaviours.Clear();
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.UI = this;
         }
     }
 }

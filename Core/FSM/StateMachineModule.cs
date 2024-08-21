@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM {
     public class StateMachineModule : GameModule {
@@ -144,10 +145,15 @@ namespace XiheFramework.Core.FSM {
         public void StartAllStateMachines() {
             m_IsActive = true;
         }
-        
+
         public override void OnReset() {
             m_StateMachines.Clear();
             m_RemoveQueue.Clear();
+        }
+
+        protected override void Awake() {
+            base.Awake();
+            Game.Fsm = this;
         }
     }
 }

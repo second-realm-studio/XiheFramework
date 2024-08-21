@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
@@ -48,7 +45,7 @@ namespace XiheFramework.Combat.Animation2D {
         /// <returns></returns>
         public Animation2DEntity InstantiateAnimationEntity(uint ownerId, string animationName, bool playFirstFrameAtStart = false) {
             var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
-            var animation2DEntity = Game.Entity.InstantiateEntity<Animation2DEntity>(animationAddress, ownerId);
+            var animation2DEntity = Game.Entity.InstantiateEntity<Animation2DEntity>(animationAddress, ownerId,true,0u);
             animation2DEntity.Setup(playFirstFrameAtStart);
             Game.Event.Invoke(onAnimationCreate, ownerId, animation2DEntity.EntityId);
             return animation2DEntity;
@@ -111,6 +108,11 @@ namespace XiheFramework.Combat.Animation2D {
             var entityId = entity.EntityId;
             Game.Entity.DestroyEntity(animationEntityId);
             Game.Event.Invoke(onAnimationDestroy, ownerId, entityId);
+        }
+        
+        protected override void Awake() {
+            base.Awake();
+            Game.Animation2D = this;
         }
     }
 }

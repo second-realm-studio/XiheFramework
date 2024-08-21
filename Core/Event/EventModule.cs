@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Utility.DataStructure;
+using XiheFramework.Runtime;
 using static System.String;
 
 namespace XiheFramework.Core.Event {
@@ -29,6 +30,10 @@ namespace XiheFramework.Core.Event {
         /// <param name="eventName"></param>
         /// <param name="handler"></param>
         public string Subscribe(string eventName, EventHandler<object> handler) {
+            if (string.IsNullOrEmpty(eventName)) {
+                Debug.Log("[Event] Subscribe: eventName is null or empty");
+                return null;
+            }
             var id = Guid.NewGuid().ToString();
 
             m_ActiveEventHandlers.Add(id, handler);
@@ -141,6 +146,12 @@ namespace XiheFramework.Core.Event {
             lock (m_LockRoot) {
                 m_WaitingList.Clear();
             }
+        }
+
+        protected override void Awake() {
+            base.Awake();
+            
+            Game.Event = this;
         }
     }
 }

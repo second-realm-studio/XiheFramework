@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
-    public abstract class UIBehaviour : MonoBehaviour {
+    public abstract class UIBehaviour : GameEntity {
+        public override string EntityGroupName => "UI";
+
         public string uiName;
-        public bool activeOnStart = false;
+        // public bool activeOnStart = false;
 
         private void Start() {
             Register();
@@ -16,11 +20,11 @@ namespace XiheFramework.Core.UI {
             Game.UI.RegisterUIBehaviour(uiName, this);
         }
 
-        protected virtual void OnStart() { }
+        protected abstract void OnStart();
+        protected abstract void OnActive();
+        protected abstract void OnUnActive();
 
-        protected virtual void OnActive() { }
-
-        protected virtual void OnUnActive() { }
+        // protected abstract void OnDestroy();
 
         public void Active() {
             OnActive();

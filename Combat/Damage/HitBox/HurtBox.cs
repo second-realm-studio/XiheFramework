@@ -1,20 +1,20 @@
+using System;
 using UnityEngine;
-using XiheFramework.Combat.Base;
+using UnityEngine.Serialization;
+using XiheFramework.Core.Entity;
 
 namespace XiheFramework.Combat.Damage.HitBox {
     public class HurtBox : MonoBehaviour {
-        public CombatEntity owner;
-
-        private void Start() {
-            if (owner == null) {
-                owner = GetComponentInParent<CombatEntity>();
-            }
-        }
+        public GameEntity owner;
 
 #if UNITY_EDITOR
         private void OnValidate() {
             if (owner == null) {
-                owner = GetComponentInParent<CombatEntity>();
+                owner = GetComponent<GameEntity>();
+            }
+
+            if (owner == null) {
+                owner = GetComponentInParent<GameEntity>();
             }
         }
 #endif

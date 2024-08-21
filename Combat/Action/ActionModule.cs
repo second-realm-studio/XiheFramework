@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Combat.Base;
-using XiheFramework.Core;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
@@ -14,9 +13,20 @@ namespace XiheFramework.Combat.Action {
 
         private Dictionary<uint, uint> m_CurrentActions = new Dictionary<uint, uint>();
 
+        public void StopCurrentAction(uint ownerEntityId) {
+            if (m_CurrentActions.ContainsKey(ownerEntityId)) {
+                var currentActionId = m_CurrentActions[ownerEntityId];
+                if (currentActionId != 0) {
+                    Game.Entity.DestroyEntity(currentActionId);
+                }
+
+                m_CurrentActions[ownerEntityId] = 0;
+            }
+        }
+
         public void ChangeAction(uint ownerEntityId, string actionAddress, params KeyValuePair<string, object>[] args) {
             if (m_OwnerSwitchingActionStatus.ContainsKey(ownerEntityId)) {
-                if (m_OwnerSwitchingActionStatus[ownerEntityId] == true) {
+                if (m_OwnerSwitchingActionStatus[ownerEntityId]) {
                     return;
                 }
 
@@ -50,7 +60,7 @@ namespace XiheFramework.Combat.Action {
             Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
 
             if (enableDebug) {
-                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityAddressName}({ownerEntityId}) Change Action: {actionAddress}");
+                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionAddress}");
             }
         }
 
@@ -61,8 +71,30 @@ namespace XiheFramework.Combat.Action {
             }
         }
 
+        protected override void Awake() {
+            base.Awake();
+            Game.Action = this;
+        }
+
         public override void Setup() {
             Game.Event.Subscribe(onChangeActionEventName, OnChangeAction);
+            Game.Event.Subscribe(Game.Entity.onEntityDestroyedEvtName, OnOwnerEntityDestroyed);
+        }
+
+        // private void Reset() {
+        //     m_OwnerSwitchingActionStatus.Clear();
+        //     m_CurrentActions.Clear();
+        // }
+
+        private void OnOwnerEntityDestroyed(object sender, object e) {
+            if (sender is not uint id) {
+                return;
+            }
+
+            if (m_CurrentActions.ContainsKey(id)) {
+                StopCurrentAction(id);
+                m_CurrentActions.Remove(id);
+            }
         }
 
         private void OnChangeAction(object sender, object e) {

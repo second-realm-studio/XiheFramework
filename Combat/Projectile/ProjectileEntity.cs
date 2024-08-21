@@ -1,39 +1,41 @@
 using UnityEngine;
-using UnityEngine.Serialization;
-using XiheFramework.Combat.Base;
-using XiheFramework.Combat.Damage.DataTypes;
+using XiheFramework.Combat.Damage;
 using XiheFramework.Combat.Damage.HitBox;
+using XiheFramework.Combat.Damage.Interfaces;
 using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Projectile {
     public abstract class ProjectileEntity : TimeBasedGameEntity {
-        public HitBoxEntityBase hitBox;
+        public override string EntityGroupName => "ProjectileEntity";
+        public HitBoxBase hitBox;
         public float lifeTime = 5f;
 
         public Vector3 StartPoint { get; private set; }
         public Vector3 EndPoint { get; private set; }
 
+        protected float elapsedTime;
+
         private bool m_IsAirborne;
-        private float m_LifeTimer;
 
-        public void Launch(Vector3 startPoint, Vector3 endPoint, System.Action<DamageEventArgs> onDamageCallback) {
-            System.Action<int> action = _ => { m_IsAirborne = false; };
-            action += OnContact;
-            hitBox.SetHitCallback(action);
-
+        public void Launch(Vector3 startPoint, Vector3 endPoint, System.Action<IDamageData> onDamageCallback) {
             StartPoint = startPoint;
             EndPoint = endPoint;
 
-            hitBox.DeactivateHitBox();
-            onDamageCallback += OnDamage;
-            hitBox.SetDamageCallback(onDamageCallback);
-            hitBox.ActivateHitBox();
+            hitBox.DisableHitBox();
+            transform.position = StartPoint; //prevent it from spawning at vector3.zero and touch the ground 
+            hitBox.OnHit = OnContact;
+            hitBox.OnDamageDealt = OnDamage + onDamageCallback;
+            hitBox.EnableHitBox(OwnerId);
 
             OnLaunch();
 
             m_IsAirborne = true;
-            m_LifeTimer = 0f;
+            elapsedTime = 0f;
+        }
+
+        public void RestartLifeTime() {
+            elapsedTime = 0f;
         }
 
         public override void OnUpdateCallback() {
@@ -41,17 +43,17 @@ namespace XiheFramework.Combat.Projectile {
                 return;
             }
 
-            m_LifeTimer += ScaledDeltaTime;
-            OnAirborne(m_LifeTimer);
+            elapsedTime += ScaledDeltaTime;
+            OnAirborne();
 
-            if (m_LifeTimer >= lifeTime) {
+            if (elapsedTime >= lifeTime) {
                 Game.Projectile.DestroyProjectile(EntityId);
             }
         }
-        
+
         public override void OnDestroyCallback() {
             base.OnDestroyCallback();
-            
+
             StopAllCoroutines();
         }
 
@@ -63,22 +65,23 @@ namespace XiheFramework.Combat.Projectile {
         /// <summary>
         /// Calls every frame when the projectile is in the air
         /// </summary>
-        protected abstract void OnAirborne(float elapsedTime);
+        protected abstract void OnAirborne();
 
         /// <summary>
         /// Calls when the projectile damages something
         /// </summary>
-        /// <param name="damageEventArgs"></param>
-        protected abstract void OnDamage(DamageEventArgs damageEventArgs);
+        /// <param name="damageData"></param>
+        protected abstract void OnDamage(IDamageData damageData);
 
         /// <summary>
         /// Calls when the projectile is in contact with something
         /// </summary>
-        protected abstract void OnContact(int layer);
+        /// <param name="other"></param>
+        protected abstract void OnContact(Collider other);
 
 #if UNITY_EDITOR
         private void OnValidate() {
-            hitBox = GetComponentInChildren<HitBoxEntityBase>();
+            hitBox = GetComponentInChildren<HitBoxBase>();
         }
 #endif
     }

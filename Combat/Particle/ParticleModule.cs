@@ -9,9 +9,8 @@ namespace XiheFramework.Combat.Particle {
         public readonly string onParticlePlay = "Particle.OnParticlePlay";
         public readonly string onParticleDestroy = "Particle.OnParticleDestroy";
 
-        public ParticleEntity CreateParticleEntity(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale,
+        public ParticleEntity CreateParticleEntity(uint ownerId, string particleAddress, Vector3 localPosition, Quaternion localRotation, Vector3 localScale,
             bool followOwner = true) {
-            var particleAddress = ParticleUtil.GetParticleEntityAddress(particleName);
             var particleEntity = Game.Entity.InstantiateEntity<ParticleEntity>(particleAddress, ownerId, followOwner, 0);
             localScale.Scale(particleEntity.gameObject.transform.localScale);
             particleEntity.Setup(localPosition, localRotation, localScale);
@@ -26,18 +25,18 @@ namespace XiheFramework.Combat.Particle {
             }
         }
 
-        public ParticleEntity PlayParticle(uint ownerId, string particleName, bool loop = false, bool followOwner = false) {
+        public ParticleEntity PlayParticle(uint ownerId, string particleAddress, bool loop = false, bool followOwner = false) {
             var ownerEntity = Game.Entity.GetEntity<GameEntity>(ownerId);
             if (ownerEntity != null) {
-                return PlayParticle(ownerId, particleName, ownerEntity.transform.position, ownerEntity.transform.rotation, ownerEntity.transform.localScale, loop, followOwner);
+                return PlayParticle(ownerId, particleAddress, ownerEntity.transform.position, ownerEntity.transform.rotation, ownerEntity.transform.localScale, loop, followOwner);
             }
 
             return null;
         }
 
-        public ParticleEntity PlayParticle(uint ownerId, string particleName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop,
+        public ParticleEntity PlayParticle(uint ownerId, string particleAddress, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop,
             bool followOwner = true) {
-            var particle = CreateParticleEntity(ownerId, particleName, localPosition, localRotation, localScale, followOwner);
+            var particle = CreateParticleEntity(ownerId, particleAddress, localPosition, localRotation, localScale, followOwner);
             particle.Play(loop);
             Game.Event.Invoke(onParticlePlay, ownerId, particle.EntityId);
 

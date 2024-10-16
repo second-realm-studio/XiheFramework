@@ -2,31 +2,40 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using XiheFramework.Core.LogicTime;
+using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Entity {
     public abstract class GameEntity : MonoBehaviour {
-        public bool destroyWithOwner = false;
+        [SerializeField, HideInInspector]
+        public uint presetEntityId;
 
+        [SerializeField, HideInInspector]
+        public uint presetOwnerId;
+
+        [SerializeField, HideInInspector]
+        public bool useLogicTime = true;
+
+        public abstract string GroupName { get; }
+        public string EntityFullName { get; internal set; }
         public uint EntityId { get; internal set; }
-
-        public abstract string EntityGroupName { get; }
-
-        /// <summary>
-        /// Indexing name for Addressable
-        /// </summary>
-        public string EntityName => gameObject.name;
-
-        public string FullEntityAddress => $"{EntityGroupName}_{EntityName}";
-
         public uint OwnerId { get; internal set; }
 
-        private Dictionary<string, string> m_EventHandlerIds = new Dictionary<string, string>();
+        public float TimeScale { get; protected set; }
+        protected float ScaledDeltaTime => Time.unscaledDeltaTime * TimeScale;
+
+        private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
+
+        public virtual void OnInitCallback() { }
+        public virtual void OnUpdateCallback() { }
+        public virtual void OnFixedUpdateCallback() { }
+        public virtual void OnLateUpdateCallback() { }
+        public virtual void OnDestroyCallback() { }
 
         internal void OnInitCallbackInternal() {
-            if (destroyWithOwner) {
-                SubscribeEvent(Game.Entity.onEntityDestroyedEvtName, OnEntityDestroyed);
-            }
+            TimeScale = 1;
+            SubscribeEvent(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
 
             OnInitCallback();
         }
@@ -38,56 +47,55 @@ namespace XiheFramework.Core.Entity {
         internal void OnLateUpdateCallbackInternal() => OnLateUpdateCallback();
 
         internal void OnDestroyCallbackInternal() {
-            foreach (var handlerId in m_EventHandlerIds.Keys) {
-                UnsubscribeEvent(handlerId);
+            foreach (var eventName in m_EventHandlerIds.Keys) {
+                UnsubscribeEvent(eventName);
             }
+
+            m_EventHandlerIds.Clear();
 
             OnDestroyCallback();
         }
-
-        public virtual void OnInitCallback() { }
-        public virtual void OnUpdateCallback() { }
-        public virtual void OnFixedUpdateCallback() { }
-        public virtual void OnLateUpdateCallback() { }
-        public virtual void OnDestroyCallback() { }
 
         public void DestroyEntity() {
             Game.Entity.DestroyEntity(EntityId);
         }
 
+        /// <summary>
+        /// Automatically Unsubscribe Event when Entity is being Destroyed
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <param name="eventHandler"></param>
         protected void SubscribeEvent(string eventName, EventHandler<object> eventHandler) {
-            if (!m_EventHandlerIds.ContainsKey(eventName)) {
-                var handlerId = Game.Event.Subscribe(eventName, eventHandler);
-                m_EventHandlerIds.Add(eventName, handlerId);
-            }
-            else {
-                Debug.LogError(
-                    $"[ENTITY] Multiple subscriptions to event: {eventName} is not allowed. Check your base classes. Subscribing Skipped.");
+            var handlerId = Game.Event.Subscribe(eventName, eventHandler);
+            m_EventHandlerIds.Add(eventName, handlerId);
+        }
+
+        private void UnsubscribeEvent(string eventName) {
+            if (m_EventHandlerIds.TryGetValue(eventName, out var handlerIds)) {
+                foreach (var handlerId in handlerIds) {
+                    Game.Event.Unsubscribe(eventName, handlerId);
+                    if (Game.Entity.enableDebug) {
+                        Debug.Log($"[ENTITY] {EntityFullName}({EntityId}) Unsubscribed event: {eventName} with handlerId: {handlerId}");
+                    }
+                }
             }
         }
 
-        protected void UnsubscribeEvent(string eventName) {
-            if (m_EventHandlerIds.TryGetValue(eventName, out var handlerId)) {
-                Game.Event.Unsubscribe(eventName, handlerId);
-                m_EventHandlerIds.Remove(eventName);
-                Debug.Log($"[ENTITY] Unsubscribed event: {eventName} with handlerId: {handlerId}");
+        private void OnSetGlobalTimeScale(object sender, object e) {
+            if (useLogicTime) {
+                var args = (OnSetGlobalTimeScaleEventArgs)e;
+                TimeScale = args.newTimeScale;
             }
         }
 
-        private void OnEntityDestroyed(object sender, object e) {
-            if (sender is not uint ownerId) {
-                return;
-            }
-
-            if (ownerId == OwnerId) {
-                DestroyEntity();
+        private void Start() {
+            if (EntityId == 0) {
+                Game.Entity.RegisterInstantiatedEntity(this, presetEntityId, false, presetOwnerId);
             }
         }
 
-        // private void Start() { }
-        // private void Update() { }
-        // private void FixedUpdate() { }
-        // private void LateUpdate() { }
-        // private void OnDestroy() { }
+        private void OnDestroy() {
+            Game.Entity.UnregisterEntity(EntityId);
+        }
     }
 }

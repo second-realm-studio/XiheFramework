@@ -15,11 +15,10 @@ namespace XiheFramework.Combat.Animation2D {
         /// Instantiate Animation at local position 0,0,0 and scale 1,1,1
         /// </summary>
         /// <param name="ownerId"></param>
-        /// <param name="animationName"></param>
+        /// <param name="animationAddress"></param>
         /// <param name="onLoadedCallback"></param>
         /// <param name="playFirstFrameAtStart"></param>
-        public void CreateAnimationEntityAsync(uint ownerId, string animationName, System.Action<Animation2DEntity> onLoadedCallback, bool playFirstFrameAtStart = false) {
-            var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
+        public void CreateAnimationEntityAsync(uint ownerId, string animationAddress, System.Action<Animation2DEntity> onLoadedCallback, bool playFirstFrameAtStart = false) {
             Game.Entity.InstantiateEntityAsync<Animation2DEntity>(animationAddress, ownerId, true, 0, entity => {
                 entity.Setup(playFirstFrameAtStart);
                 onLoadedCallback?.Invoke(entity);
@@ -27,9 +26,9 @@ namespace XiheFramework.Combat.Animation2D {
             });
         }
 
-        public void PlayAnimationAsync(uint ownerId, string animationName, int frameInterval, EndBehaviour endBehaviour, bool playFirstFrameAtStart = false,
+        public void PlayAnimationAsync(uint ownerId, string animationAddress, int frameInterval, EndBehaviour endBehaviour, bool playFirstFrameAtStart = false,
             Action<Animation2DEntity> onLoadedCallback = null) {
-            CreateAnimationEntityAsync(ownerId, animationName, entity => {
+            CreateAnimationEntityAsync(ownerId, animationAddress, entity => {
                 onLoadedCallback?.Invoke(entity);
                 entity.Play(endBehaviour, frameInterval);
                 Game.Event.Invoke(onAnimationPlay, ownerId, entity.EntityId);
@@ -40,14 +39,15 @@ namespace XiheFramework.Combat.Animation2D {
         /// Instantiate Animation at local position 0,0,0 and scale 1,1,1
         /// </summary>
         /// <param name="ownerId"></param>
-        /// <param name="animationName"></param>
+        /// <param name="animationAddress"></param>
         /// <param name="playFirstFrameAtStart"></param>
         /// <returns></returns>
-        public Animation2DEntity InstantiateAnimationEntity(uint ownerId, string animationName, bool playFirstFrameAtStart = false) {
-            var animationAddress = AnimationUtil.GetAnimation2DEntityAddress(animationName);
-            var animation2DEntity = Game.Entity.InstantiateEntity<Animation2DEntity>(animationAddress, ownerId,true,0u);
-            animation2DEntity.Setup(playFirstFrameAtStart);
-            Game.Event.Invoke(onAnimationCreate, ownerId, animation2DEntity.EntityId);
+        public Animation2DEntity InstantiateAnimationEntity(uint ownerId, string animationAddress, bool playFirstFrameAtStart = false) {
+            var animation2DEntity = Game.Entity.InstantiateEntity<Animation2DEntity>(animationAddress, ownerId, true, 0u, entity => {
+                entity.Setup(playFirstFrameAtStart);
+                Game.Event.Invoke(onAnimationCreate, ownerId, entity.EntityId);
+            });
+
             return animation2DEntity;
         }
 
@@ -55,13 +55,13 @@ namespace XiheFramework.Combat.Animation2D {
         /// Create and Play Animation at local position 0,0,0 and scale 1,1,1
         /// </summary>
         /// <param name="ownerId"></param>
-        /// <param name="animationName"></param>
+        /// <param name="animationAddress"></param>
         /// <param name="frameInterval"></param>
         /// <param name="endBehaviour"></param>
         /// <param name="playFirstFrameAtStart"></param>
         /// <returns></returns>
-        public Animation2DEntity PlayAnimation(uint ownerId, string animationName, int frameInterval, EndBehaviour endBehaviour, bool playFirstFrameAtStart = false) {
-            var anim = InstantiateAnimationEntity(ownerId, animationName, playFirstFrameAtStart);
+        public Animation2DEntity PlayAnimation(uint ownerId, string animationAddress, int frameInterval, EndBehaviour endBehaviour, bool playFirstFrameAtStart = false) {
+            var anim = InstantiateAnimationEntity(ownerId, animationAddress, playFirstFrameAtStart);
             anim.Play(endBehaviour, frameInterval);
             return anim;
         }
@@ -109,7 +109,7 @@ namespace XiheFramework.Combat.Animation2D {
             Game.Entity.DestroyEntity(animationEntityId);
             Game.Event.Invoke(onAnimationDestroy, ownerId, entityId);
         }
-        
+
         protected override void Awake() {
             base.Awake();
             Game.Animation2D = this;

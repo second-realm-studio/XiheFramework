@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
@@ -9,9 +10,8 @@ namespace XiheFramework.Combat.Action {
     public class ActionModule : GameModule {
         public readonly string onChangeActionEventName = "Action.OnChangeAction";
 
-        private Dictionary<uint, bool> m_OwnerSwitchingActionStatus = new Dictionary<uint, bool>(); //prevent multiple action switch at the same frame.
-
-        private Dictionary<uint, uint> m_CurrentActions = new Dictionary<uint, uint>();
+        private Dictionary<uint, ChangeActionInfo> m_ChangingActions = new(); //prevent multiple action switch at the same frame. always favor last change call
+        private Dictionary<uint, uint> m_CurrentActions = new();
 
         public void StopCurrentAction(uint ownerEntityId) {
             if (m_CurrentActions.ContainsKey(ownerEntityId)) {
@@ -24,44 +24,9 @@ namespace XiheFramework.Combat.Action {
             }
         }
 
+        //TODO: change to last priority
         public void ChangeAction(uint ownerEntityId, string actionAddress, params KeyValuePair<string, object>[] args) {
-            if (m_OwnerSwitchingActionStatus.ContainsKey(ownerEntityId)) {
-                if (m_OwnerSwitchingActionStatus[ownerEntityId]) {
-                    return;
-                }
-
-                m_OwnerSwitchingActionStatus[ownerEntityId] = true;
-            }
-            else {
-                m_OwnerSwitchingActionStatus.Add(ownerEntityId, true);
-            }
-
-            if (m_CurrentActions.ContainsKey(ownerEntityId)) {
-                var currentActionId = m_CurrentActions[ownerEntityId];
-                if (currentActionId != 0) {
-                    Game.Entity.DestroyEntity(currentActionId);
-                }
-
-                m_CurrentActions[ownerEntityId] = 0;
-            }
-            else {
-                m_CurrentActions.Add(ownerEntityId, 0);
-            }
-
-            var action = Game.Entity.InstantiateEntity<ActionEntity>(actionAddress, ownerEntityId, true, 0u, entity => { entity.SetArguments(args); });
-            m_CurrentActions[ownerEntityId] = action.EntityId;
-
-            if (action == null) {
-                Debug.LogError($"{actionAddress} Action not found");
-                return;
-            }
-
-            OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(action.EntityId, actionAddress, args);
-            Game.Event.Invoke(onChangeActionEventName, ownerEntityId, onChangeActionArgs);
-
-            if (enableDebug) {
-                Debug.Log($"[Action] {Runtime.Game.Entity.GetEntity<GameEntity>(ownerEntityId).EntityName}({ownerEntityId}) Change Action: {actionAddress}");
-            }
+            m_ChangingActions.TryAdd(ownerEntityId, new ChangeActionInfo(actionAddress, args));
         }
 
         public void SetCurrentActionArgument(uint ownerEntityId, string key, object value) {
@@ -77,30 +42,64 @@ namespace XiheFramework.Combat.Action {
         }
 
         public override void Setup() {
-            Game.Event.Subscribe(onChangeActionEventName, OnChangeAction);
-            Game.Event.Subscribe(Game.Entity.onEntityDestroyedEvtName, OnOwnerEntityDestroyed);
+            Game.Event.Subscribe(Game.Entity.onEntityDestroyedEvtName, OnEntityDestroyed);
         }
 
-        // private void Reset() {
-        //     m_OwnerSwitchingActionStatus.Clear();
-        //     m_CurrentActions.Clear();
-        // }
+        public override void OnLateUpdate() {
+            base.OnLateUpdate();
 
-        private void OnOwnerEntityDestroyed(object sender, object e) {
-            if (sender is not uint id) {
-                return;
+            if (m_ChangingActions == null || m_ChangingActions.Count == 0) return;
+
+            foreach (var changingAction in m_ChangingActions) {
+                var ownerEntity = Game.Entity.GetEntity<GameEntity>(changingAction.Key);
+
+                if (changingAction.Key == 0 || string.IsNullOrEmpty(changingAction.Value.actionAddress) || ownerEntity == null) {
+                    continue;
+                }
+
+                var ownerId = ownerEntity.EntityId;
+
+                //destroy current action
+                if (m_CurrentActions.TryGetValue(ownerId, out var currentActionId)) {
+                    if (currentActionId != 0) Game.Entity.DestroyEntity(currentActionId);
+                    m_CurrentActions.Remove(ownerId);
+                }
+
+                //instantiate new action
+                var actionAddress = changingAction.Value.actionAddress;
+                var args = changingAction.Value.args;
+                Game.Entity.InstantiateEntity<ActionEntity>(actionAddress, Vector3.zero, Quaternion.identity, ownerId, onInstantiatedCallback: entity => {
+                    entity.SetArguments(args);
+                    m_CurrentActions[ownerId] = entity.EntityId;
+
+                    OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(entity.EntityId, actionAddress, args);
+                    Game.Event.Invoke(onChangeActionEventName, ownerId, onChangeActionArgs);
+                    if (enableDebug) {
+                        Debug.Log($"[Action] {ownerEntity.EntityFullName}({ownerId}) Change Action: {actionAddress}");
+                    }
+                });
             }
 
-            if (m_CurrentActions.ContainsKey(id)) {
-                StopCurrentAction(id);
-                m_CurrentActions.Remove(id);
+            m_ChangingActions.Clear();
+        }
+
+        private void OnEntityDestroyed(object sender, object e) {
+            if (sender is not uint entityId) return;
+
+            var args = (OnEntityDestroyedEventArgs)e;
+
+            if (m_CurrentActions.ContainsKey(args.entityId)) {
+                m_CurrentActions.Remove(args.entityId);
             }
         }
 
-        private void OnChangeAction(object sender, object e) {
-            var id = (uint)sender;
-            if (m_OwnerSwitchingActionStatus.ContainsKey(id)) {
-                m_OwnerSwitchingActionStatus[id] = false;
+        private struct ChangeActionInfo {
+            public string actionAddress;
+            public KeyValuePair<string, object>[] args;
+
+            public ChangeActionInfo(string actionAddress, KeyValuePair<string, object>[] args) {
+                this.actionAddress = actionAddress;
+                this.args = args;
             }
         }
     }

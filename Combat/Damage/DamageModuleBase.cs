@@ -27,7 +27,10 @@ namespace XiheFramework.Combat.Damage {
                 IDamageData damageData = damageQueue.Dequeue();
                 var valid = Process(damageData, out var outputData);
                 if (valid) {
-                    Debug.Log("[DMG] Damage Processed: " + damageData.ToString());
+                    if (enableDebug) {
+                        Debug.Log("[DMG] Damage Processed: " + damageData.ToString());
+                    }
+
                     Game.Event.InvokeNow(onProcessedDamageEventName, damageData.receiverId, outputData);
                 }
             }
@@ -38,7 +41,10 @@ namespace XiheFramework.Combat.Damage {
             var valid = Validate(damageData, out var message);
             if (!valid) {
                 outputData = null;
-                Debug.Log("[DMG] Damage Invalid: " + damageData.ToString() + "\n" + message);
+                if (enableDebug) {
+                    Debug.LogWarning("[DMG] Damage Invalid: " + damageData.ToString() + "\n" + message);
+                }
+
                 return false;
             }
 

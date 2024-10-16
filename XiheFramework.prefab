@@ -1725,6 +1725,8 @@ MonoBehaviour:
   fixedUpdateInterval: 0
   lateUpdateInterval: 0
   enableDebug: 0
+  referenceResolution: {x: 1920, y: 1080}
+  referencePixelsPerUnit: 100
 --- !u!1 &6007378692645266568
 GameObject:
   m_ObjectHideFlags: 0

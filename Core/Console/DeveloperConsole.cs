@@ -10,8 +10,8 @@ namespace XiheFramework.Core.Console {
         public GameObject consolePanel;
         public TMP_InputField inputField;
         public TextMeshProUGUI outputText;
-        public Button clearButton;
-        public Button helpButton;
+        public UnityEngine.UI.Button clearButton;
+        public UnityEngine.UI.Button helpButton;
 
         private bool m_IsOpen;
         private List<string> m_Logs = new List<string>();

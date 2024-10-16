@@ -6,14 +6,14 @@ using UnityEngine;
 using XiheFramework.Core.Config;
 
 namespace XiheFramework.Editor.Core.Config {
-    public class ConfigEditorWindow : EditorWindow {
+    public class ConfigModuleEditorWindow : EditorWindow {
         private SerializedObject m_Target;
         private SerializedProperty m_ConfigSettings;
 
         private ReorderableList m_ReorderableList;
 
         public static void ShowWindow(SerializedObject configModule) {
-            var window = GetWindow<ConfigEditorWindow>("Config Editor");
+            var window = GetWindow<ConfigModuleEditorWindow>("Config Editor");
             window.m_Target = configModule;
             window.InitList();
         }

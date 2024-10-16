@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using XiheFramework.Runtime;
@@ -13,7 +14,7 @@ namespace XiheFramework.Combat.Animation2D.TestRoom {
         public TextMeshProUGUI speedText;
         public TMP_InputField animationIntervalInputField;
 #endif
-        public Button playBtn;
+        public UnityEngine.UI.Button playBtn;
         public Slider speedSlider;
 
 

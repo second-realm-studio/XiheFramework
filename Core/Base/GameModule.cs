@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 namespace XiheFramework.Core.Base {
+    [DefaultExecutionOrder(-301)]
     public abstract class GameModule : MonoBehaviour {
         public int updateInterval;
         public int fixedUpdateInterval;

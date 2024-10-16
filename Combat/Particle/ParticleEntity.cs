@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Particle {
-    public sealed class ParticleEntity : TimeBasedGameEntity {
+    public sealed class ParticleEntity : GameEntity {
         public ParticleSystem particle;
         private ParticleSystem.MainModule m_MainModule;
         private List<ParticleSystem.MainModule> m_SubMainModules = new List<ParticleSystem.MainModule>();
@@ -12,7 +13,7 @@ namespace XiheFramework.Combat.Particle {
         private Transform m_CachedTransform;
         private bool m_Loop;
 
-        public override string EntityGroupName => "ParticleEntity";
+        public override string GroupName => "ParticleEntity";
 
         public override void OnInitCallback() {
             if (!particle) {
@@ -20,6 +21,7 @@ namespace XiheFramework.Combat.Particle {
             }
 
             InitMainModules();
+            SubscribeEvent(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
         }
 
 #if UNITY_EDITOR
@@ -30,13 +32,12 @@ namespace XiheFramework.Combat.Particle {
         }
 #endif
 
-        protected override void OnSetGlobalTimeScale(object sender, object e) {
-            base.OnSetGlobalTimeScale(sender, e);
-
-            m_MainModule.simulationSpeed = timeScale;
+        void OnSetGlobalTimeScale(object sender, object e) {
+            var args = (OnSetGlobalTimeScaleEventArgs)e;
+            m_MainModule.simulationSpeed = args.newTimeScale;
             for (var i = 0; i < m_SubMainModules.Count; i++) {
                 var subMainModule = m_SubMainModules[i];
-                subMainModule.simulationSpeed = timeScale;
+                subMainModule.simulationSpeed = args.newTimeScale;
             }
         }
 
@@ -59,11 +60,11 @@ namespace XiheFramework.Combat.Particle {
             m_SubMainModules.ForEach(subMainModule => subMainModule.loop = loop);
             particle.Play(true);
         }
-        
+
         public void SetMaterial(Material material) {
             m_ParticleSystemRenderer.material = material;
         }
-        
+
         private void OnParticleSystemStopped() {
             Game.Particle.DestroyParticle(EntityId);
         }
@@ -73,13 +74,13 @@ namespace XiheFramework.Combat.Particle {
             m_MainModule = particle.main;
             m_MainModule.playOnAwake = false;
             m_MainModule.stopAction = ParticleSystemStopAction.Callback;
-            m_MainModule.simulationSpeed = timeScale;
+            m_MainModule.simulationSpeed = ScaledDeltaTime / Time.unscaledDeltaTime;
 
             var childParticles = particle.GetComponentsInChildren<ParticleSystem>();
             for (var i = 1; i < childParticles.Length; i++) {
                 var subParticle = childParticles[i];
                 var subMainModule = subParticle.main;
-                subMainModule.simulationSpeed = timeScale;
+                subMainModule.simulationSpeed = ScaledDeltaTime / Time.unscaledDeltaTime;
                 m_SubMainModules.Add(subMainModule);
             }
         }

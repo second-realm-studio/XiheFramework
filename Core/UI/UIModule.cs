@@ -1,113 +1,302 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.UI.UIEntity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
     public class UIModule : GameModule {
-        private readonly Dictionary<string, UIBehaviour> m_UIBehaviours = new();
+        public Vector2 referenceResolution = new(1920, 1080);
+        public float referencePixelsPerUnit = 100;
+        private Canvas m_PageCanvas;
+        private Canvas m_PopCanvas;
+        private Canvas m_OverlayCanvas;
 
-        public void RegisterUIBehaviour(string behaviourName, UIBehaviour behaviour) {
-            if (m_UIBehaviours.ContainsKey(behaviourName)) {
-                m_UIBehaviours[behaviourName].UnActive();
-                m_UIBehaviours.Remove(behaviourName);
-            }
+        private readonly LinkedList<PageReturnHistoryInfo> m_PageReturnHistory = new();
+        private readonly Dictionary<uint, UILayoutEntity> m_PopEntities = new();
+        private readonly Dictionary<uint, UILayoutEntity> m_OverlayEntities = new();
 
-            m_UIBehaviours.Add(behaviourName, behaviour);
-
-            // if (behaviour.activeOnStart) {
-            //     ActivateUI(behaviourName);
-            // }
-            // else {
-            //     UnactivateUI(behaviourName);
-            // }
-        }
+        public PageReturnHistoryInfo[] CurrentPageHistory => m_PageReturnHistory.ToArray();
+        public UILayoutEntity[] CurrentPops => m_PopEntities.Values.ToArray();
+        public UILayoutEntity[] CurrentOverlays => m_OverlayEntities.Values.ToArray();
 
         /// <summary>
-        ///     use UnActiveUI instead to hide ui
+        /// Open new UIPageEntity in Page Layer
         /// </summary>
-        /// <param name="behaviourName"></param>
-        public void UnregisterUIBehaviour(string behaviourName) {
-            if (m_UIBehaviours.ContainsKey(behaviourName)) m_UIBehaviours.Remove(behaviourName);
-        }
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public uint OpenPage(string address) {
+            if (!m_PageCanvas || string.IsNullOrEmpty(address)) return 0;
+            HideOrDestroyPage();
 
-        public bool ActivateUI(string behaviourName) {
-            if (!m_UIBehaviours.ContainsKey(behaviourName)) {
-                Debug.Log("[UI] " + behaviourName + " is not registered");
-                return false;
-            }
+            RemoveRepeatedHistory(address);
 
-            m_UIBehaviours[behaviourName].gameObject.SetActive(true);
-            m_UIBehaviours[behaviourName].Active();
-            return true;
-        }
+            var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(address, m_PageCanvas);
+            if (newUIEntity.homePage) {
+                var current = m_PageReturnHistory.First;
+                while (current != null) {
+                    if (current.Value.entity != null) {
+                        Game.Entity.DestroyEntity(current.Value.entity.EntityId);
+                    }
 
-        public bool UnactivateUI(string behaviourName) {
-            if (!m_UIBehaviours.ContainsKey(behaviourName)) return false;
-            if (m_UIBehaviours[behaviourName] == null) {
-                m_UIBehaviours.Remove(behaviourName);
-                return false;
-            }
-
-            m_UIBehaviours[behaviourName].UnActive();
-            m_UIBehaviours[behaviourName].gameObject.SetActive(false);
-            return true;
-        }
-
-        public bool TryGetUIBehaviour<T>(string uiName, out T uiBehaviour) where T : UIBehaviour {
-            // var obj = FindObjectOfType<T>();
-            // if (obj) {
-            //     uiBehaviour = obj;
-            //     return obj;
-            // }
-            //
-            // uiBehaviour = null;
-            // //var go = Instantiate(uiBehaviour, gameObject.transform);
-            // return false;
-
-            if (m_UIBehaviours.ContainsKey(uiName)) {
-                uiBehaviour = m_UIBehaviours[uiName] as T;
-                if (uiBehaviour != null) {
-                    return true;
+                    var next = current.Next;
+                    m_PageReturnHistory.Remove(current);
+                    current = next;
                 }
             }
 
-            uiBehaviour = null;
-            return false;
+            var returnHistoryInfo = new PageReturnHistoryInfo(address, newUIEntity);
+            m_PageReturnHistory.AddLast(returnHistoryInfo);
+
+            return newUIEntity.EntityId;
         }
 
         /// <summary>
-        /// Instantiate UI Behaviour, Important: This method is not allowed to be called in any callbacks, call Async version if in callback
+        /// Open Previous UILayoutEntity in Page Layer
         /// </summary>
-        /// <param name="address"></param>
-        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T InstantiateUIBehaviour<T>(string address) where T : UIBehaviour {
-            GameObject obj = Game.Resource.InstantiateAsset<GameObject>(address);
-            T uiBehaviour = obj.GetComponent<T>();
-            return uiBehaviour;
+        public uint ReturnPrevPage() {
+            if (!m_PageCanvas) return 0;
+            if (m_PageReturnHistory.Count == 0) return 0;
+
+            var entry = m_PageReturnHistory.Last.Value;
+            if (entry.entity.homePage) {
+                return entry.entity.EntityId;
+            }
+
+            Game.Entity.DestroyEntity(entry.entity.EntityId);
+            m_PageReturnHistory.RemoveLast();
+
+            if (m_PageReturnHistory.Count == 0) {
+                return 0;
+            }
+
+            //find hidden entity
+            var lastHistory = m_PageReturnHistory.Last.Value;
+            var hiddenEntity = lastHistory.entity;
+            if (hiddenEntity != null) {
+                hiddenEntity.gameObject.SetActive(true);
+                return hiddenEntity.EntityId;
+            }
+
+            var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(lastHistory.address, m_PageCanvas);
+
+            lastHistory = new PageReturnHistoryInfo(lastHistory.address, newUIEntity);
+            m_PageReturnHistory.Last.Value = lastHistory;
+
+            return newUIEntity.EntityId;
         }
 
-        public UIBehaviour InstantiateUIBehaviour(string address) {
-            return InstantiateUIBehaviour<UIBehaviour>(address);
+        /// <summary>
+        /// Open Home UILayoutEntity in Page Layer
+        /// </summary>
+        /// <returns></returns>
+        public uint HomePage() {
+            if (!m_PageCanvas) return 0;
+            if (m_PageReturnHistory.Count == 0) return 0;
+            if (m_PageReturnHistory.Last == null) {
+                m_PageReturnHistory.Clear();
+                return 0;
+            }
+
+            var current = m_PageReturnHistory.Last;
+            while (current != null && current != m_PageReturnHistory.First) {
+                if (current.Value.entity != null) {
+                    Game.Entity.DestroyEntity(current.Value.entity.EntityId);
+                }
+
+                var next = current.Previous;
+                m_PageReturnHistory.Remove(current);
+                current = next;
+            }
+
+            var entry = m_PageReturnHistory.First.Value;
+            UIPageEntity homeEntity;
+            if (entry.entity != null) {
+                homeEntity = entry.entity;
+                entry.entity.gameObject.SetActive(true);
+            }
+            else {
+                var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(entry.address, m_PageCanvas);
+
+                entry = new PageReturnHistoryInfo(entry.address, newUIEntity);
+                m_PageReturnHistory.First.Value = entry;
+                homeEntity = newUIEntity;
+            }
+
+            if (!homeEntity.homePage) {
+                Debug.LogWarning($"[UI] Home Page not found! Opening first page in history: {entry.address}");
+            }
+
+            return homeEntity.EntityId;
         }
 
-        public void InstantiateUIBehaviourAsync<T>(string address, Action<T> onInstantiated) where T : UIBehaviour {
-            Game.Resource.InstantiateAssetAsync<GameObject>(address, (obj) => {
-                T uiBehaviour = obj.GetComponent<T>();
-                onInstantiated?.Invoke(uiBehaviour);
-            });
+        private void RemoveRepeatedHistory(string address) {
+            if (m_PageReturnHistory.Count == 0) return;
+
+            //if opening same page, refresh page only, don't need to remove history
+            if (m_PageReturnHistory.Last.Value.address == address) {
+                var hiddenEntity = m_PageReturnHistory.Last.Value.entity;
+                if (hiddenEntity != null) {
+                    Game.Entity.DestroyEntity(hiddenEntity.EntityId);
+                }
+
+                m_PageReturnHistory.RemoveLast();
+                return;
+            }
+
+            var currentNode = m_PageReturnHistory.Last;
+            while (currentNode != null) {
+                if (currentNode.Value.address == address) {
+                    var temp = currentNode;
+                    while (temp != null) {
+                        if (temp.Value.entity != null) {
+                            Game.Entity.DestroyEntity(temp.Value.entity.EntityId);
+                        }
+
+                        var prev = temp.Previous;
+                        m_PageReturnHistory.Remove(temp);
+                        temp = prev;
+                    }
+
+                    break;
+                }
+
+                currentNode = currentNode.Previous;
+            }
         }
 
-        public override void OnReset() {
-            m_UIBehaviours.Clear();
+        private void HideOrDestroyPage() {
+            if (m_PageReturnHistory.Count == 0) return;
+            var entry = m_PageReturnHistory.Last.Value;
+            if (entry.entity.destroyOnClose) {
+                Game.Entity.DestroyEntity(entry.entity.EntityId);
+                entry.entity = null;
+                m_PageReturnHistory.Last.Value = entry;
+            }
+            else {
+                entry.entity.gameObject.SetActive(false);
+            }
+        }
+
+        public uint OpenPop(string address) {
+            var popEntity = OpenPop<UIPopEntity>(address);
+            if (popEntity == null) {
+                return 0;
+            }
+
+            return popEntity.EntityId;
+        }
+
+        public T OpenPop<T>(string address) where T : UIPopEntity {
+            if (!m_PopCanvas || string.IsNullOrEmpty(address)) {
+                return null;
+            }
+
+            var popEntity = InstantiateUILayoutEntity<T>(address, m_PopCanvas);
+            if (popEntity == null) {
+                Debug.LogError($"[UI] Pop UILayout Entity {address} not found or not a {typeof(T).Name}!");
+                return null;
+            }
+
+            m_PopEntities[popEntity.EntityId] = popEntity;
+            return popEntity;
+        }
+
+        public void ClosePop(uint popEntityId) {
+            if (popEntityId == 0) {
+                return;
+            }
+
+            if (m_PopEntities.TryGetValue(popEntityId, out var popEntity)) {
+                Game.Entity.DestroyEntity(popEntity.EntityId);
+                m_PopEntities.Remove(popEntityId);
+            }
+        }
+
+        public uint OpenOverlay(string address) {
+            var overlayEntity = OpenOverlay<UIOverlayEntity>(address);
+            if (overlayEntity == null) {
+                return 0;
+            }
+
+            return overlayEntity.EntityId;
+        }
+
+        public T OpenOverlay<T>(string address) where T : UIOverlayEntity {
+            if (!m_OverlayCanvas || string.IsNullOrEmpty(address)) {
+                return null;
+            }
+
+            var overlayEntity = InstantiateUILayoutEntity<T>(address, m_OverlayCanvas);
+            if (overlayEntity == null) {
+                Debug.LogError($"[UI] Overlay UILayout Entity {address} not found or not a {typeof(T).Name}!");
+                return null;
+            }
+
+            m_OverlayEntities[overlayEntity.EntityId] = overlayEntity;
+            overlayEntity.gameObject.SetActive(true);
+            return overlayEntity;
+        }
+
+        public void CloseOverlay(uint overlayEntityId) {
+            if (overlayEntityId == 0) {
+                return;
+            }
+
+            if (m_OverlayEntities.TryGetValue(overlayEntityId, out var overlayEntity)) {
+                Game.Entity.DestroyEntity(overlayEntity.EntityId);
+                m_OverlayEntities.Remove(overlayEntityId);
+            }
         }
 
         protected override void Awake() {
             base.Awake();
 
             Game.UI = this;
+
+            m_PageCanvas = CreateCanvas("PageCanvas", 0);
+            m_PopCanvas = CreateCanvas("PopCanvas", 1);
+            m_OverlayCanvas = CreateCanvas("OverlayCanvas", 2);
+        }
+
+        private Canvas CreateCanvas(string canvasName, int sortingOrder) {
+            var go = new GameObject(canvasName);
+            go.transform.SetParent(transform, false);
+            var canvas = go.AddComponent<Canvas>();
+            var scaler = go.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = referenceResolution;
+            scaler.referencePixelsPerUnit = referencePixelsPerUnit;
+            go.AddComponent<GraphicRaycaster>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = sortingOrder;
+
+            return canvas;
+        }
+
+        private T InstantiateUILayoutEntity<T>(string address, Canvas target) where T : UILayoutEntity {
+            return Game.Entity.InstantiateEntity<T>(address, onInstantiatedCallback: entity => {
+                entity.transform.SetParent(target.transform, false);
+                var rectTransform = entity.GetComponent<RectTransform>();
+                rectTransform.localPosition = Vector3.zero;
+                rectTransform.localScale = Vector3.one;
+                entity.gameObject.SetActive(true);
+            });
+        }
+
+        [Serializable]
+        public struct PageReturnHistoryInfo {
+            public string address;
+            public UIPageEntity entity;
+
+            public PageReturnHistoryInfo(string address, UIPageEntity entity) {
+                this.address = address;
+                this.entity = entity;
+            }
         }
     }
 }

@@ -15,9 +15,9 @@ namespace XiheFramework.Combat.Buff {
         /// Add buff stack to owner CombatEntity
         /// </summary>
         /// <param name="ownerId"></param>
-        /// <param name="buffName"></param>
+        /// <param name="buffAddress"></param>
         /// <param name="stack">0: max stack</param>
-        public void AddBuff(uint ownerId, string buffName, int stack = 1) {
+        public void AddBuff(uint ownerId, string buffAddress, int stack = 1) {
             var owner = Game.Entity.GetEntity<GameEntity>(ownerId);
             if (owner == null) {
                 return;
@@ -28,26 +28,25 @@ namespace XiheFramework.Combat.Buff {
             }
 
             // buff already exists
-            if (buffOwner.HasBuff(buffName)) {
+            if (buffOwner.HasBuff(buffAddress)) {
                 if (stack == 0) {
-                    stack = GetBuffEntity(ownerId, buffName).maxStack;
+                    stack = GetBuffEntity(ownerId, buffAddress).maxStack;
                 }
 
-                var buffEntity = Game.Entity.GetEntity<BuffEntity>(buffOwner.GetBuffEntityId(buffName));
+                var buffEntity = Game.Entity.GetEntity<BuffEntity>(buffOwner.GetBuffEntityId(buffAddress));
                 var deltaStack = GetDeltaStack(buffEntity.CurrentStack, stack, buffEntity.maxStack);
 
                 if (deltaStack == 0) {
-                    if (enableDebug) Debug.Log($"[BUFF]MAX REACHED({buffEntity.maxStack}): {owner.name}({owner.EntityId})<-{buffName}({stack})");
+                    if (enableDebug) Debug.Log($"[BUFF]MAX REACHED({buffEntity.maxStack}): {owner.name}({owner.EntityId})<-{buffAddress}({stack})");
                     return;
                 }
 
                 buffEntity.CurrentStack += deltaStack;
                 buffEntity.OnBuffAddStack();
-                var args = new OnAddBuffEventArgs(buffEntity.EntityId, buffName, deltaStack);
+                var args = new OnAddBuffEventArgs(buffEntity.EntityId, buffAddress, deltaStack);
                 Game.Event.InvokeNow(onBuffAddedEvtName, owner.EntityId, args);
             }
             else {
-                var buffAddress = BuffUtil.GetBuffEntityAddress(buffName);
                 var buffEntity = Runtime.Game.Entity.InstantiateEntity<BuffEntity>(buffAddress, owner.EntityId, true);
                 if (stack == 0) {
                     stack = buffEntity.maxStack;
@@ -55,12 +54,12 @@ namespace XiheFramework.Combat.Buff {
 
                 buffEntity.CurrentStack = stack;
                 buffEntity.OnBuffEnter();
-                var args = new OnBuffCreateEventArgs(buffEntity.EntityId, buffName);
+                var args = new OnBuffCreateEventArgs(buffEntity.EntityId, buffAddress);
                 Game.Event.InvokeNow(onBuffCreatedEvtName, owner.EntityId, args);
             }
 
             if (enableDebug) {
-                Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] gained {buffName}({stack})");
+                Debug.Log($"[BUFF]{owner.name}[{owner.EntityId}] gained {buffAddress}({stack})");
             }
         }
 
@@ -92,7 +91,7 @@ namespace XiheFramework.Combat.Buff {
                 var eventArgs = new OnBuffDestroyEventArgs(buffEntity.EntityId, buffName);
                 Game.Event.InvokeNow(onBuffDestroyedEvtName, owner.EntityId, eventArgs);
                 if (enableDebug) {
-                    Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] lost {buffName}");
+                    Debug.Log($"[BUFF]{owner.name}[{owner.EntityId}] lost {buffName}");
                 }
             }
             else {
@@ -101,7 +100,7 @@ namespace XiheFramework.Combat.Buff {
                 var eventArgs = new OnRemoveBuffEventArgs(buffEntity.EntityId, buffName, stack, buffEntity.CurrentStack - stack);
                 Game.Event.InvokeNow(onBuffRemovedEvtName, owner.EntityId, eventArgs);
                 if (enableDebug) {
-                    Debug.Log($"[BUFF]{owner.EntityName}[{owner.EntityId}] removed {stack}stacks of {buffName}");
+                    Debug.Log($"[BUFF]{owner.name}[{owner.EntityId}] removed {stack}stacks of {buffName}");
                 }
             }
         }
@@ -218,21 +217,6 @@ namespace XiheFramework.Combat.Buff {
         protected override void Awake() {
             base.Awake();
             Game.Buff = this;
-        }
-
-        public override void Setup() {
-            Game.Event.Subscribe(Game.Entity.onEntityDestroyedEvtName, OnOwnerEntityDestroyed);
-        }
-
-        private void OnOwnerEntityDestroyed(object sender, object e) {
-            if (sender is not uint id) {
-                return;
-            }
-
-            var entity = Game.Entity.GetEntity<GameEntity>(id);
-            if (entity is IBuffOwner buffOwner) {
-                buffOwner.ClearBuff();
-            }
         }
     }
 }

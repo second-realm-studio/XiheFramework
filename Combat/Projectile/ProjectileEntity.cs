@@ -2,12 +2,13 @@ using UnityEngine;
 using XiheFramework.Combat.Damage;
 using XiheFramework.Combat.Damage.HitBox;
 using XiheFramework.Combat.Damage.Interfaces;
+using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Projectile {
-    public abstract class ProjectileEntity : TimeBasedGameEntity {
-        public override string EntityGroupName => "ProjectileEntity";
+    public abstract class ProjectileEntity : GameEntity {
+        public override string GroupName => "ProjectileEntity";
         public HitBoxBase hitBox;
         public float lifeTime = 5f;
 
@@ -38,6 +39,10 @@ namespace XiheFramework.Combat.Projectile {
             elapsedTime = 0f;
         }
 
+        public void DestroyProjectile() {
+            Game.Projectile.DestroyProjectile(EntityId);
+        }
+
         public override void OnUpdateCallback() {
             if (!m_IsAirborne) {
                 return;
@@ -47,7 +52,7 @@ namespace XiheFramework.Combat.Projectile {
             OnAirborne();
 
             if (elapsedTime >= lifeTime) {
-                Game.Projectile.DestroyProjectile(EntityId);
+                DestroyProjectile();
             }
         }
 

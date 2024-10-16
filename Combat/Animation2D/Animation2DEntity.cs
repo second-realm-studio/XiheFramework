@@ -2,15 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
 
 namespace XiheFramework.Combat.Animation2D {
-    public sealed class Animation2DEntity : TimeBasedGameEntity {
+    public sealed class Animation2DEntity : GameEntity {
         public UvAnimation uvAnimation;
         public MeshRenderer mainMeshRenderer;
         public Vector3 offset;
 
-        public override string EntityGroupName => "Animation2DEntity";
+        public override string GroupName => "Animation2DEntity";
 
         //properties
         public Material MainMaterial { get; private set; }
@@ -53,7 +54,7 @@ namespace XiheFramework.Combat.Animation2D {
         public void Setup(bool playFirstFrameAtStart = false) {
             MainMaterial = mainMeshRenderer.material;
             if (uvAnimation == null) {
-                Debug.LogError($"{this.EntityName} uvAnimation is null");
+                Debug.LogError($"{this.name} uvAnimation is null");
                 return;
             }
 
@@ -112,7 +113,7 @@ namespace XiheFramework.Combat.Animation2D {
 
         public void RegisterEvent(int frame, System.Action callback) {
             if (frame > TotalFrameCount - 1 || frame < 0) {
-                Debug.LogWarning($"{EntityName} frame {frame} out of range");
+                Debug.LogWarning($"{name} frame {frame} out of range");
             }
 
             if (m_EventMap.ContainsKey(frame)) {

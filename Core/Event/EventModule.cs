@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.Entity;
 using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 using static System.String;
@@ -19,7 +20,7 @@ namespace XiheFramework.Core.Event {
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
                     var element = m_WaitingList.Dequeue();
-                    element.EventHandler.Invoke(element.Sender, element.Argument);
+                    element.eventHandler.Invoke(element.sender, element.argument);
                 }
             }
         }
@@ -34,6 +35,7 @@ namespace XiheFramework.Core.Event {
                 Debug.Log("[Event] Subscribe: eventName is null or empty");
                 return null;
             }
+
             var id = Guid.NewGuid().ToString();
 
             m_ActiveEventHandlers.Add(id, handler);
@@ -87,8 +89,9 @@ namespace XiheFramework.Core.Event {
                     }
                 }
             }
-            else
-                Debug.Log("Event :" + eventName + " does not have any c# subscriber");
+            else {
+                if (enableDebug) Debug.Log("Event :" + eventName + " does not have any c# subscriber");
+            }
         }
 
         public void Invoke(string eventName, object sender = null, object eventArg = null) {
@@ -128,15 +131,15 @@ namespace XiheFramework.Core.Event {
             return m_ActiveEventHandlers;
         }
 
-        private class EventPair {
-            public readonly object Argument;
-            public readonly EventHandler<object> EventHandler;
-            public readonly object Sender;
+        private struct EventPair {
+            public readonly object argument;
+            public readonly EventHandler<object> eventHandler;
+            public readonly object sender;
 
             public EventPair(object sender, object argument, EventHandler<object> eventHandler) {
-                Sender = sender;
-                Argument = argument;
-                EventHandler = eventHandler;
+                this.sender = sender;
+                this.argument = argument;
+                this.eventHandler = eventHandler;
             }
         }
 
@@ -150,7 +153,7 @@ namespace XiheFramework.Core.Event {
 
         protected override void Awake() {
             base.Awake();
-            
+
             Game.Event = this;
         }
     }

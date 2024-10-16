@@ -1,12 +1,12 @@
 namespace XiheFramework.Combat.Buff {
-    public class OnAddBuffEventArgs {
+    public struct OnAddBuffEventArgs {
         public uint buffEntityId;
-        public string buffName;
+        public string buffAddress;
         public int deltaStack;
 
-        public OnAddBuffEventArgs(uint buffEntityId, string buffName, int deltaStack) {
+        public OnAddBuffEventArgs(uint buffEntityId, string buffAddress, int deltaStack) {
             this.buffEntityId = buffEntityId;
-            this.buffName = buffName;
+            this.buffAddress = buffAddress;
             this.deltaStack = deltaStack;
         }
     }

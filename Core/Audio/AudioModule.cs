@@ -32,7 +32,7 @@ namespace XiheFramework.Core.Audio {
 #endif
 
         public void PlayViaUnity(uint ownerId, AudioClip audioClip, Vector3 worldPosition, bool loop) {
-            var audioEntity = Game.Entity.InstantiateEntity<AudioEntity>("AudioEntity_StandardAudioEntity", ownerId, true, 0u, null);
+            var audioEntity = Game.Entity.InstantiateEntity<AudioEntity>("AudioEntity_StandardAudioEntity", worldPosition, ownerId, true, 0u, null);
             audioEntity.transform.position = worldPosition;
             audioEntity.AudioClip = audioClip;
             audioEntity.Loop = loop;

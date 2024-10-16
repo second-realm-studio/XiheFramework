@@ -22,7 +22,7 @@ namespace XiheFramework.Editor.Core.Config {
             m_Target.ApplyModifiedProperties();
 
             if (GUILayout.Button("Open Config Editor", GUILayout.Height(40))) {
-                ConfigEditorWindow.ShowWindow(m_Target);
+                ConfigModuleEditorWindow.ShowWindow(m_Target);
             }
         }
     }

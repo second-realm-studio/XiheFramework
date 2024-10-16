@@ -25,38 +25,26 @@ namespace XiheFramework.Core.LogicTime {
         /// </summary>
         /// <param name="timeScale"></param>
         /// <param name="duration"> duration in frames </param>
-        /// <param name="affectUnityTimeScale"> if true, will affect Time.timeScale </param>
-        public void SetGlobalTimeScaleInFrame(float timeScale, int duration, bool affectUnityTimeScale = false) {
+        /// <param name="setUnityTimeScale"> if true, will affect Time.timeScale </param>
+        public void SetGlobalTimeScaleInFrame(float timeScale, int duration, bool setUnityTimeScale = false) {
+            var oldTimeScale = GlobalTimeScale;
             GlobalTimeScale = timeScale;
             m_Duration = duration;
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
-            if (affectUnityTimeScale) {
+            var args = new OnSetGlobalTimeScaleEventArgs(timeScale, oldTimeScale, duration);
+            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, args);
+            if (setUnityTimeScale) {
                 Time.timeScale = timeScale;
             }
 
             Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
         }
 
-        public void SetGlobalTimeScaleInSecond(float timeScale, float duration, bool affectUnityTimeScale = false) {
-            GlobalTimeScale = timeScale;
-            m_Duration = (int)(duration * 60f);
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
-            if (affectUnityTimeScale) {
-                Time.timeScale = timeScale;
-            }
-
-            Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
+        public void SetGlobalTimeScaleInSecond(float timeScale, float duration, bool setUnityTimeScale = false) {
+            SetGlobalTimeScaleInFrame(timeScale, (int)(duration / Time.deltaTime), setUnityTimeScale);
         }
 
-        public void SetGlobalTimeScalePermanent(float timeScale, bool affectUnityTimeScale = false) {
-            GlobalTimeScale = timeScale;
-            m_Duration = 0;
-            if (affectUnityTimeScale) {
-                Time.timeScale = timeScale;
-            }
-
-            Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, timeScale);
-            Shader.SetGlobalFloat(TimeScalePropertyID, timeScale);
+        public void SetGlobalTimeScalePermanent(float timeScale, bool setUnityTimeScale = false) {
+            SetGlobalTimeScaleInFrame(timeScale, 0, setUnityTimeScale);
         }
 
         public override void OnUpdate() {

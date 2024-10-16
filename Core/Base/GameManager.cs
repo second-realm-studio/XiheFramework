@@ -1,4 +1,9 @@
-﻿using System;
+﻿// -----------------------------------
+// XiheFramework
+// Author: sky_haihai, yifeng
+// -----------------------------------
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Utility;
@@ -6,10 +11,11 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Base {
     /// <summary>
-    /// Game manager for XiheFramework, work as a Singleton
+    /// Game manager for XiheFramework, work as a Singleton.
     /// </summary>
+    [DefaultExecutionOrder(-300)]
     public class GameManager : Singleton<GameManager> {
-        public static readonly string OnXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
+        public readonly string onXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
         public int frameRate = 60;
         public bool dontDestroyOnLoad = true;
 
@@ -25,6 +31,7 @@ namespace XiheFramework.Core.Base {
             RegisterAllComponent();
             foreach (var component in m_GameModules.Values) component.Setup();
             Debug.LogFormat("XiheFramework Initialized");
+            Game.Manager = this;
         }
 
         private void Start() {
@@ -38,7 +45,7 @@ namespace XiheFramework.Core.Base {
 
         private void Update() {
             if (m_OnInitEventInvoked) return;
-            Game.Event.Invoke(OnXiheFrameworkInitialized);
+            Game.Event.Invoke(onXiheFrameworkInitialized);
             m_OnInitEventInvoked = true;
         }
 

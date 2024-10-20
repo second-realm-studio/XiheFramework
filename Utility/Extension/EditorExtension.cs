@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System;
 
-namespace XiheFramework.Core.Utility.Extension
+namespace XiheFramework.Utility.Extension
 {
     public static class EditorTime
     {

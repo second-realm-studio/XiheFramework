@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace XiheFramework.Core.Utility.Extension {
+namespace XiheFramework.Utility.Extension {
     public static class UnityEngineExtension {
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component {
             var component = gameObject.GetComponent<T>();

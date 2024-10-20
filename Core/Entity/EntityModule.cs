@@ -63,7 +63,21 @@ namespace XiheFramework.Core.Entity {
             return InstantiateEntity(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
         }
 
+        public GameEntity InstantiateEntity(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
+            Action<GameEntity> onInstantiatedCallback = null) {
+            return InstantiateEntity<GameEntity>(entityAddress, localPosition, localRotation, ownerEntityId, setParent, presetId, onInstantiatedCallback);
+        }
 
+        public GameEntity InstantiateEntity(string entityAddress, Vector3 localPosition, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
+            Action<GameEntity> onInstantiatedCallback = null) {
+            return InstantiateEntity<GameEntity>(entityAddress, localPosition, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
+        }
+
+        public GameEntity InstantiateEntity(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
+            Action<GameEntity> onInstantiatedCallback = null) {
+            return InstantiateEntity<GameEntity>(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
+        }
+        
         public void InstantiateEntityAsync<T>(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true,
             uint presetId = 0, Action<T> onInstantiatedCallback = null)
             where T : GameEntity {

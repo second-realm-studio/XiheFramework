@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace XiheFramework.Core.Utility.Extension
+namespace XiheFramework.Utility.Extension
 {
     public static class ColorExtension
     {

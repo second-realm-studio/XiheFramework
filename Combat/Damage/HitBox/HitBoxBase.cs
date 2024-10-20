@@ -3,8 +3,8 @@ using UnityEngine;
 using XiheFramework.Combat.Damage.Interfaces;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
-using XiheFramework.Core.Utility.Extension;
 using XiheFramework.Runtime;
+using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Combat.Damage.HitBox {
     public abstract class HitBoxBase : MonoBehaviour {

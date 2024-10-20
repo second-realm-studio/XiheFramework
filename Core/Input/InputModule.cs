@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Base;
-using XiheFramework.Core.Utility.Extension;
+using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Core.Input {
     public class InputModule : GameModule {

@@ -11,8 +11,7 @@ namespace XiheFramework.Core.FSM {
 
         private Queue<string> m_RemoveQueue = new();
         private bool m_IsActive = true;
-
-
+        
         public override void OnUpdate() {
             if (!m_IsActive) return;
 

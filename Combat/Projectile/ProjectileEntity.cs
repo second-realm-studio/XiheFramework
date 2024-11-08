@@ -9,26 +9,20 @@ using XiheFramework.Runtime;
 namespace XiheFramework.Combat.Projectile {
     public abstract class ProjectileEntity : GameEntity {
         public override string GroupName => "ProjectileEntity";
-        public HitBoxBase hitBox;
         public float lifeTime = 5f;
 
         public Vector3 StartPoint { get; private set; }
         public Vector3 EndPoint { get; private set; }
 
         protected float elapsedTime;
-
         private bool m_IsAirborne;
 
-        public void Launch(Vector3 startPoint, Vector3 endPoint, System.Action<IDamageData> onDamageCallback) {
+        public void Launch(Vector3 startPoint, Vector3 endPoint) {
             StartPoint = startPoint;
             EndPoint = endPoint;
 
-            hitBox.DisableHitBox();
             transform.position = StartPoint; //prevent it from spawning at vector3.zero and touch the ground 
-            hitBox.OnHit = OnContact;
-            hitBox.OnDamageDealt = OnDamage + onDamageCallback;
-            hitBox.EnableHitBox(OwnerId);
-
+            
             OnLaunch();
 
             m_IsAirborne = true;
@@ -61,7 +55,7 @@ namespace XiheFramework.Combat.Projectile {
 
             StopAllCoroutines();
         }
-
+        
         /// <summary>
         /// Calls on the first frame when the projectile is launched
         /// </summary>
@@ -75,19 +69,23 @@ namespace XiheFramework.Combat.Projectile {
         /// <summary>
         /// Calls when the projectile damages something
         /// </summary>
-        /// <param name="damageData"></param>
-        protected abstract void OnDamage(IDamageData damageData);
+        /// <param name="senderId"></param>
+        /// <param name="receiverId"></param>
+        /// <param name="hit"></param>
+        protected abstract void OnDamageEnter(uint senderId, uint receiverId, RaycastHit hit);
 
         /// <summary>
-        /// Calls when the projectile is in contact with something
+        /// Calls when the projectile stay damages something
         /// </summary>
-        /// <param name="other"></param>
-        protected abstract void OnContact(Collider other);
+        /// <param name="senderId"></param>
+        /// <param name="receiverId"></param>
+        /// <param name="hit"></param>
+        protected abstract void OnDamageStay(uint senderId, uint receiverId, RaycastHit hit);
 
-#if UNITY_EDITOR
-        private void OnValidate() {
-            hitBox = GetComponentInChildren<HitBoxBase>();
-        }
-#endif
+        /// <summary>
+        /// Calls when the projectile exits
+        /// </summary>
+        /// <param name="lastReceiverId"></param>
+        protected abstract void OnDamageExit(uint lastReceiverId);
     }
 }

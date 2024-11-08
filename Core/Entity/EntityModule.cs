@@ -77,7 +77,7 @@ namespace XiheFramework.Core.Entity {
             Action<GameEntity> onInstantiatedCallback = null) {
             return InstantiateEntity<GameEntity>(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
         }
-        
+
         public void InstantiateEntityAsync<T>(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true,
             uint presetId = 0, Action<T> onInstantiatedCallback = null)
             where T : GameEntity {
@@ -173,6 +173,10 @@ namespace XiheFramework.Core.Entity {
 
             Debug.LogWarning($"[ENTITY] Entity : {entityId} is not Existed");
             return null;
+        }
+
+        public GameEntity GetEntity(uint entityId) {
+            return GetEntity<GameEntity>(entityId);
         }
 
         public bool IsEntityAvailable(uint entityId) {

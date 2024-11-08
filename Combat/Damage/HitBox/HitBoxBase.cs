@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using XiheFramework.Combat.Damage.Interfaces;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
@@ -8,71 +9,19 @@ using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Combat.Damage.HitBox {
     public abstract class HitBoxBase : MonoBehaviour {
-        public Action<IDamageData> OnDamageDealt { get; set; }
-        public Action<Collider> OnHit { get; set; }
         public uint OwnerId { get; private set; }
 
-        public Collider hitBoxCollider;
-        public LayerMask damageLayerMask;
         public LayerMask hitLayerMask;
 
-        protected abstract void OnContactCallback(Collider other);
-        protected abstract void OnDamageDealtCallback(IDamageData damageData);
-        protected abstract IDamageData GetDamageData(uint senderId, uint receiverId);
-
-        public virtual void EnableHitBox(uint owner) {
+        public void EnableHitBox(uint owner) {
             OwnerId = owner;
-            hitBoxCollider.enabled = true;
+            OnEnableHitBox();
         }
 
-        public virtual void DisableHitBox() {
-            if (hitBoxCollider != null) {
-                hitBoxCollider.enabled = false;
-            }
-        }
+        public void DisableHitBox() => OnDisableHitBox();
 
-        public void ClearOnHit() {
-            OnHit = null;
-        }
+        protected abstract void OnEnableHitBox();
 
-        public void ClearOnDamageDealt() {
-            OnDamageDealt = null;
-        }
-
-        private void Awake() {
-            if (hitBoxCollider == null) {
-                hitBoxCollider = GetComponent<Collider>();
-            }
-
-            hitBoxCollider.enabled = false;
-        }
-
-        private void OnTriggerEnter(Collider other) {
-            if (hitLayerMask.Includes(other.gameObject.layer)) {
-                OnContactCallback(other);
-                OnHit?.Invoke(other);
-            }
-
-            var hurtBox = other.GetComponentInParent<HurtBox>();
-
-            if (hurtBox == null) {
-                return;
-            }
-
-            if (damageLayerMask.Includes(other.gameObject.layer)) {
-                var data = GetDamageData(OwnerId, hurtBox.owner.EntityId);
-                OnDamageDealtCallback(data);
-                OnDamageDealt?.Invoke(data);
-                Game.Damage.RegisterDamage(data);
-            }
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate() {
-            if (hitBoxCollider == null) {
-                hitBoxCollider = GetComponent<Collider>();
-            }
-        }
-#endif
+        protected abstract void OnDisableHitBox();
     }
 }

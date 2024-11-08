@@ -34,8 +34,8 @@ namespace XiheFramework.Combat.Particle {
             return null;
         }
 
-        public ParticleEntity PlayParticle(uint ownerId, string particleAddress, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop,
-            bool followOwner = true) {
+        public ParticleEntity PlayParticle(uint ownerId, string particleAddress, Vector3 localPosition, Quaternion localRotation, Vector3 localScale, bool loop=false,
+            bool followOwner = false) {
             var particle = CreateParticleEntity(ownerId, particleAddress, localPosition, localRotation, localScale, followOwner);
             particle.Play(loop);
             Game.Event.Invoke(onParticlePlay, ownerId, particle.EntityId);

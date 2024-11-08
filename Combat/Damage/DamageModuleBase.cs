@@ -9,6 +9,7 @@ using XiheFramework.Runtime;
 namespace XiheFramework.Combat.Damage {
     public abstract class DamageModuleBase : GameModule, IDamageModule {
         public string onProcessedDamageEventName => "Damage.OnProcessedDamage";
+        
         protected Queue<IDamageData> damageQueue = new();
 
         public void RegisterDamage(IDamageData damageData) {

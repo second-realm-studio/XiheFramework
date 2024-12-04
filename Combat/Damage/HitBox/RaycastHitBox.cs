@@ -1,22 +1,35 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Combat.Damage.HitBox {
     public class RaycastHitBox : HitBoxBase {
         /// <summary>
-        /// Called when raycast starts hitting something
-        /// @param senderId
-        /// @param receiverId
-        /// @param hitInfo
+        /// Event triggered when hit is detected upon entering a collision.
         /// </summary>
+        /// <remarks>
+        /// The delegate takes three parameters:
+        /// <list type="number">
+        ///     <item><description><c>uint</c>: The unique identifier of the damage source.</description></item>
+        ///     <item><description><c>uint</c>: The unique identifier of the damage target.</description></item>
+        ///     <item><description><see cref="RaycastHit"/>: Details about the collision, such as hit point and normal.</description></item>
+        /// </list>
+        /// </remarks>
         public Action<uint, uint, RaycastHit> OnDamageEnter { get; set; }
 
         /// <summary>
-        /// Called when raycast stays hitting something that it did last frame
-        /// @param senderId
-        /// @param receiverId
-        /// @param hitInfo
+        /// Event triggered when hit is detected upon staying in a collision.
         /// </summary>
+        /// <remarks>
+        /// The delegate takes three parameters:
+        /// <list type="number">
+        ///     <item><description><c>uint</c>: The unique identifier of the damage source.</description></item>
+        ///     <item><description><c>uint</c>: The unique identifier of the damage target.</description></item>
+        ///     <item><description><see cref="RaycastHit"/>: Details about the collision, such as hit point and normal.</description></item>
+        /// </list>
+        /// </remarks>
         public Action<uint, uint, RaycastHit> OnDamageStay { get; set; }
 
         /// <summary>
@@ -25,29 +38,80 @@ namespace XiheFramework.Combat.Damage.HitBox {
         /// </summary>
         public Action<uint> OnDamageExit { get; set; }
 
-        public Transform rayOrigin;
-        public float rayDistance = 10;
+        public Vector3 rayOrigin; //object space
+        public int rayArraySize = 1; //can not be lower than 1
+        public float spread = 0.1f;
         public Vector3 rayDirection; //in object space
+        public float rayDistance = 10;
 
+        public int maxHitCount = 10; //0 means unlimited
         public int stayCoolDownFrame = 10;
 
         private bool m_Activated;
         private int m_StayCoolDownTimer;
-        private Collider m_LastHitCollider; //determine if hit is HitEnter or HitStay or HitExit
+        private readonly List<uint> m_LastFrameHitEntityIds = new List<uint>();
+        private readonly List<uint> m_CurrentFrameHitEntityIds = new List<uint>();
+        private List<RaycastHit> m_HitList;
+
+        private void Awake() {
+            m_HitList = new List<RaycastHit>();
+            rayArraySize = Mathf.Max(rayArraySize, 1);
+        }
 
         private void FixedUpdate() {
             if (!m_Activated) {
                 return;
             }
 
-            var originWS = rayOrigin ? rayOrigin.position : transform.position;
-            var directionWS = transform.TransformDirection(rayDirection);
+            UpdateRaycastHitList();
 
-            if (Physics.Raycast(originWS, directionWS, out var hit, rayDistance, hitLayerMask)) {
+            if (m_HitList.Count == 0) {
+                foreach (var lastFrameHitEntityId in m_LastFrameHitEntityIds) {
+                    OnHitExitCallback(lastFrameHitEntityId);
+                }
+
+                m_LastFrameHitEntityIds.Clear();
+                return;
+            }
+
+            foreach (var lastFrameHitEntityId in m_LastFrameHitEntityIds.ToList()) {
+                if (!m_CurrentFrameHitEntityIds.Contains(lastFrameHitEntityId)) {
+                    m_LastFrameHitEntityIds.Remove(lastFrameHitEntityId);
+                    OnHitExitCallback(lastFrameHitEntityId);
+                }
+            }
+
+            foreach (var hit in m_HitList) {
                 OnHitCallback(hit);
             }
-            else {
-                OnHitExitCallback();
+        }
+
+        private void UpdateRaycastHitList() {
+            m_HitList.Clear();
+            m_CurrentFrameHitEntityIds.Clear();
+
+            var originWS = transform.TransformPoint(rayOrigin);
+            var directionWS = transform.TransformDirection(rayDirection);
+
+            for (int i = 0; i < rayArraySize; i++) {
+                var startPos = GetOffsetRayOrigin(originWS, directionWS, i);
+                if (Physics.Raycast(startPos, directionWS, out var hit, rayDistance, hitLayerMask, QueryTriggerInteraction.Collide)) {
+                    var hurtBox = hit.collider.GetComponent<HurtBox>();
+                    if (hurtBox == null) {
+                        continue;
+                    }
+
+                    var receiverId = hurtBox.owner.EntityId;
+                    if (m_CurrentFrameHitEntityIds.Contains(receiverId)) {
+                        continue;
+                    }
+
+                    m_HitList.Add(hit);
+                    m_CurrentFrameHitEntityIds.Add(receiverId);
+                    if (m_HitList.Count >= maxHitCount) {
+                        return;
+                    }
+                }
             }
         }
 
@@ -65,9 +129,9 @@ namespace XiheFramework.Combat.Damage.HitBox {
                 return;
             }
 
-            if (m_LastHitCollider != hit.collider) {
+            if (!m_LastFrameHitEntityIds.Contains(hurtBox.owner.EntityId)) {
                 OnHitEnterCallback(hurtBox, hit);
-                m_LastHitCollider = hit.collider;
+                m_LastFrameHitEntityIds.Add(hurtBox.owner.EntityId);
             }
             else {
                 OnHitStayCallback(hurtBox, hit);
@@ -89,18 +153,32 @@ namespace XiheFramework.Combat.Damage.HitBox {
             m_StayCoolDownTimer++;
         }
 
-        private void OnHitExitCallback() {
-            if (m_LastHitCollider == null) {
-                return;
+        private void OnHitExitCallback(uint lastReceiverId) {
+            OnDamageExit?.Invoke(lastReceiverId);
+        }
+
+        private Vector3 GetOffsetRayOrigin(Vector3 originWS, Vector3 directionWS, int index) {
+            Vector3 offset;
+            if (rayArraySize > 1) {
+                var offsetDirection = Vector3.Cross(directionWS, transform.forward).normalized;
+                offset = spread / 2f * -offsetDirection + index * spread / (rayArraySize - 1) * offsetDirection;
+            }
+            else {
+                offset = Vector3.zero;
             }
 
-            var hurtBox = m_LastHitCollider.gameObject.GetComponentInParent<HurtBox>();
-            if (hurtBox == null) {
-                return;
-            }
+            var startPos = originWS + offset;
+            return startPos;
+        }
 
-            OnDamageExit?.Invoke(hurtBox.owner.EntityId);
-            m_LastHitCollider = null;
+        private void OnDrawGizmos() {
+            Gizmos.color = Color.red;
+            var originWS = transform.TransformPoint(rayOrigin);
+            var directionWS = transform.TransformDirection(rayDirection).normalized;
+            for (int i = 0; i < rayArraySize; i++) {
+                var startPos = GetOffsetRayOrigin(originWS, directionWS, i);
+                Gizmos.DrawLine(startPos, startPos + directionWS * rayDistance);
+            }
         }
     }
 }

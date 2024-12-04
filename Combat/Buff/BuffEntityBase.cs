@@ -5,7 +5,7 @@ using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
 
 namespace XiheFramework.Combat.Buff {
-    public abstract class BuffEntity : GameEntity {
+    public abstract class BuffEntityBase : GameEntity {
         public override string GroupName => "BuffEntity";
 
         /// <summary>

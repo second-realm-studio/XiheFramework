@@ -33,7 +33,7 @@ namespace XiheFramework.Combat.Buff {
                     stack = GetBuffEntity(ownerId, buffAddress).maxStack;
                 }
 
-                var buffEntity = Game.Entity.GetEntity<BuffEntity>(buffOwner.GetBuffEntityId(buffAddress));
+                var buffEntity = Game.Entity.GetEntity<BuffEntityBase>(buffOwner.GetBuffEntityId(buffAddress));
                 var deltaStack = GetDeltaStack(buffEntity.CurrentStack, stack, buffEntity.maxStack);
 
                 if (deltaStack == 0) {
@@ -47,7 +47,7 @@ namespace XiheFramework.Combat.Buff {
                 Game.Event.InvokeNow(onBuffAddedEvtName, owner.EntityId, args);
             }
             else {
-                var buffEntity = Runtime.Game.Entity.InstantiateEntity<BuffEntity>(buffAddress, owner.EntityId, true);
+                var buffEntity = Runtime.Game.Entity.InstantiateEntity<BuffEntityBase>(buffAddress, owner.EntityId, true);
                 if (stack == 0) {
                     stack = buffEntity.maxStack;
                 }
@@ -118,7 +118,7 @@ namespace XiheFramework.Combat.Buff {
             return buffOwner.HasBuff(buffName);
         }
 
-        public BuffEntity GetBuffEntity(uint ownerId, string buffName) {
+        public BuffEntityBase GetBuffEntity(uint ownerId, string buffName) {
             var owner = Game.Entity.GetEntity<GameEntity>(ownerId);
             if (owner == null) {
                 return null;
@@ -129,7 +129,7 @@ namespace XiheFramework.Combat.Buff {
             }
 
             if (buffOwner.HasBuff(buffName)) {
-                return Game.Entity.GetEntity<BuffEntity>(buffOwner.GetBuffEntityId(buffName));
+                return Game.Entity.GetEntity<BuffEntityBase>(buffOwner.GetBuffEntityId(buffName));
             }
 
             return null;

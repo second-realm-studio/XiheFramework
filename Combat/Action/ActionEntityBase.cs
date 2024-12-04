@@ -4,7 +4,7 @@ using XiheFramework.Core.Entity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Action {
-    public abstract class ActionEntity : GameEntity {
+    public abstract class ActionEntityBase : GameEntity {
         public override string GroupName => "ActionEntity";
         protected Dictionary<string, object> Arguments { get; private set; }
         

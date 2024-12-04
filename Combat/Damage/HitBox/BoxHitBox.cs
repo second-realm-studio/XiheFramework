@@ -1,19 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
-using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Damage.HitBox {
-    public class SphereHitBox : HitBoxBase {
+    public class BoxHitBox : HitBoxBase {
         /// <summary>
         /// Called when raycast starts hitting something
         /// @param senderId
         /// @param receiverId
         /// @param hitPoint
         /// </summary>
-        public Action<uint, uint, Vector3, Collider> OnDamageEnter { get; set; }
+        public Action<uint, uint, Vector3> OnDamageEnter { get; set; }
 
         /// <summary>
         /// Called when raycast stays hitting something that it did last frame
@@ -21,16 +18,16 @@ namespace XiheFramework.Combat.Damage.HitBox {
         /// @param receiverId
         /// @param hitPoint
         /// </summary>
-        public Action<uint, uint, Vector3, Collider> OnDamageStay { get; set; }
+        public Action<uint, uint, Vector3> OnDamageStay { get; set; }
 
         /// <summary>
         /// Called when overlapSphere not hitting anything
         /// @param lastReceiverId
         /// </summary>
-        public System.Action<uint> OnDamageExit { get; set; }
+        public Action<uint> OnDamageExit { get; set; }
 
         public Vector3 sphereCenter;
-        public float sphereRadius = 1;
+        public float sphereRadius;
         public int maxHitCount = 10;
         public int stayCoolDownFrame = 10;
 
@@ -66,12 +63,8 @@ namespace XiheFramework.Combat.Damage.HitBox {
             }
 
             for (var i = 0; i < m_Results.Length; i++) {
-                var currentCol = m_Results[i];
-                if (currentCol == null) {
-                    continue;
-                }
-
-                var hurtBox = currentCol.GetComponentInParent<HurtBox>();
+                var currentId = m_Results[i];
+                var hurtBox = currentId.GetComponentInParent<HurtBox>();
                 if (hurtBox == null) {
                     m_Results[i] = null;
                     continue;
@@ -80,7 +73,7 @@ namespace XiheFramework.Combat.Damage.HitBox {
                 m_CurrentFrameHitEntityIds.Add(hurtBox.owner.EntityId);
             }
 
-            foreach (var lastFrameHitId in m_LastFrameHitEntityIds.ToList()) {
+            foreach (var lastFrameHitId in m_LastFrameHitEntityIds) {
                 if (!m_CurrentFrameHitEntityIds.Contains(lastFrameHitId)) {
                     m_LastFrameHitEntityIds.Remove(lastFrameHitId);
                     OnHitExitCallback(lastFrameHitId);
@@ -119,23 +112,23 @@ namespace XiheFramework.Combat.Damage.HitBox {
             }
 
             if (!m_LastFrameHitEntityIds.Contains(hurtBox.owner.EntityId)) {
-                OnHitEnterCallback(hurtBox, hitPoint, hitCol);
+                OnHitEnterCallback(hurtBox, hitPoint);
                 m_LastFrameHitEntityIds.Add(hurtBox.owner.EntityId);
             }
             else {
-                OnHitStayCallback(hurtBox, hitPoint, hitCol);
+                OnHitStayCallback(hurtBox, hitPoint);
             }
         }
 
-        private void OnHitEnterCallback(HurtBox hurtBox, Vector3 hitPoint, Collider other) {
-            OnDamageEnter?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint, other);
+        private void OnHitEnterCallback(HurtBox hurtBox, Vector3 hitPoint) {
+            OnDamageEnter?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint);
         }
 
-        private void OnHitStayCallback(HurtBox hurtBox, Vector3 hitPoint, Collider other) {
+        private void OnHitStayCallback(HurtBox hurtBox, Vector3 hitPoint) {
             if (m_StayCoolDownTimer >= stayCoolDownFrame) {
                 m_StayCoolDownTimer -= stayCoolDownFrame;
 
-                OnDamageStay?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint, other);
+                OnDamageStay?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint);
                 return;
             }
 
@@ -143,11 +136,11 @@ namespace XiheFramework.Combat.Damage.HitBox {
         }
 
         private void OnHitExitCallback(uint lastReceiverId) {
-            OnDamageExit?.Invoke(lastReceiverId);
+            OnDamageExit.Invoke(lastReceiverId);
         }
 
         private void OnDrawGizmos() {
-            Gizmos.color = Color.red;
+            Gizmos.color=Color.red;
             Gizmos.DrawWireSphere(transform.TransformPoint(sphereCenter), sphereRadius);
         }
     }

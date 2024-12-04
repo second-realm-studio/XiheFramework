@@ -148,7 +148,7 @@ namespace XiheFramework.Core.Entity {
             }
         }
 
-        public void ChangeEntityOwner(uint entityId, uint ownerId, bool setParent = true) {
+        public void ChangeEntityOwner(uint entityId, uint ownerId, bool setParent = true, Transform root = null) {
             if (!m_Entities.ContainsKey(entityId)) {
                 return;
             }
@@ -159,7 +159,12 @@ namespace XiheFramework.Core.Entity {
 
             m_Entities[entityId].OwnerId = ownerId;
             if (setParent) {
-                m_Entities[entityId].transform.SetParent(m_Entities[ownerId].transform);
+                if (root) {
+                    m_Entities[entityId].transform.SetParent(root);
+                }
+                else {
+                    m_Entities[entityId].transform.SetParent(m_Entities[ownerId].transform);
+                }
             }
 
             Game.Event.Invoke(onEntityOwnerChangedEvtName, entityId, ownerId);
@@ -171,7 +176,7 @@ namespace XiheFramework.Core.Entity {
                 return m_Entities[entityId] as T;
             }
 
-            Debug.LogWarning($"[ENTITY] Entity : {entityId} is not Existed");
+            Debug.LogWarning($"[ENTITY] Entity : {entityId} is not Existed or is not Type of {typeof(T)}");
             return null;
         }
 

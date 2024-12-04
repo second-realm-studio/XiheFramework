@@ -1,11 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
-using XiheFramework.Combat.Damage.Interfaces;
-using XiheFramework.Core.Entity;
-using XiheFramework.Core.LogicTime;
-using XiheFramework.Runtime;
-using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Combat.Damage.HitBox {
     public abstract class HitBoxBase : MonoBehaviour {

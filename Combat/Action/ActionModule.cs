@@ -32,7 +32,7 @@ namespace XiheFramework.Combat.Action {
         public void SetCurrentActionArgument(uint ownerEntityId, string key, object value) {
             if (!m_CurrentActions.TryGetValue(ownerEntityId, out var actionId)) return;
             if (actionId != 0) {
-                Game.Entity.GetEntity<ActionEntity>(actionId).SetArguments(new KeyValuePair<string, object>(key, value));
+                Game.Entity.GetEntity<ActionEntityBase>(actionId).SetArguments(new KeyValuePair<string, object>(key, value));
             }
         }
 
@@ -68,7 +68,7 @@ namespace XiheFramework.Combat.Action {
                 //instantiate new action
                 var actionAddress = changingAction.Value.actionAddress;
                 var args = changingAction.Value.args;
-                Game.Entity.InstantiateEntity<ActionEntity>(actionAddress, Vector3.zero, Quaternion.identity, ownerId, onInstantiatedCallback: entity => {
+                Game.Entity.InstantiateEntity<ActionEntityBase>(actionAddress, Vector3.zero, Quaternion.identity, ownerId, onInstantiatedCallback: entity => {
                     entity.SetArguments(args);
                     m_CurrentActions[ownerId] = entity.EntityId;
 

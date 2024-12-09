@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
@@ -50,7 +51,8 @@ namespace XiheFramework.Combat.Action {
 
             if (m_ChangingActions == null || m_ChangingActions.Count == 0) return;
 
-            foreach (var changingAction in m_ChangingActions) {
+            //TODO: ToArray too expensive, fix it
+            foreach (var changingAction in m_ChangingActions.ToArray()) {
                 var ownerEntity = Game.Entity.GetEntity<GameEntity>(changingAction.Key);
 
                 if (changingAction.Key == 0 || string.IsNullOrEmpty(changingAction.Value.actionAddress) || ownerEntity == null) {

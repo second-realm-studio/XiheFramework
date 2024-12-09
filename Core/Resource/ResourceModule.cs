@@ -71,6 +71,7 @@ namespace XiheFramework.Core.Resource {
                 return null;
             }
 #else
+            Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: XiheFramework->Setup Wizard");
             return null;
 #endif
         }

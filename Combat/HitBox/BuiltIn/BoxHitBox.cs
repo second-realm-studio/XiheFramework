@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Core.Entity;
 
-namespace XiheFramework.Combat.Damage.HitBox {
+namespace XiheFramework.Combat.HitBox.BuiltIn {
     public class BoxHitBox : HitBoxBase {
         /// <summary>
         /// Called when raycast starts hitting something
@@ -64,13 +65,13 @@ namespace XiheFramework.Combat.Damage.HitBox {
 
             for (var i = 0; i < m_Results.Length; i++) {
                 var currentId = m_Results[i];
-                var hurtBox = currentId.GetComponentInParent<HurtBox>();
-                if (hurtBox == null) {
+                var receiverEntity = currentId.GetComponentInParent<GameEntity>();
+                if (receiverEntity == null) {
                     m_Results[i] = null;
                     continue;
                 }
 
-                m_CurrentFrameHitEntityIds.Add(hurtBox.owner.EntityId);
+                m_CurrentFrameHitEntityIds.Add(receiverEntity.EntityId);
             }
 
             foreach (var lastFrameHitId in m_LastFrameHitEntityIds) {
@@ -97,8 +98,8 @@ namespace XiheFramework.Combat.Damage.HitBox {
         }
 
         private void OnHitCallback(Collider hitCol) {
-            var hurtBox = hitCol.gameObject.GetComponentInParent<HurtBox>();
-            if (hurtBox == null) {
+            var receiverEntity = hitCol.gameObject.GetComponentInParent<GameEntity>();
+            if (receiverEntity == null) {
                 return;
             }
 
@@ -111,24 +112,24 @@ namespace XiheFramework.Combat.Damage.HitBox {
                 hitPoint = sphereCenterWS;
             }
 
-            if (!m_LastFrameHitEntityIds.Contains(hurtBox.owner.EntityId)) {
-                OnHitEnterCallback(hurtBox, hitPoint);
-                m_LastFrameHitEntityIds.Add(hurtBox.owner.EntityId);
+            if (!m_LastFrameHitEntityIds.Contains(receiverEntity.EntityId)) {
+                OnHitEnterCallback(receiverEntity, hitPoint);
+                m_LastFrameHitEntityIds.Add(receiverEntity.EntityId);
             }
             else {
-                OnHitStayCallback(hurtBox, hitPoint);
+                OnHitStayCallback(receiverEntity, hitPoint);
             }
         }
 
-        private void OnHitEnterCallback(HurtBox hurtBox, Vector3 hitPoint) {
-            OnDamageEnter?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint);
+        private void OnHitEnterCallback(GameEntity receiverEntity, Vector3 hitPoint) {
+            OnDamageEnter?.Invoke(OwnerId, receiverEntity.EntityId, hitPoint);
         }
 
-        private void OnHitStayCallback(HurtBox hurtBox, Vector3 hitPoint) {
+        private void OnHitStayCallback(GameEntity receiverEntity, Vector3 hitPoint) {
             if (m_StayCoolDownTimer >= stayCoolDownFrame) {
                 m_StayCoolDownTimer -= stayCoolDownFrame;
 
-                OnDamageStay?.Invoke(OwnerId, hurtBox.owner.EntityId, hitPoint);
+                OnDamageStay?.Invoke(OwnerId, receiverEntity.EntityId, hitPoint);
                 return;
             }
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace XiheFramework.Combat.Damage.HitBox {
+namespace XiheFramework.Combat.HitBox {
     public abstract class HitBoxBase : MonoBehaviour {
         public uint OwnerId { get; private set; }
 

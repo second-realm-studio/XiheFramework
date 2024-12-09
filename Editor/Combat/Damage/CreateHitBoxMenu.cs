@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using XiheFramework.Combat.Damage.HitBox;
+using XiheFramework.Combat.HitBox;
+using XiheFramework.Combat.HitBox.BuiltIn;
 
 namespace XiheFramework.Editor.Combat.Damage {
     public static class CreateHitBoxMenu {

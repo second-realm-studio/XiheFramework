@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XiheFramework.Utility.Extension;
+using XiheFramework.Core.Entity;
 
-namespace XiheFramework.Combat.Damage.HitBox {
+namespace XiheFramework.Combat.HitBox.BuiltIn {
     public class RaycastHitBox : HitBoxBase {
         /// <summary>
         /// Event triggered when hit is detected upon entering a collision.
@@ -43,7 +43,6 @@ namespace XiheFramework.Combat.Damage.HitBox {
         public float spread = 0.1f;
         public Vector3 rayDirection; //in object space
         public float rayDistance = 10;
-
         public int maxHitCount = 10; //0 means unlimited
         public int stayCoolDownFrame = 10;
 
@@ -56,6 +55,7 @@ namespace XiheFramework.Combat.Damage.HitBox {
         private void Awake() {
             m_HitList = new List<RaycastHit>();
             rayArraySize = Mathf.Max(rayArraySize, 1);
+            maxHitCount = Mathf.Max(maxHitCount, 0);
         }
 
         private void FixedUpdate() {
@@ -96,19 +96,19 @@ namespace XiheFramework.Combat.Damage.HitBox {
             for (int i = 0; i < rayArraySize; i++) {
                 var startPos = GetOffsetRayOrigin(originWS, directionWS, i);
                 if (Physics.Raycast(startPos, directionWS, out var hit, rayDistance, hitLayerMask, QueryTriggerInteraction.Collide)) {
-                    var hurtBox = hit.collider.GetComponent<HurtBox>();
-                    if (hurtBox == null) {
+                    var receiverEntity = hit.collider.GetComponent<GameEntity>();
+                    if (receiverEntity == null) {
                         continue;
                     }
 
-                    var receiverId = hurtBox.owner.EntityId;
+                    var receiverId = receiverEntity.EntityId;
                     if (m_CurrentFrameHitEntityIds.Contains(receiverId)) {
                         continue;
                     }
 
                     m_HitList.Add(hit);
                     m_CurrentFrameHitEntityIds.Add(receiverId);
-                    if (m_HitList.Count >= maxHitCount) {
+                    if (m_HitList.Count >= maxHitCount && maxHitCount > 0) {
                         return;
                     }
                 }
@@ -124,29 +124,29 @@ namespace XiheFramework.Combat.Damage.HitBox {
         }
 
         protected void OnHitCallback(RaycastHit hit) {
-            var hurtBox = hit.collider.gameObject.GetComponentInParent<HurtBox>();
-            if (hurtBox == null) {
+            var receiverEntity = hit.collider.gameObject.GetComponentInParent<GameEntity>();
+            if (receiverEntity == null) {
                 return;
             }
 
-            if (!m_LastFrameHitEntityIds.Contains(hurtBox.owner.EntityId)) {
-                OnHitEnterCallback(hurtBox, hit);
-                m_LastFrameHitEntityIds.Add(hurtBox.owner.EntityId);
+            if (!m_LastFrameHitEntityIds.Contains(receiverEntity.EntityId)) {
+                OnHitEnterCallback(receiverEntity, hit);
+                m_LastFrameHitEntityIds.Add(receiverEntity.EntityId);
             }
             else {
-                OnHitStayCallback(hurtBox, hit);
+                OnHitStayCallback(receiverEntity, hit);
             }
         }
 
-        private void OnHitEnterCallback(HurtBox hurtBox, RaycastHit hit) {
-            OnDamageEnter?.Invoke(OwnerId, hurtBox.owner.EntityId, hit);
+        private void OnHitEnterCallback(GameEntity receiverEntity, RaycastHit hit) {
+            OnDamageEnter?.Invoke(OwnerId, receiverEntity.EntityId, hit);
         }
 
-        private void OnHitStayCallback(HurtBox hurtBox, RaycastHit hit) {
+        private void OnHitStayCallback(GameEntity receiverEntity, RaycastHit hit) {
             if (m_StayCoolDownTimer >= stayCoolDownFrame) {
                 m_StayCoolDownTimer -= stayCoolDownFrame;
 
-                OnDamageStay?.Invoke(OwnerId, hurtBox.owner.EntityId, hit);
+                OnDamageStay?.Invoke(OwnerId, receiverEntity.EntityId, hit);
                 return;
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Buff {
     public abstract class BuffEntityBase : GameEntity {
@@ -26,9 +27,18 @@ namespace XiheFramework.Combat.Buff {
                 }
             }
         }
+        
+        protected GameEntity Owner { get; private set; }
 
         private readonly Dictionary<string, object> m_BuffValues = new Dictionary<string, object>();
 
+        
+        public override void OnInitCallback() {
+            Owner= Game.Entity.GetEntity<GameEntity>(OwnerId);
+            if (Owner==null) {
+                Debug.LogError("[Buff] owner is null");
+            }
+        }
         public override void OnUpdateCallback() {
             OnBuffUpdate();
         }

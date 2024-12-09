@@ -1,6 +1,5 @@
 using UnityEngine;
 using XiheFramework.Combat.Damage;
-using XiheFramework.Combat.Damage.HitBox;
 using XiheFramework.Combat.Damage.Interfaces;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.LogicTime;

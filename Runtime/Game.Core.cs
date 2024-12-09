@@ -2,6 +2,7 @@
 using XiheFramework.Core.Audio;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.Blackboard;
+using XiheFramework.Core.Command;
 using XiheFramework.Core.Config;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.Event;
@@ -24,6 +25,7 @@ namespace XiheFramework.Runtime {
         public static AudioModule Audio { get; internal set; }
         public static EventModule Event { get; internal set; }
         public static BlackboardModule Blackboard { get; internal set; }
+        public static CommandModule Command { get; internal set; }
         public static ConfigModule Config { get; internal set; }
         public static ResourceModule Resource { get; internal set; }
         public static UIModule UI { get; internal set; }

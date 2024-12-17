@@ -16,6 +16,7 @@ namespace XiheFramework.Core.Base {
     [DefaultExecutionOrder(-300)]
     public class GameManager : Singleton<GameManager> {
         public readonly string onXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
+        public string gameName = "My Game";
         public int frameRate = 60;
         public bool dontDestroyOnLoad = true;
 
@@ -96,6 +97,10 @@ namespace XiheFramework.Core.Base {
             foreach (var component in Instance.m_GameModules.Values) component.OnReset();
             Instance.m_GameModules.Clear();
             Instance.m_RegisterGameModulesQueue.Clear();
+        }
+        
+        public static string GetGameName() {
+            return Instance.gameName;
         }
     }
 }

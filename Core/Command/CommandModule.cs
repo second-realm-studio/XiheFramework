@@ -7,7 +7,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Command {
     public class CommandModule : GameModule {
-        private Dictionary<string, IExecutable> m_RegisteredCommands = new();
+        private readonly Dictionary<string, IExecutable> m_RegisteredCommands = new();
 
         public void ExecuteCommand(string commandTypeName) {
             if (!m_RegisteredCommands.TryGetValue(commandTypeName, out var command)) {
@@ -18,12 +18,15 @@ namespace XiheFramework.Core.Command {
             command.Execute();
         }
 
+        protected override void Awake() {
+            base.Awake();
+            Game.Command = this;
+        }
+
         public override void Setup() {
             base.Setup();
 
             RegisterAllCommands();
-
-            Game.Command = this;
         }
 
         private void RegisterAllCommands() {

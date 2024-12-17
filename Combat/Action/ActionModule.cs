@@ -43,7 +43,7 @@ namespace XiheFramework.Combat.Action {
         }
 
         public override void Setup() {
-            Game.Event.Subscribe(Game.Entity.onEntityDestroyedEvtName, OnEntityDestroyed);
+            Game.Event.Subscribe(Game.Entity.OnEntityDestroyedEvtName, OnEntityDestroyed);
         }
 
         public override void OnLateUpdate() {
@@ -77,7 +77,7 @@ namespace XiheFramework.Combat.Action {
                     OnChangeActionArgs onChangeActionArgs = new OnChangeActionArgs(entity.EntityId, actionAddress, args);
                     Game.Event.Invoke(onChangeActionEventName, ownerId, onChangeActionArgs);
                     if (enableDebug) {
-                        Debug.Log($"[Action] {ownerEntity.EntityFullName}({ownerId}) Change Action: {actionAddress}");
+                        Debug.Log($"[Action] {ownerEntity.EntityAddress}({ownerId}) Change Action: {actionAddress}");
                     }
                 });
             }

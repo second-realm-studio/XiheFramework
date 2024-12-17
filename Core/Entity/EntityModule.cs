@@ -8,10 +8,10 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Entity {
     //TODO: change to hash id
-    public class EntityModule : GameModule {
-        public readonly string onEntityInstantiatedEvtName = "Event.OnEntityRegistered";
-        public readonly string onEntityDestroyedEvtName = "Event.OnEntityDestroyed";
-        public readonly string onEntityOwnerChangedEvtName = "Event.OnEntityOwnerChanged";
+    public class EntityModule : GameModule, IEntityModule {
+        public string OnEntityInstantiatedEvtName => "Event.OnEntityRegistered";
+        public string OnEntityDestroyedEvtName => "Event.OnEntityDestroyed";
+        public string OnEntityOwnerChangedEvtName => "Event.OnEntityOwnerChanged";
 
         private readonly Dictionary<uint, GameEntity> m_Entities = new();
         private readonly Dictionary<uint, uint> m_RecycledEntityIds = new(); //entity ids that's being destroyed at current frame
@@ -46,7 +46,7 @@ namespace XiheFramework.Core.Entity {
             lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
 
             if (enableDebug) {
-                Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityFullName})");
+                Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityAddress})");
             }
 
             return entity;
@@ -90,7 +90,7 @@ namespace XiheFramework.Core.Entity {
                 var entity = go.GetComponent<T>();
                 lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
                 if (enableDebug) {
-                    Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityFullName})");
+                    Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityAddress})");
                 }
             });
         }
@@ -117,7 +117,7 @@ namespace XiheFramework.Core.Entity {
                 m_RecycledEntityIds.Add(entityId, entityId);
                 Destroy(entity.gameObject);
                 if (enableDebug) {
-                    Debug.Log($"[ENTITY] Entity being Destroyed : {entityId} ({entity.EntityFullName})");
+                    Debug.Log($"[ENTITY] Entity being Destroyed : {entityId} ({entity.EntityAddress})");
                 }
             }
         }
@@ -138,11 +138,11 @@ namespace XiheFramework.Core.Entity {
 
                 entity.OnDestroyCallbackInternal();
                 if (enableDebug) {
-                    Debug.Log($"[ENTITY] Entity Unregistered : {entityId} ({entity.EntityFullName})");
+                    Debug.Log($"[ENTITY] Entity Unregistered : {entityId} ({entity.EntityAddress})");
                 }
 
-                var args = new OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityFullName, entity.gameObject.name);
-                Game.Event.Invoke(onEntityDestroyedEvtName, entityId, args);
+                var args = new OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name);
+                Game.Event.Invoke(OnEntityDestroyedEvtName, entityId, args);
                 m_Entities.Remove(entityId);
                 m_RecycledEntityIds.Remove(entityId); // release recycled id if exist
             }
@@ -167,7 +167,7 @@ namespace XiheFramework.Core.Entity {
                 }
             }
 
-            Game.Event.Invoke(onEntityOwnerChangedEvtName, entityId, ownerId);
+            Game.Event.Invoke(OnEntityOwnerChangedEvtName, entityId, ownerId);
         }
 
         public T GetEntity<T>(uint entityId) where T : GameEntity {
@@ -246,13 +246,13 @@ namespace XiheFramework.Core.Entity {
             return finalId;
         }
 
-        private void SetUpGameEntity<T>(T entity, string fullName, uint presetId, uint ownerEntityId, bool setParent, Action<T> onInstantiated = null) where T : GameEntity {
+        private void SetUpGameEntity<T>(T entity, string address, uint presetId, uint ownerEntityId, bool setParent, Action<T> onInstantiated = null) where T : GameEntity {
             if (presetId != 0) DestroyEntity(presetId);
             var finalId = CalculateFinalId(presetId);
 
             entity.EntityId = finalId;
-            entity.EntityFullName = fullName;
-            entity.gameObject.name = entity.EntityFullName;
+            entity.EntityAddress = address;
+            entity.gameObject.name = entity.EntityAddress;
             if (ownerEntityId != 0) {
                 if (IsEntityAvailable(ownerEntityId)) {
                     entity.OwnerId = ownerEntityId;
@@ -270,16 +270,28 @@ namespace XiheFramework.Core.Entity {
 
             onInstantiated?.Invoke(entity);
 
-            var args = new OnEntityInstantiatedEventArgs(finalId, entity.EntityFullName, entity.gameObject.name);
-            Game.Event.InvokeNow(onEntityInstantiatedEvtName, finalId, args);
+            var args = new OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
+            Game.Event.InvokeNow(OnEntityInstantiatedEvtName, finalId, args);
 
             entity.OnInitCallbackInternal();
         }
 
         protected override void Awake() {
             base.Awake();
-
             Game.Entity = this;
+        }
+
+        public override void Setup() {
+            base.Setup();
+
+            Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
+            Game.Event.Subscribe(Game.Serialization.OnLoadEventName, OnLoad);
+        }
+
+        private void OnSave(object sender, object e) { }
+
+        private void OnLoad(object sender, object e) {
+            throw new NotImplementedException();
         }
     }
 }

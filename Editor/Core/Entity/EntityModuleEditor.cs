@@ -54,7 +54,7 @@ namespace XiheFramework.Editor.Core.Entity {
                 var module = m_Target.targetObject as EntityModule;
                 if (module != null) {
                     foreach (var entity in module.CurrentEntities) {
-                        var debugInfo = new EntityDebugInfo(entity.EntityId, entity.OwnerId, entity.GroupName, entity.EntityFullName, entity.TimeScale, entity.gameObject);
+                        var debugInfo = new EntityDebugInfo(entity.EntityId, entity.OwnerId, entity.GroupName, entity.EntityAddress, entity.TimeScale, entity.gameObject);
                         entityDebugInfo.Add(debugInfo);
                     }
 

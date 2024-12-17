@@ -1,14 +1,12 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using XiheFramework.Combat.Damage.Interfaces;
-using XiheFramework.Core;
 using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Combat.Damage {
     public abstract class DamageModuleBase : GameModule, IDamageModule {
-        public string onProcessedDamageEventName => "Damage.OnProcessedDamage";
+        public string OnProcessedDamageEventName => "Damage.OnProcessedDamage";
         
         protected Queue<IDamageData> damageQueue = new();
 
@@ -32,7 +30,7 @@ namespace XiheFramework.Combat.Damage {
                         Debug.Log("[DMG] Damage Processed: " + damageData.ToString());
                     }
 
-                    Game.Event.InvokeNow(onProcessedDamageEventName, damageData.receiverId, outputData);
+                    Game.Event.InvokeNow(OnProcessedDamageEventName, damageData.receiverId, outputData);
                 }
             }
         }

@@ -35,7 +35,7 @@ namespace XiheFramework.Editor.Core.Entity {
             EditorGUILayout.LabelField("Entity ID", Application.isPlaying ? target.EntityId.ToString() : "Not Playing");
             EditorGUILayout.LabelField("Owner ID", Application.isPlaying ? target.OwnerId.ToString() : "Not Playing");
             EditorGUILayout.LabelField("Group Name", target.GroupName);
-            EditorGUILayout.LabelField("Full Name", Application.isPlaying ? target.EntityFullName : "Not Playing");
+            EditorGUILayout.LabelField("Full Name", Application.isPlaying ? target.EntityAddress : "Not Playing");
             EditorGUILayout.LabelField("Time Scale", Application.isPlaying ? target.TimeScale.ToString("0.000") : "Not Playing");
 
             GUI.enabled = true;

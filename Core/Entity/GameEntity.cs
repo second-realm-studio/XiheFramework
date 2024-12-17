@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.LogicTime;
+using XiheFramework.Core.Serialization;
+using XiheFramework.Core.Serialization.Serializable;
 using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
@@ -18,7 +20,7 @@ namespace XiheFramework.Core.Entity {
         public bool useLogicTime = true;
 
         public abstract string GroupName { get; }
-        public string EntityFullName { get; internal set; }
+        public string EntityAddress { get; internal set; }
         public uint EntityId { get; internal set; }
         public uint OwnerId { get; internal set; }
 
@@ -33,9 +35,21 @@ namespace XiheFramework.Core.Entity {
         public virtual void OnLateUpdateCallback() { }
         public virtual void OnDestroyCallback() { }
 
+        public virtual SerializableEntityData OnSerializedCallBack() {
+            var data = new SerializableEntityData();
+            data.entityAddress = EntityAddress;
+            data.position = transform.position;
+            data.rotation = transform.rotation.eulerAngles;
+            return data;
+        }
+
+        public virtual void OnDeserializedCallBack(SerializableEntityData data) { }
+
         internal void OnInitCallbackInternal() {
             TimeScale = 1;
             SubscribeEvent(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
+            // SubscribeEvent(Game.Serialization.OnSaveEventName, OnSave);
+            // SubscribeEvent(Game.Serialization.OnLoadEventName, OnLoad);
 
             OnInitCallback();
         }
@@ -74,9 +88,6 @@ namespace XiheFramework.Core.Entity {
             if (m_EventHandlerIds.TryGetValue(eventName, out var handlerIds)) {
                 foreach (var handlerId in handlerIds) {
                     Game.Event.Unsubscribe(eventName, handlerId);
-                    if (Game.Entity.enableDebug) {
-                        Debug.Log($"[ENTITY] {EntityFullName}({EntityId}) Unsubscribed event: {eventName} with handlerId: {handlerId}");
-                    }
                 }
             }
         }

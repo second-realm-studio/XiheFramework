@@ -171,13 +171,13 @@ namespace XiheFramework.Core.Entity {
         }
 
         public T GetEntity<T>(uint entityId) where T : GameEntity {
-            if (m_Entities.ContainsKey(entityId)) {
-                var result = m_Entities[entityId];
-                return m_Entities[entityId] as T;
+            if (!m_Entities.ContainsKey(entityId)) {
+                Debug.LogWarning($"[ENTITY] Entity : {entityId} is not existed or is not Type of {typeof(T)}");
+                return null;
             }
 
-            Debug.LogWarning($"[ENTITY] Entity : {entityId} is not Existed or is not Type of {typeof(T)}");
-            return null;
+            var result = m_Entities[entityId];
+            return result as T;
         }
 
         public GameEntity GetEntity(uint entityId) {
@@ -271,27 +271,14 @@ namespace XiheFramework.Core.Entity {
             onInstantiated?.Invoke(entity);
 
             var args = new OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
-            Game.Event.InvokeNow(OnEntityInstantiatedEvtName, finalId, args);
 
             entity.OnInitCallbackInternal();
+            Game.Event.InvokeNow(OnEntityInstantiatedEvtName, finalId, args);
         }
 
         protected override void Awake() {
             base.Awake();
             Game.Entity = this;
-        }
-
-        public override void Setup() {
-            base.Setup();
-
-            Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
-            Game.Event.Subscribe(Game.Serialization.OnLoadEventName, OnLoad);
-        }
-
-        private void OnSave(object sender, object e) { }
-
-        private void OnLoad(object sender, object e) {
-            throw new NotImplementedException();
         }
     }
 }

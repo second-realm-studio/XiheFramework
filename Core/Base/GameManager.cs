@@ -50,6 +50,12 @@ namespace XiheFramework.Core.Base {
             m_OnInitEventInvoked = true;
         }
 
+        private void OnApplicationQuit() {
+            foreach (var module in m_GameModules.Values) {
+                module.OnQuit();
+            }
+        }
+
         private void RegisterAllComponent() {
             while (m_RegisterGameModulesQueue.Count > 0) {
                 var module = m_RegisterGameModulesQueue.Dequeue();
@@ -98,7 +104,7 @@ namespace XiheFramework.Core.Base {
             Instance.m_GameModules.Clear();
             Instance.m_RegisterGameModulesQueue.Clear();
         }
-        
+
         public static string GetGameName() {
             return Instance.gameName;
         }

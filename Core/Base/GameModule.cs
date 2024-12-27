@@ -46,7 +46,7 @@ namespace XiheFramework.Core.Base {
                 m_LateUpdateTimer += 1;
             }
         }
-        
+
         public virtual void OnUpdate() { }
 
         public virtual void OnFixedUpdate() { }
@@ -60,7 +60,9 @@ namespace XiheFramework.Core.Base {
         public virtual void Setup() { }
 
         public virtual void OnLateStart() { }
-        
+
         public virtual void OnReset() { }
+
+        public virtual void OnQuit() { }
     }
 }

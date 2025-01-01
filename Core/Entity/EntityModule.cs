@@ -141,7 +141,8 @@ namespace XiheFramework.Core.Entity {
                     Debug.Log($"[ENTITY] Entity Unregistered : {entityId} ({entity.EntityAddress})");
                 }
 
-                var args = new OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name);
+                var args = new OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name, entity.transform.position,
+                    entity.transform.rotation);
                 Game.Event.Invoke(OnEntityDestroyedEvtName, entityId, args);
                 m_Entities.Remove(entityId);
                 m_RecycledEntityIds.Remove(entityId); // release recycled id if exist

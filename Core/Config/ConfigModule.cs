@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
+using Object = System.Object;
 
 namespace XiheFramework.Core.Config {
     public class ConfigModule : GameModule {
@@ -35,11 +36,30 @@ namespace XiheFramework.Core.Config {
         }
 
         public T FetchConfig<T>(string configPath) {
-            if (m_ConfigEntries.TryGetValue(configPath, out var entry)) {
-                return entry.value is T value ? value : default;
+            if (!m_ConfigEntries.TryGetValue(configPath, out var entry)) {
+                Debug.LogError($"[CFG]Config not found: {configPath}");
+                return default;
             }
 
-            return default;
+            if (entry.value is not T value) {
+                Debug.LogError($"[CFG]Config type mismatch: {configPath} is not {typeof(T)}");
+                return default;
+            }
+
+            return value;
+        }
+
+        public T FetchConfigDefaultPath<T>(Type type, string fieldName) {
+            var path = GetDefaultPath(type, fieldName);
+            return FetchConfig<T>(path);
+        }
+
+        public T FetchConfigDefaultPath<T>(Object instance, string fieldName) {
+            return FetchConfigDefaultPath<T>(instance.GetType(), fieldName);
+        }
+
+        public string GetDefaultPath(Type type, string fieldName) {
+            return ConfigHelper.GetDefaultPath(type, fieldName);
         }
 
         public override void Setup() {

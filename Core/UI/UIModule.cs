@@ -48,6 +48,8 @@ namespace XiheFramework.Core.UI {
                 }
             }
 
+            newUIEntity.Show();
+
             var returnHistoryInfo = new PageReturnHistoryInfo(address, newUIEntity);
             m_PageReturnHistory.AddLast(returnHistoryInfo);
 
@@ -78,7 +80,7 @@ namespace XiheFramework.Core.UI {
             var lastHistory = m_PageReturnHistory.Last.Value;
             var hiddenEntity = lastHistory.entity;
             if (hiddenEntity != null) {
-                hiddenEntity.gameObject.SetActive(true);
+                hiddenEntity.Show();
                 return hiddenEntity.EntityId;
             }
 
@@ -117,7 +119,6 @@ namespace XiheFramework.Core.UI {
             UIPageEntity homeEntity;
             if (entry.entity != null) {
                 homeEntity = entry.entity;
-                entry.entity.gameObject.SetActive(true);
             }
             else {
                 var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(entry.address, m_PageCanvas);
@@ -126,6 +127,8 @@ namespace XiheFramework.Core.UI {
                 m_PageReturnHistory.First.Value = entry;
                 homeEntity = newUIEntity;
             }
+
+            homeEntity.Show();
 
             if (!homeEntity.homePage) {
                 Debug.LogWarning($"[UI] Home Page not found! Opening first page in history: {entry.address}");
@@ -178,7 +181,7 @@ namespace XiheFramework.Core.UI {
                 m_PageReturnHistory.Last.Value = entry;
             }
             else {
-                entry.entity.gameObject.SetActive(false);
+                entry.entity.Hide();
             }
         }
 

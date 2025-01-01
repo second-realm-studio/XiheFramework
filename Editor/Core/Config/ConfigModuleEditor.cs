@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using XiheFramework.Core.Config;
@@ -9,8 +12,8 @@ namespace XiheFramework.Editor.Core.Config {
         private SerializedObject m_Target;
 
         private void OnEnable() {
-            var p = (ConfigModule)target;
-            m_Target = new SerializedObject(p);
+            var configModule = (ConfigModule)target;
+            m_Target = new SerializedObject(configModule);
         }
 
         public override void OnInspectorGUI() {
@@ -23,6 +26,28 @@ namespace XiheFramework.Editor.Core.Config {
 
             if (GUILayout.Button("Open Config Editor", GUILayout.Height(40))) {
                 ConfigModuleEditorWindow.ShowWindow(m_Target);
+            }
+
+            if (GUILayout.Button("Retrieve Config Attributes", GUILayout.Height(40))) {
+                AddNewFoundConfigs();
+            }
+        }
+
+        private void AddNewFoundConfigs() {
+            var configModule = (ConfigModule)target;
+            var allConfigInfo = ConfigEditorHelper.FindAllConfigInfo();
+            var configDic = configModule.configSettings.ToDictionary(x => x.path, x => x);
+            foreach (var configInfo in allConfigInfo) {
+                if (configDic.ContainsKey(configInfo.path)) {
+                    continue;
+                }
+
+                var presetConfigEntry = new PresetConfigEntry();
+                presetConfigEntry.path = configInfo.path;
+                presetConfigEntry.type = configInfo.type;
+                presetConfigEntry.SetValue(configInfo.defaultValue);
+
+                configModule.configSettings.Add(presetConfigEntry);
             }
         }
     }

@@ -78,7 +78,8 @@ namespace XiheFramework.Core.Config {
                     animationCurveValue = (AnimationCurve)value;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Debug.LogError($"[CONFIG] Value: {value} Type: {value.GetType().FullName} cannot be set to Config Type: {type}");
+                    break;
             }
         }
     }

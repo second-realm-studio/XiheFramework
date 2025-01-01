@@ -25,6 +25,15 @@ namespace XiheFramework.Editor.Core.Config {
             m_ReorderableList.elementHeight = EditorGUIUtility.singleLineHeight * 3;
             m_ReorderableList.drawElementCallback = OnDrawElement;
             m_ReorderableList.elementHeightCallback = OnElementHeight;
+            m_ReorderableList.onAddCallback = OnAddElement;
+        }
+
+        private void OnAddElement(ReorderableList list) {
+            ReorderableList.defaultBehaviours.DoAddButton(list);
+
+            var element = m_ConfigSettings.GetArrayElementAtIndex(list.count - 1);
+            element.FindPropertyRelative("path").stringValue = $"NewConfig_{list.count}";
+            element.FindPropertyRelative("type").enumValueIndex = (int)ConfigType.String;
         }
 
         private float OnElementHeight(int index) {
@@ -47,7 +56,7 @@ namespace XiheFramework.Editor.Core.Config {
         }
 
         private void OnDrawHeader(Rect rect) {
-            EditorGUI.LabelField(rect, "Presets");
+            EditorGUI.LabelField(rect, "Preset Configs");
         }
 
         private void OnDrawElement(Rect rect, int index, bool isActive, bool isFocused) {
@@ -129,7 +138,7 @@ namespace XiheFramework.Editor.Core.Config {
                 EditorGUILayout.HelpBox("Open Config Editor from ConfigModule", MessageType.Error);
                 return;
             }
-            
+
             if (m_ConfigSettings.serializedObject != null) {
                 m_ConfigSettings.serializedObject.Update();
                 m_ReorderableList.DoLayoutList();

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Editor.Utility.GoArray {
+namespace XiheFramework.Utility.GOArray {
     [CustomEditor(typeof(GOArray))]
     public class GOArrayEditor : UnityEditor.Editor {
         private GOArray m_Target;

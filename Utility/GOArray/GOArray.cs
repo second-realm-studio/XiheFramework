@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Editor.Utility.GoArray {
+namespace XiheFramework.Utility.GOArray {
     [ExecuteInEditMode]
     public class GOArray : MonoBehaviour {
 #if UNITY_EDITOR
@@ -60,14 +60,15 @@ namespace XiheFramework.Editor.Utility.GoArray {
 
                 var globalPos = m_CachedTransform.TransformPoint(pos);
                 var go = PrefabUtility.InstantiatePrefab(source) as GameObject;
+                //todo:temp solution for scene objs
+                if (go==null) {
+                    go = Instantiate(source) as GameObject;
+                }
                 // globalPos, m_CachedTransform.rotation, m_CachedTransform
                 go.transform.SetParent(m_CachedTransform);
                 go.transform.position = globalPos;
                 go.transform.rotation = m_CachedTransform.rotation;
                 go.name = source.name + "_" + i + "_" + j + "_" + k;
-                // if (relativeOffset != Vector3.zero) {
-                //     
-                // }
             }
         }
 

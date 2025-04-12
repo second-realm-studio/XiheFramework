@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+#if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+#endif
 using UnityEngine;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.Resource;
@@ -69,8 +71,8 @@ namespace XiheFramework.Editor.Core.Resource {
         }
 
         private void GenerateAddressWrapper() {
+#if USE_ADDRESSABLE
             m_CombineAllLinkScripts = true;
-
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings == null) {
                 Debug.LogWarning("Addressable Asset Settings not found! Go to: Window->Asset Management->Addressables->Groups, Create Addressable Asset Settings.");
@@ -108,6 +110,12 @@ namespace XiheFramework.Editor.Core.Resource {
                 Directory.CreateDirectory(LinkScriptsDirectory);
             }
 
+            var defaultGroupEmpty = addressInfoArrays.ContainsKey("DefaultLocalGroup") && addressInfoArrays["DefaultLocalGroup"].Length == 0;
+            if (addressInfoArrays.Count == 0 || defaultGroupEmpty) {
+                Debug.LogWarning("No addressable assets found! Empty ResourceAddresses script generated.");
+                WriteWrapperScript("Resource", null, false);
+            }
+
             if (m_CombineAllLinkScripts) {
                 WriteWrapperScript("Resource", addressInfoArrays["DefaultLocalGroup"]);
             }
@@ -121,8 +129,11 @@ namespace XiheFramework.Editor.Core.Resource {
             AssetDatabase.Refresh();
 
             Debug.Log("Generated Address Wrapper Script at " + LinkScriptsDirectory);
+#else
+            Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
+#endif
         }
-
+#if USE_ADDRESSABLE
         private void MarkAssetsAddressable(string path, string addressableGroupName, SearchOption searchOption, out AssetNameAddressPair[] addressInfos) {
             var addressesResult = new List<AssetNameAddressPair>();
             var files = Directory.GetFiles(path, "*.*", searchOption);
@@ -197,13 +208,17 @@ namespace XiheFramework.Editor.Core.Resource {
             return true;
         }
 
-        private void WriteWrapperScript(string groupName, AssetNameAddressPair[] addressInfo) {
+        private void WriteWrapperScript(string groupName, AssetNameAddressPair[] addressInfo, bool ignoreEmpty = true) {
             string scriptTemplate = File.ReadAllText(TemplatePath);
             var scriptName = RemoveSpecialCharacters(groupName) + "Addresses";
             scriptTemplate = scriptTemplate.Replace("#GENERATETIME#", DateTime.UtcNow.ToUniversalTime().ToString(CultureInfo.CurrentCulture));
             scriptTemplate = scriptTemplate.Replace("#SCRIPTNAME#", scriptName);
-            var content = GetContentString(addressInfo);
-            if (string.IsNullOrEmpty(content)) {
+            string content = string.Empty;
+            if (addressInfo != null && addressInfo.Length > 0) {
+                content = GetContentString(addressInfo);
+            }
+
+            if (ignoreEmpty && string.IsNullOrEmpty(content)) {
                 return;
             }
 
@@ -230,8 +245,14 @@ namespace XiheFramework.Editor.Core.Resource {
             return result;
         }
 
-        string RemoveSpecialCharacters(string input) {
-            return Regex.Replace(input, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+        private string RemoveSpecialCharacters(string input) {
+            //if first char is a number
+            string output = Regex.Replace(input, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+            if (char.IsDigit(output[0])) {
+                output = "_" + output;
+            }
+
+            return output;
         }
 
 
@@ -239,5 +260,6 @@ namespace XiheFramework.Editor.Core.Resource {
             public string assetName;
             public string address;
         }
+#endif
     }
 }

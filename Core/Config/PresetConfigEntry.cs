@@ -46,40 +46,46 @@ namespace XiheFramework.Core.Config {
         }
 
         public void SetValue(object value) {
-            switch (type) {
-                case ConfigType.Integer:
-                    intValue = (int)value;
-                    break;
-                case ConfigType.Boolean:
-                    boolValue = (bool)value;
-                    break;
-                case ConfigType.Float:
-                    floatValue = (float)value;
-                    break;
-                case ConfigType.String:
-                    stringValue = (string)value;
-                    break;
-                case ConfigType.Color:
-                    colorValue = (Color)value;
-                    break;
-                case ConfigType.LayerMask:
-                    layerMaskValue = (LayerMask)value;
-                    break;
-                case ConfigType.Vector2:
-                    vector2Value = (Vector2)value;
-                    break;
-                case ConfigType.Vector3:
-                    vector3Value = (Vector3)value;
-                    break;
-                case ConfigType.Vector4:
-                    vector4Value = (Vector4)value;
-                    break;
-                case ConfigType.AnimationCurve:
-                    animationCurveValue = (AnimationCurve)value;
-                    break;
-                default:
-                    Debug.LogError($"[CONFIG] Value: {value} Type: {value.GetType().FullName} cannot be set to Config Type: {type}");
-                    break;
+            try {
+                switch (type) {
+                    case ConfigType.Integer:
+                        intValue = (int)Convert.ChangeType(value, typeof(int));
+                        break;
+                    case ConfigType.Boolean:
+                        boolValue = (bool)Convert.ChangeType(value, typeof(bool));
+                        break;
+                    case ConfigType.Float:
+                        floatValue = (float)Convert.ChangeType(value, typeof(float));
+                        break;
+                    case ConfigType.String:
+                        stringValue = (string)Convert.ChangeType(value, typeof(string));
+                        break;
+                    case ConfigType.Color:
+                        colorValue = (Color)Convert.ChangeType(value, typeof(Color));
+                        break;
+                    case ConfigType.LayerMask:
+                        layerMaskValue = (LayerMask)Convert.ChangeType(value, typeof(LayerMask));
+                        break;
+                    case ConfigType.Vector2:
+                        vector2Value = (Vector2)Convert.ChangeType(value, typeof(Vector2));
+                        break;
+                    case ConfigType.Vector3:
+                        vector3Value = (Vector3)Convert.ChangeType(value, typeof(Vector3));
+                        break;
+                    case ConfigType.Vector4:
+                        vector4Value = (Vector4)Convert.ChangeType(value, typeof(Vector4));
+                        break;
+                    case ConfigType.AnimationCurve:
+                        animationCurveValue = (AnimationCurve)Convert.ChangeType(value, typeof(AnimationCurve));
+                        break;
+                    default:
+                        Debug.LogWarning($"Type {type} is not supported, please configure {path} manually.");
+                        break;
+                }
+            }
+            catch (Exception e) {
+                Debug.LogWarning(
+                    $"[CONFIG] Path: {path}, Value: {value}, Type: {value.GetType().Name} cannot be converted to Config Type: {type}, please configure it manually. Error: {e}");
             }
         }
     }

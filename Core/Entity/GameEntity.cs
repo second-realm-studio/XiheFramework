@@ -35,7 +35,7 @@ namespace XiheFramework.Core.Entity {
         public virtual void OnLateUpdateCallback() { }
         public virtual void OnDestroyCallback() { }
 
-        public virtual SerializableEntityData OnSerializedCallBack() {
+        public virtual SerializableEntityData OnSaveCallBack(OnSaveEventArgs args) {
             var data = new SerializableEntityData();
             data.entityAddress = EntityAddress;
             data.position = transform.position;
@@ -43,14 +43,14 @@ namespace XiheFramework.Core.Entity {
             return data;
         }
 
-        public virtual void OnDeserializedCallBack(SerializableEntityData data) { }
+        public virtual void OnLoadCallBack(SerializableEntityData data) {
+            transform.position = data.position;
+            transform.rotation = Quaternion.Euler(data.rotation);
+        }
 
         internal void OnInitCallbackInternal() {
             TimeScale = 1;
             SubscribeEvent(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
-            // SubscribeEvent(Game.Serialization.OnSaveEventName, OnSave);
-            // SubscribeEvent(Game.Serialization.OnLoadEventName, OnLoad);
-
             OnInitCallback();
         }
 
@@ -59,6 +59,10 @@ namespace XiheFramework.Core.Entity {
         internal void OnFixedUpdateCallbackInternal() => OnFixedUpdateCallback();
 
         internal void OnLateUpdateCallbackInternal() => OnLateUpdateCallback();
+
+        internal void OnSaveCallBackInternal(OnSaveEventArgs args) => OnSaveCallBack(args);
+
+        internal void OnLoadCallBackInternal(SerializableEntityData entityData) => OnLoadCallBack(entityData);
 
         internal void OnDestroyCallbackInternal() {
             foreach (var eventName in m_EventHandlerIds.Keys) {

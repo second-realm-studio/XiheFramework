@@ -45,7 +45,9 @@ namespace XiheFramework.Editor.Core.Config {
                 var presetConfigEntry = new PresetConfigEntry();
                 presetConfigEntry.path = configInfo.path;
                 presetConfigEntry.type = configInfo.type;
-                presetConfigEntry.SetValue(configInfo.defaultValue);
+                if (configInfo.defaultValue != null) {
+                    presetConfigEntry.SetValue(configInfo.defaultValue);
+                }
 
                 configModule.configSettings.Add(presetConfigEntry);
             }

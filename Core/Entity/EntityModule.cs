@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.Serialization;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Entity {
@@ -190,6 +191,26 @@ namespace XiheFramework.Core.Entity {
                 return m_Entities.ContainsKey(entityId) && !m_RecycledEntityIds.ContainsKey(entityId);
             }
         }
+        
+        protected override void Awake() {
+            base.Awake();
+            Game.Entity = this;
+        }
+
+        public override void Setup() {
+            base.Setup();
+            Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
+        }
+
+        private void OnSave(object sender, object e) {
+            var args= (OnSaveEventArgs) e;
+            var cache = new List<uint>(m_Entities.Keys);
+            foreach (var entity in cache) {
+                if (m_Entities.ContainsKey(entity)) {
+                    m_Entities[entity].OnSaveCallBackInternal(args);
+                }
+            }
+        }
 
         public override void OnUpdate() {
             var cache = new List<uint>(m_Entities.Keys);
@@ -275,11 +296,6 @@ namespace XiheFramework.Core.Entity {
 
             entity.OnInitCallbackInternal();
             Game.Event.InvokeNow(OnEntityInstantiatedEvtName, finalId, args);
-        }
-
-        protected override void Awake() {
-            base.Awake();
-            Game.Entity = this;
         }
     }
 }

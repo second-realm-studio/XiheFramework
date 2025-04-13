@@ -191,7 +191,7 @@ namespace XiheFramework.Core.Entity {
                 return m_Entities.ContainsKey(entityId) && !m_RecycledEntityIds.ContainsKey(entityId);
             }
         }
-        
+
         protected override void Awake() {
             base.Awake();
             Game.Entity = this;
@@ -199,11 +199,13 @@ namespace XiheFramework.Core.Entity {
 
         public override void Setup() {
             base.Setup();
-            Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
+            if (Game.Serialization != null) {
+                Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
+            }
         }
 
         private void OnSave(object sender, object e) {
-            var args= (OnSaveEventArgs) e;
+            var args = (OnSaveEventArgs)e;
             var cache = new List<uint>(m_Entities.Keys);
             foreach (var entity in cache) {
                 if (m_Entities.ContainsKey(entity)) {

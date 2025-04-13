@@ -48,18 +48,18 @@ namespace XiheFramework.Core.Config {
 
             return value;
         }
-        
-        public T FetchConfig<T>(Object instance, string fieldName) {
-            return FetchConfig<T>(GetDefaultPath(instance.GetType(), fieldName));
+
+        public T FetchConfig<T>(Object ownerInstance, string fieldName) {
+            return FetchConfig<T>(GetDefaultPath(ownerInstance.GetType(), fieldName));
         }
 
-        public T FetchConfigDefaultPath<T>(Type type, string fieldName) {
-            var path = GetDefaultPath(type, fieldName);
+        public T FetchConfigDefaultPath<T>(Type ownerType, string fieldName) {
+            var path = GetDefaultPath(ownerType, fieldName);
             return FetchConfig<T>(path);
         }
 
-        public T FetchConfigDefaultPath<T>(Object instance, string fieldName) {
-            return FetchConfigDefaultPath<T>(instance.GetType(), fieldName);
+        public T FetchConfigDefaultPath<T>(Object ownerInstance, string fieldName) {
+            return FetchConfigDefaultPath<T>(ownerInstance.GetType(), fieldName);
         }
 
         public string GetDefaultPath(Type type, string fieldName) {

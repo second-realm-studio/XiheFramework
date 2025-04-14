@@ -67,6 +67,25 @@ namespace XiheFramework.Core.Config {
         }
 
         public override void Setup() {
+            // foreach (var setting in configSettings) {
+            //     var newEntry = new ConfigEntry {
+            //         path = setting.path,
+            //         type = setting.type,
+            //         value = setting.GetValue()
+            //     };
+            //     AddConfig(newEntry);
+            // }
+            //
+            // if (enableDebug) {
+            //     Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
+            // }
+        }
+
+        protected override void Awake() {
+            base.Awake();
+
+            Game.Config = this;
+            
             foreach (var setting in configSettings) {
                 var newEntry = new ConfigEntry {
                     path = setting.path,
@@ -79,12 +98,6 @@ namespace XiheFramework.Core.Config {
             if (enableDebug) {
                 Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
             }
-        }
-
-        protected override void Awake() {
-            base.Awake();
-
-            Game.Config = this;
         }
     }
 }

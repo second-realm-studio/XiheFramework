@@ -25,14 +25,14 @@ namespace XiheFramework.Core.LogicTime {
         /// </summary>
         /// <param name="timeScale"></param>
         /// <param name="duration"> duration in frames </param>
-        /// <param name="setUnityTimeScale"> if true, will affect Time.timeScale </param>
-        public void SetGlobalTimeScaleInFrame(float timeScale, int duration, bool setUnityTimeScale = false) {
+        /// <param name="alsoSetUnityTimeScale"> if true, will affect Time.timeScale </param>
+        public void SetGlobalTimeScaleInFrame(float timeScale, int duration, bool alsoSetUnityTimeScale = false) {
             var oldTimeScale = GlobalTimeScale;
             GlobalTimeScale = timeScale;
             m_Duration = duration;
             var args = new OnSetGlobalTimeScaleEventArgs(timeScale, oldTimeScale, duration);
             Game.Event.Invoke(onSetGlobalTimeScaleEventName, null, args);
-            if (setUnityTimeScale) {
+            if (alsoSetUnityTimeScale) {
                 Time.timeScale = timeScale;
             }
 

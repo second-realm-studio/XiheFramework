@@ -12,7 +12,7 @@ namespace XiheFramework.Combat.Buff {
         public readonly string onSetBuffValueEventName = "Buff.OnSetBuffValue";
 
         /// <summary>
-        /// Add buff stack to owner CombatEntity
+        /// Add buff stack to owner IBuffOwner entity
         /// </summary>
         /// <param name="ownerId"></param>
         /// <param name="buffAddress"></param>

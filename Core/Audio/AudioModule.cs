@@ -6,7 +6,6 @@ using XiheFramework.Runtime;
 namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
         private List<uint> m_PlayingEvents = new();
-
 #if USE_WWISE
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null, AkCallbackManager.EventCallback callback = null) {
             var id = audioEvent.Post(container, (uint)AkCallbackType.AK_EndOfEvent, callback);

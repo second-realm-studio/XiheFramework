@@ -17,28 +17,29 @@ namespace XiheFramework.Combat.Buff {
         /// <param name="ownerId"></param>
         /// <param name="buffAddress"></param>
         /// <param name="stack">0: max stack</param>
-        public void AddBuff(uint ownerId, string buffAddress, int stack = 1) {
+        public uint AddBuff(uint ownerId, string buffAddress, int stack = 1) {
             var owner = Game.Entity.GetEntity<GameEntity>(ownerId);
             if (owner == null) {
-                return;
+                return 0;
             }
 
             if (owner is not IBuffOwner buffOwner) {
-                return;
+                return 0;
             }
 
             // buff already exists
+            BuffEntityBase buffEntity = null;
             if (buffOwner.HasBuff(buffAddress)) {
                 if (stack == 0) {
                     stack = GetBuffEntity(ownerId, buffAddress).maxStack;
                 }
 
-                var buffEntity = Game.Entity.GetEntity<BuffEntityBase>(buffOwner.GetBuffEntityId(buffAddress));
+                buffEntity = Game.Entity.GetEntity<BuffEntityBase>(buffOwner.GetBuffEntityId(buffAddress));
                 var deltaStack = GetDeltaStack(buffEntity.CurrentStack, stack, buffEntity.maxStack);
 
                 if (deltaStack == 0) {
                     if (enableDebug) Debug.Log($"[BUFF]MAX REACHED({buffEntity.maxStack}): {owner.name}({owner.EntityId})<-{buffAddress}({stack})");
-                    return;
+                    return buffEntity.EntityId;
                 }
 
                 buffEntity.CurrentStack += deltaStack;
@@ -47,7 +48,7 @@ namespace XiheFramework.Combat.Buff {
                 Game.Event.InvokeNow(onBuffAddedEvtName, owner.EntityId, args);
             }
             else {
-                var buffEntity = Runtime.Game.Entity.InstantiateEntity<BuffEntityBase>(buffAddress, owner.EntityId, true);
+                buffEntity = Game.Entity.InstantiateEntity<BuffEntityBase>(buffAddress, owner.EntityId, true);
                 if (stack == 0) {
                     stack = buffEntity.maxStack;
                 }
@@ -58,9 +59,14 @@ namespace XiheFramework.Combat.Buff {
                 Game.Event.InvokeNow(onBuffCreatedEvtName, owner.EntityId, args);
             }
 
+            if (buffEntity == null) return 0;
+
             if (enableDebug) {
                 Debug.Log($"[BUFF]{owner.name}[{owner.EntityId}] gained {buffAddress}({stack})");
             }
+
+
+            return buffEntity.EntityId;
         }
 
         /// <summary>

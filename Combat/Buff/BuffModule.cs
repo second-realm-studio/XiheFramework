@@ -127,10 +127,12 @@ namespace XiheFramework.Combat.Buff {
         public BuffEntityBase GetBuffEntity(uint ownerId, string buffName) {
             var owner = Game.Entity.GetEntity<GameEntity>(ownerId);
             if (owner == null) {
+                Debug.LogWarning($"[BUFF]Owner:{ownerId} doesn't exist");
                 return null;
             }
 
             if (owner is not IBuffOwner buffOwner) {
+                Debug.LogWarning($"[BUFF]Owner:{ownerId} is not IBuffOwner");
                 return null;
             }
 
@@ -138,6 +140,7 @@ namespace XiheFramework.Combat.Buff {
                 return Game.Entity.GetEntity<BuffEntityBase>(buffOwner.GetBuffEntityId(buffName));
             }
 
+            Debug.LogWarning($"[BUFF]{ownerId} doesn't have buff {buffName}");
             return null;
         }
 
@@ -157,6 +160,7 @@ namespace XiheFramework.Combat.Buff {
         public void SetBuffValue(uint ownerId, string buffName, string valueName, object value) {
             var buffEntity = GetBuffEntity(ownerId, buffName);
             if (!buffEntity) {
+                Debug.LogWarning($"[BUFF]{ownerId} doesn't have buff {buffName}");
                 return;
             }
 

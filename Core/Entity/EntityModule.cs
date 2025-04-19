@@ -26,7 +26,7 @@ namespace XiheFramework.Core.Entity {
                 Debug.LogWarning("[ENTITY] Entity : " + entity.EntityId + " has already been registered, no need to register again");
                 return;
             }
-
+            entity.gameObject.name += "(Scene)";
             lock (m_LockRoot) SetUpGameEntity(entity, entity.gameObject.name, presetId, ownerEntityId, setParent);
         }
 
@@ -43,7 +43,7 @@ namespace XiheFramework.Core.Entity {
                 Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " has no component of type " + typeof(T));
                 return null;
             }
-
+            entity.gameObject.name = entityAddress + "(Prefab)";
             lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
 
             if (enableDebug) {
@@ -89,6 +89,7 @@ namespace XiheFramework.Core.Entity {
 
             Game.Resource.InstantiateAssetAsync<GameObject>(entityAddress, localPosition, localRotation, go => {
                 var entity = go.GetComponent<T>();
+                entity.gameObject.name = entityAddress + "(Prefab)";
                 lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
                 if (enableDebug) {
                     Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityAddress})");
@@ -276,7 +277,6 @@ namespace XiheFramework.Core.Entity {
 
             entity.EntityId = finalId;
             entity.EntityAddress = address;
-            entity.gameObject.name = entity.EntityAddress;
             if (ownerEntityId != 0) {
                 if (IsEntityAvailable(ownerEntityId)) {
                     entity.OwnerId = ownerEntityId;

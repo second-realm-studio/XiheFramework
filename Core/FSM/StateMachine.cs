@@ -10,31 +10,29 @@ namespace XiheFramework.Core.FSM {
     public class StateMachine {
         private string m_CurrentState;
 
-        private string m_DefaultState;
+        private string m_InitialState;
 
         private string m_NextState;
         private Dictionary<string, BaseState> m_States = new();
 
-        public static StateMachine Create(string defaultState) {
-            return new StateMachine {
-                m_DefaultState = defaultState
-            };
+        public static StateMachine Create(string initialState) {
+            return new StateMachine { m_InitialState = initialState };
         }
 
         public static StateMachine Create() {
             return new StateMachine();
         }
-        
+
         public int GetStateCount() {
             return m_States.Count;
         }
 
-        public void SetDefaultState(string stateName) {
-            m_DefaultState = stateName;
+        public void SetInitialState(string stateName) {
+            m_InitialState = stateName;
         }
-        
-        public string GetDefaultState() {
-            return m_DefaultState;
+
+        public string GetInitialState() {
+            return m_InitialState;
         }
 
         public string GetCurrentState() {
@@ -57,9 +55,9 @@ namespace XiheFramework.Core.FSM {
         }
 
         public void Start() {
-            if (m_DefaultState == null || !m_States.ContainsKey(m_DefaultState)) m_DefaultState = m_States.Keys.First();
+            if (m_InitialState == null || !m_States.ContainsKey(m_InitialState)) m_InitialState = m_States.Keys.First();
 
-            m_CurrentState = m_DefaultState;
+            m_CurrentState = m_InitialState;
 
             m_ExitToEnter = true;
             // m_States[m_CurrentState].OnEnter();
@@ -82,6 +80,7 @@ namespace XiheFramework.Core.FSM {
 
             if (m_ExitToEnter) {
                 m_States[m_CurrentState].OnEnter();
+                Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_CurrentState));
                 m_ExitToEnter = false;
                 m_EnterToUpdate = true;
                 m_NextFrameLock = false;

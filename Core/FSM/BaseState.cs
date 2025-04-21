@@ -15,5 +15,7 @@
         public void ChangeState(string targetState) {
             m_ParentStateMachine.ChangeState(targetState);
         }
+        
+        //todo: add SubscribeEvent like GameEntity
     }
 }

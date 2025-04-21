@@ -7,6 +7,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM {
     public class StateMachineModule : GameModule {
+        public string OnStateEnterEventName => "FSM.OnStateEnter";
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
         private Queue<string> m_RemoveQueue = new();
@@ -48,10 +49,10 @@ namespace XiheFramework.Core.FSM {
             return null;
         }
 
-        public void SetDefaultState(string fsmName, string stateName) {
+        public void SetInitialState(string fsmName, string stateName) {
             if (!IsFsmExisted(fsmName)) return;
 
-            m_StateMachines[fsmName].SetDefaultState(stateName);
+            m_StateMachines[fsmName].SetInitialState(stateName);
         }
 
         public void ChangeState(string fsmName, string stateName) {

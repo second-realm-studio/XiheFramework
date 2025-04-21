@@ -49,10 +49,6 @@ namespace XiheFramework.Core.Config {
             return value;
         }
 
-        public T FetchConfig<T>(Object ownerInstance, string fieldName) {
-            return FetchConfig<T>(GetDefaultPath(ownerInstance.GetType(), fieldName));
-        }
-
         public T FetchConfigDefaultPath<T>(Type ownerType, string fieldName) {
             var path = GetDefaultPath(ownerType, fieldName);
             return FetchConfig<T>(path);

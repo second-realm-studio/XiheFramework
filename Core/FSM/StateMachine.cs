@@ -79,7 +79,7 @@ namespace XiheFramework.Core.FSM {
             if (IsNullOrEmpty(m_CurrentState)) return;
 
             if (m_ExitToEnter) {
-                m_States[m_CurrentState].OnEnter();
+                m_States[m_CurrentState].OnEnterInternal();
                 Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_CurrentState));
                 m_ExitToEnter = false;
                 m_EnterToUpdate = true;
@@ -87,7 +87,7 @@ namespace XiheFramework.Core.FSM {
             }
 
             if (m_UpdateToExit) {
-                m_States[m_CurrentState].OnExit();
+                m_States[m_CurrentState].OnExitInternal();
                 m_CurrentState = m_NextState;
                 m_UpdateToExit = false;
                 m_ExitToEnter = true;
@@ -96,7 +96,7 @@ namespace XiheFramework.Core.FSM {
 
             if (m_EnterToUpdate && m_NextFrameLock) {
                 if (m_States.ContainsKey(m_CurrentState))
-                    m_States[m_CurrentState].OnUpdate();
+                    m_States[m_CurrentState].OnUpdateInternal();
                 else
                     Debug.Log("[FSM] state " + m_CurrentState + " does not exist");
             }

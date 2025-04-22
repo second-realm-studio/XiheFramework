@@ -1,21 +1,53 @@
-﻿namespace XiheFramework.Core.FSM {
+﻿using System;
+using System.Collections.Generic;
+using XiheFramework.Core.Utility.DataStructure;
+using XiheFramework.Runtime;
+
+namespace XiheFramework.Core.FSM {
     public abstract class BaseState {
         private readonly StateMachine m_ParentStateMachine;
+        private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
 
         protected BaseState(StateMachine parentStateMachine) {
             m_ParentStateMachine = parentStateMachine;
         }
 
-        public abstract void OnEnter();
+        internal void OnEnterInternal() {
+            OnEnterCallback();
+        }
 
-        public abstract void OnUpdate();
+        internal void OnUpdateInternal() {
+            OnUpdateCallback();
+        }
 
-        public abstract void OnExit();
+        internal void OnExitInternal() {
+            foreach (var eventName in m_EventHandlerIds.Keys) {
+                UnsubscribeEvent(eventName);
+            }
+
+            m_EventHandlerIds.Clear();
+            OnExitCallback();
+        }
+
+        protected abstract void OnEnterCallback();
+        protected abstract void OnUpdateCallback();
+        protected abstract void OnExitCallback();
 
         public void ChangeState(string targetState) {
             m_ParentStateMachine.ChangeState(targetState);
         }
-        
-        //todo: add SubscribeEvent like GameEntity
+
+        protected void SubscribeEvent(string eventName, EventHandler<object> eventHandler) {
+            var handlerId = Game.Event.Subscribe(eventName, eventHandler);
+            m_EventHandlerIds.Add(eventName, handlerId);
+        }
+
+        private void UnsubscribeEvent(string eventName) {
+            if (m_EventHandlerIds.TryGetValue(eventName, out var handlerIds)) {
+                foreach (var handlerId in handlerIds) {
+                    Game.Event.Unsubscribe(eventName, handlerId);
+                }
+            }
+        }
     }
 }

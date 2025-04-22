@@ -13,15 +13,15 @@ namespace XiheFramework.Core.FSM {
             this.m_OnExitCallbacks = onExitCallbacks;
         }
 
-        public override void OnEnter() {
+        protected override void OnEnterCallback() {
             m_OnEnterCallbacks.Invoke();
         }
 
-        public override void OnUpdate() {
+        protected override void OnUpdateCallback() {
             m_OnUpdateCallbacks.Invoke();
         }
 
-        public override void OnExit() {
+        protected override void OnExitCallback() {
             m_OnExitCallbacks.Invoke();
         }
     }

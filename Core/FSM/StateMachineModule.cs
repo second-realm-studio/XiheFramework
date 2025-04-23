@@ -8,6 +8,7 @@ using XiheFramework.Runtime;
 namespace XiheFramework.Core.FSM {
     public class StateMachineModule : GameModule {
         public string OnStateEnterEventName => "FSM.OnStateEnter";
+        public string OnStateExitEventName => "FSM.OnStateExit";
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
         private Queue<string> m_RemoveQueue = new();

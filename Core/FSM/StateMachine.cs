@@ -88,6 +88,7 @@ namespace XiheFramework.Core.FSM {
 
             if (m_UpdateToExit) {
                 m_States[m_CurrentState].OnExitInternal();
+                Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_CurrentState));
                 m_CurrentState = m_NextState;
                 m_UpdateToExit = false;
                 m_ExitToEnter = true;

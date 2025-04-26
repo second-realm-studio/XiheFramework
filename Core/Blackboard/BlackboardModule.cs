@@ -50,7 +50,6 @@ namespace XiheFramework.Core.Blackboard {
         /// </summary>
         /// <param name="dataName">data name, work as indexing key</param>
         /// <param name="value">data entity</param>
-        /// <param name="targetType">data type</param>
         /// <typeparam name="T">object</typeparam>
         public void SetData<T>(string dataName, T value) {
             if (m_Data.ContainsKey(dataName))
@@ -58,7 +57,8 @@ namespace XiheFramework.Core.Blackboard {
             else
                 m_Data.Add(dataName, value);
 
-            Game.Event.Invoke(onDataChangeEventName, dataName, value);
+            var args = new OnDataChangeEventArgs(dataName, value);
+            Game.Event.Invoke(onDataChangeEventName, null, args);
             UpdateDataPathTree();
         }
 

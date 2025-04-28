@@ -108,7 +108,7 @@ namespace XiheFramework.Utility.KCC {
             return validPosition;
         }
 
-
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
             Gizmos.color = Color.red;
 
@@ -124,7 +124,7 @@ namespace XiheFramework.Utility.KCC {
             DrawWireCapsule(transform.TransformPoint(center), rotation, radius - skinThickness, height + 2 * (radius - skinThickness), Color.green);
         }
 
-        public static void DrawWireCapsule(Vector3 pos, Quaternion rot, float radius, float height, Color color = default(Color)) {
+        private static void DrawWireCapsule(Vector3 pos, Quaternion rot, float radius, float height, Color color = default(Color)) {
             if (color != default(Color))
                 Handles.color = color;
 
@@ -147,5 +147,6 @@ namespace XiheFramework.Utility.KCC {
                 Handles.DrawWireDisc(Vector3.down * pointOffset, Vector3.up, radius);
             }
         }
+#endif
     }
 }

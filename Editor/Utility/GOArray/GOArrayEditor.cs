@@ -1,13 +1,14 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using XiheFramework.Utility.GOArray;
 
-namespace XiheFramework.Utility.GOArray {
-    [CustomEditor(typeof(GOArray))]
-    public class GOArrayEditor : UnityEditor.Editor {
-        private GOArray m_Target;
+namespace XiheFramework.Editor.Utility.GOArray {
+    [CustomEditor(typeof(GoArray))]
+    public class GoArrayEditor : UnityEditor.Editor {
+        private GoArray m_Target;
 
         private void OnEnable() {
-            m_Target = (GOArray)target;
+            m_Target = (GoArray)target;
         }
 
         public override void OnInspectorGUI() {

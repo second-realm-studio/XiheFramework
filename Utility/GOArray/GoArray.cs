@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace XiheFramework.Utility.GOArray {
     [ExecuteInEditMode]
-    public class GOArray : MonoBehaviour {
+    public class GoArray : MonoBehaviour {
 #if UNITY_EDITOR
         public GameObject source;
 

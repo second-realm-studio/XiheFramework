@@ -9,7 +9,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
     public class UIModule : GameModule {
-        public Vector2 referenceResolution = new(1920, 1080);
+        // public Vector2 referenceResolution = new(1920, 1080);
         public float referencePixelsPerUnit = 100;
         private Canvas m_PageCanvas;
         private Canvas m_PopCanvas;
@@ -272,11 +272,15 @@ namespace XiheFramework.Core.UI {
             var canvas = go.AddComponent<Canvas>();
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = referenceResolution;
+            scaler.referenceResolution = new Vector2(Screen.width, Screen.height);
             scaler.referencePixelsPerUnit = referencePixelsPerUnit;
             go.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = sortingOrder;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = Camera.main;
+            canvas.planeDistance = 1f;
+            canvas.pixelPerfect = true;
 
             return canvas;
         }

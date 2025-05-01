@@ -87,7 +87,7 @@ namespace XiheFramework.Core.FSM {
         }
 
         public StateMachine CreateStateMachine(string fsmName) {
-            var fsm = StateMachine.Create();
+            var fsm = StateMachine.Create(fsmName);
             if (m_StateMachines.ContainsKey(fsmName)) {
                 Debug.LogWarningFormat("[FSM] Fsm with name: {0} has already existed, replacing it..", fsmName);
                 m_StateMachines[fsmName] = fsm;

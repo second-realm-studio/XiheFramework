@@ -8,19 +8,20 @@ using static System.String;
 namespace XiheFramework.Core.FSM {
     [Serializable]
     public class StateMachine {
+        private string m_FsmName;
+
         private string m_CurrentState;
-
         private string m_InitialState;
-
         private string m_NextState;
+
         private Dictionary<string, BaseState> m_States = new();
 
-        public static StateMachine Create(string initialState) {
-            return new StateMachine { m_InitialState = initialState };
+        public static StateMachine Create(string fsmName, string initialState) {
+            return new StateMachine { m_FsmName = fsmName, m_InitialState = initialState };
         }
 
-        public static StateMachine Create() {
-            return new StateMachine();
+        public static StateMachine Create(string fsmName) {
+            return new StateMachine() { m_FsmName = fsmName };
         }
 
         public int GetStateCount() {
@@ -80,7 +81,7 @@ namespace XiheFramework.Core.FSM {
 
             if (m_ExitToEnter) {
                 m_States[m_CurrentState].OnEnterInternal();
-                Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_CurrentState));
+                Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_FsmName, m_CurrentState));
                 m_ExitToEnter = false;
                 m_EnterToUpdate = true;
                 m_NextFrameLock = false;
@@ -88,7 +89,7 @@ namespace XiheFramework.Core.FSM {
 
             if (m_UpdateToExit) {
                 m_States[m_CurrentState].OnExitInternal();
-                Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_CurrentState));
+                Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_FsmName, m_CurrentState));
                 m_CurrentState = m_NextState;
                 m_UpdateToExit = false;
                 m_ExitToEnter = true;

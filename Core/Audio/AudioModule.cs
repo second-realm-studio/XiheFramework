@@ -5,6 +5,9 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
+        [Range(0, 100)]
+        public float masterVolume = 50;
+
         public GameObject sharedAudioObject;
         private List<uint> m_PlayingEvents = new();
 #if USE_WWISE
@@ -56,6 +59,16 @@ namespace XiheFramework.Core.Audio {
             base.Awake();
 
             Game.Audio = this;
+        }
+
+        public override void Setup() {
+            base.Setup();
+        }
+
+        public override void OnUpdate() {
+            base.OnUpdate();
+            
+            AkSoundEngine.SetRTPCValue("MasterVolume", masterVolume);
         }
     }
 }

@@ -5,9 +5,23 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
+        public GameObject sharedAudioObject;
         private List<uint> m_PlayingEvents = new();
 #if USE_WWISE
+        public void Play(AK.Wwise.Event audioEvent, GameObject container = null) {
+            if (container == null) {
+                container = sharedAudioObject;
+            }
+
+            var id = audioEvent.Post(container);
+            m_PlayingEvents.Add(id);
+        }
+
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null, AkCallbackManager.EventCallback callback = null) {
+            if (container == null) {
+                container = sharedAudioObject;
+            }
+
             var id = audioEvent.Post(container, (uint)AkCallbackType.AK_EndOfEvent, callback);
             m_PlayingEvents.Add(id);
         }

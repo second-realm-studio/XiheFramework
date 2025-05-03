@@ -65,9 +65,15 @@ namespace XiheFramework.Core.Audio {
             base.Setup();
         }
 
+        public override void OnReset() {
+            base.OnReset();
+
+            AkSoundEngine.StopAll();
+        }
+
         public override void OnUpdate() {
             base.OnUpdate();
-            
+
             AkSoundEngine.SetRTPCValue("MasterVolume", masterVolume);
         }
     }

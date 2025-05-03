@@ -266,6 +266,14 @@ namespace XiheFramework.Core.UI {
             m_OverlayCanvas = CreateCanvas("OverlayCanvas", 2);
         }
 
+        public override void OnReset() {
+            base.OnReset();
+
+            m_PopEntities.Clear();
+            m_OverlayEntities.Clear();
+            m_PageReturnHistory.Clear();
+        }
+
         private Canvas CreateCanvas(string canvasName, int sortingOrder) {
             var go = new GameObject(canvasName);
             go.transform.SetParent(transform, false);

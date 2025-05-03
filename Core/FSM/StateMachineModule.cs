@@ -46,7 +46,7 @@ namespace XiheFramework.Core.FSM {
                 return m_StateMachines[fsmName].GetCurrentState();
             }
 
-            Debug.LogError("[FSM] Fsm: " + fsmName + " does not exist");
+            // Debug.LogError("[FSM] Fsm: " + fsmName + " does not exist");
             return null;
         }
 

@@ -22,6 +22,7 @@ namespace XiheFramework.Utility.GOArray {
         //public bool useConstantOffset;
         // public Vector3 constantOffset;
 
+        public bool keepLocalPosition;
         public bool keepLocalRotation;
         public bool alignRendererBound;
         public Vector3 offset;
@@ -51,7 +52,8 @@ namespace XiheFramework.Utility.GOArray {
             for (var i = 0; i < countX; i++)
             for (var j = 0; j < countY; j++)
             for (var k = 0; k < countZ; k++) {
-                var pos = new Vector3(i * offset.x, j * offset.y, k * offset.z) + source.transform.position;
+                var posOffset = keepLocalPosition ? source.transform.position : Vector3.zero;
+                var pos = new Vector3(i * offset.x, j * offset.y, k * offset.z) + posOffset;
 
                 if (alignRendererBound) {
                     var _bounds = m_Renderer.bounds;

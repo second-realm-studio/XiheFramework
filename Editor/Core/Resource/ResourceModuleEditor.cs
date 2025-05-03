@@ -63,11 +63,33 @@ namespace XiheFramework.Editor.Core.Resource {
                 GUI.enabled = false;
             }
 
+            if (GUILayout.Button("Generate Sprite Assets")) {
+                GenerateSpriteAssetsOnly();
+            }
+
             if (GUILayout.Button("Generate Address Wrapper")) {
                 GenerateAddressWrapper();
             }
 
             GUI.enabled = true;
+        }
+
+        private void GenerateSpriteAssetsOnly() {
+            var files = Directory.GetFiles(AddressableResourcesRoot, "*.*", SearchOption.AllDirectories);
+            int count = 0;
+
+            foreach (var file in files) {
+                if (!File.Exists(file)) continue;
+
+                if (AssetDatabase.GetMainAssetTypeAtPath(file) == typeof(Texture2D)) {
+                    bool success = TryCreateSpriteAssetFromTexture(file, out _);
+                    if (success) count++;
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"生成 Sprite Asset 完成，共生成：{count} 个");
         }
 
         private void GenerateAddressWrapper() {
@@ -148,11 +170,12 @@ namespace XiheFramework.Editor.Core.Resource {
             }
 
             foreach (var file in files) {
-                if (File.Exists(file)) {
-                    var success = MarkAssetAddressable(addressableGroupName, file, out var addressInfo);
-                    if (success) {
-                        addressesResult.Add(addressInfo);
-                    }
+                if (!File.Exists(file)) continue;
+
+                // 始终尝试标记原始贴图
+                var successTex = MarkAssetAddressable(addressableGroupName, file, out var addressInfoTex);
+                if (successTex) {
+                    addressesResult.Add(addressInfoTex);
                 }
             }
 
@@ -161,6 +184,68 @@ namespace XiheFramework.Editor.Core.Resource {
 
             addressInfos = addressesResult.ToArray();
         }
+
+        private bool TryCreateSpriteAssetFromTexture(string texturePath, out string spriteAssetPath) {
+            spriteAssetPath = null;
+
+            // 载入贴图
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            if (texture == null) {
+                Debug.LogWarning($"无法加载贴图: {texturePath}");
+                return false;
+            }
+
+            if (texture.name != "Hole_Jackpot") {
+                return false;
+            }
+
+            // 获取 Importer 设置
+            TextureImporter importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+            if (importer == null || importer.textureType != TextureImporterType.Sprite) {
+                Debug.LogWarning($"贴图不是 Sprite 类型: {texturePath}");
+                return false;
+            }
+
+            // 只支持单图（多 Sprite 要走 spriteImportData[]）
+            if (importer.spriteImportMode != SpriteImportMode.Single) {
+                Debug.LogWarning($"暂不支持多图切片 Sprite: {texturePath}");
+                return false;
+            }
+
+            // 获取 pivot、pixelsPerUnit、border
+            Vector2 pivot = importer.spritePivot;
+            Rect rect = new Rect(0, 0, texture.width, texture.height);
+
+            importer.GetSourceTextureWidthAndHeight(out int originalWidth, out int originalHeight);
+            float scaleX = texture.width / (float)originalWidth;
+            float scaleY = texture.height / (float)originalHeight;
+            Vector4 originalBorder = importer.spriteBorder;
+            Vector4 scaledBorder = new Vector4(
+                originalBorder.x * scaleX,
+                originalBorder.y * scaleY,
+                originalBorder.z * scaleX,
+                originalBorder.w * scaleY
+            );
+            
+            float ppu = importer.spritePixelsPerUnit;
+
+            // 创建 Sprite
+            Sprite sprite = Sprite.Create(texture, rect, pivot, ppu, 1, SpriteMeshType.FullRect, scaledBorder, false);
+            sprite.name = Path.GetFileNameWithoutExtension(texturePath) + "_Sprite";
+
+            // 保存成 .asset 文件
+            spriteAssetPath = Path.Combine(Path.GetDirectoryName(texturePath),
+                Path.GetFileNameWithoutExtension(texturePath) + "_Sprite.asset");
+
+            if (File.Exists(spriteAssetPath)) {
+                AssetDatabase.DeleteAsset(spriteAssetPath);
+            }
+
+            AssetDatabase.CreateAsset(sprite, spriteAssetPath);
+            AssetDatabase.ImportAsset(spriteAssetPath);
+            return true;
+        }
+
 
         private static bool MarkAssetAddressable(string folderName, string assetPath, out AssetNameAddressPair addressInfo) {
             addressInfo = new AssetNameAddressPair();

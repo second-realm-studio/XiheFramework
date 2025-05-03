@@ -2037,6 +2037,7 @@ MonoBehaviour:
   fixedUpdateInterval: 0
   lateUpdateInterval: 0
   enableDebug: 0
+  masterVolume: 50
   sharedAudioObject: {fileID: 3535679677674764092}
 --- !u!1 &5666856739030178703
 GameObject:

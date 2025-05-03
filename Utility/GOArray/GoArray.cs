@@ -22,6 +22,7 @@ namespace XiheFramework.Utility.GOArray {
         //public bool useConstantOffset;
         // public Vector3 constantOffset;
 
+        public bool keepLocalRotation;
         public bool alignRendererBound;
         public Vector3 offset;
 
@@ -61,13 +62,17 @@ namespace XiheFramework.Utility.GOArray {
                 var globalPos = m_CachedTransform.TransformPoint(pos);
                 var go = PrefabUtility.InstantiatePrefab(source) as GameObject;
                 //todo:temp solution for scene objs
-                if (go==null) {
+                if (go == null) {
                     go = Instantiate(source) as GameObject;
                 }
+
                 // globalPos, m_CachedTransform.rotation, m_CachedTransform
                 go.transform.SetParent(m_CachedTransform);
                 go.transform.position = globalPos;
-                go.transform.rotation = m_CachedTransform.rotation;
+                if (!keepLocalRotation) {
+                    go.transform.rotation = m_CachedTransform.rotation;
+                }
+
                 go.name = source.name + "_" + i + "_" + j + "_" + k;
             }
         }

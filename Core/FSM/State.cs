@@ -5,7 +5,7 @@ namespace XiheFramework.Core.FSM {
     public abstract class State<T> : BaseState {
         protected T owner;
 
-        protected State(StateMachine parentStateMachine, T owner) : base(parentStateMachine) {
+        protected State(StateMachine parentStateMachine, string stateName, T owner) : base(parentStateMachine, stateName) {
             this.owner = owner;
         }
     }

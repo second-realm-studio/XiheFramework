@@ -5,15 +5,19 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM {
     public abstract class BaseState {
+        public string StateName => m_StateName;
+        private string m_StateName;
         private readonly StateMachine m_ParentStateMachine;
         private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
 
-        protected BaseState(StateMachine parentStateMachine) {
+        protected BaseState(StateMachine parentStateMachine, string stateName) {
             m_ParentStateMachine = parentStateMachine;
+            m_StateName = stateName;
         }
 
         internal void OnEnterInternal() {
             OnEnterCallback();
+            Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_ParentStateMachine.FsmName, m_StateName));
         }
 
         internal void OnUpdateInternal() {
@@ -27,6 +31,7 @@ namespace XiheFramework.Core.FSM {
 
             m_EventHandlerIds.Clear();
             OnExitCallback();
+            Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_ParentStateMachine.FsmName, m_StateName));
         }
 
         protected abstract void OnEnterCallback();

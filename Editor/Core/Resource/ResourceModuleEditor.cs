@@ -215,7 +215,6 @@ namespace XiheFramework.Editor.Core.Resource {
             // 获取 pivot、pixelsPerUnit、border
             Vector2 pivot = importer.spritePivot;
             Rect rect = new Rect(0, 0, texture.width, texture.height);
-
             importer.GetSourceTextureWidthAndHeight(out int originalWidth, out int originalHeight);
             float scaleX = texture.width / (float)originalWidth;
             float scaleY = texture.height / (float)originalHeight;
@@ -226,8 +225,8 @@ namespace XiheFramework.Editor.Core.Resource {
                 originalBorder.z * scaleX,
                 originalBorder.w * scaleY
             );
-            
-            float ppu = importer.spritePixelsPerUnit;
+
+            float ppu = importer.spritePixelsPerUnit / scaleX;
 
             // 创建 Sprite
             Sprite sprite = Sprite.Create(texture, rect, pivot, ppu, 1, SpriteMeshType.FullRect, scaledBorder, false);

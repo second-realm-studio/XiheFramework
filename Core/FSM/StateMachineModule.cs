@@ -13,7 +13,7 @@ namespace XiheFramework.Core.FSM {
 
         private Queue<string> m_RemoveQueue = new();
         private bool m_IsActive = true;
-        
+
         public override void OnUpdate() {
             if (!m_IsActive) return;
 
@@ -62,18 +62,18 @@ namespace XiheFramework.Core.FSM {
             m_StateMachines[fsmName].ChangeState(stateName);
         }
 
-        public void AddState(string fsmName, string stateName, BaseState state) {
+        public void AddState(string fsmName, BaseState state) {
             if (!IsFsmExisted(fsmName)) return;
 
-            m_StateMachines[fsmName].AddState(stateName, state);
+            m_StateMachines[fsmName].AddState(state);
         }
 
         public void AddActionState(string fsmName, string stateName, Action onEnter, Action onUpdate, Action onExit) {
             if (!IsFsmExisted(fsmName)) return;
 
-            var state = new ActionState(m_StateMachines[fsmName], onEnter, onUpdate, onExit);
+            var state = new ActionState(m_StateMachines[fsmName], stateName, onEnter, onUpdate, onExit);
 
-            m_StateMachines[fsmName].AddState(stateName, state);
+            m_StateMachines[fsmName].AddState(state);
         }
 
         public void RemoveState(string fsmName, string stateName) {
@@ -124,6 +124,15 @@ namespace XiheFramework.Core.FSM {
             }
             else {
                 Debug.LogWarningFormat("[FSM] Can not stop fsm with name: {0} because it does not exist", fsmName);
+            }
+        }
+
+        public void DestroyStateMachine(string fsmName) {
+            if (m_StateMachines.ContainsKey(fsmName)) {
+                m_StateMachines[fsmName].Stop();
+            }
+            else {
+                Debug.LogWarningFormat("[FSM] Can not destroy fsm with name: {0} because it does not exist", fsmName);
             }
         }
 

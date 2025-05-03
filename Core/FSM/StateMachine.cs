@@ -8,8 +8,9 @@ using static System.String;
 namespace XiheFramework.Core.FSM {
     [Serializable]
     public class StateMachine {
-        private string m_FsmName;
+        public string FsmName => m_FsmName;
 
+        private string m_FsmName;
         private string m_CurrentState;
         private string m_InitialState;
         private string m_NextState;
@@ -40,11 +41,8 @@ namespace XiheFramework.Core.FSM {
             return m_CurrentState;
         }
 
-        public void AddState(string stateName, BaseState state) {
-            if (!m_States.ContainsKey(stateName))
-                m_States.Add(stateName, state);
-            else
-                m_States[stateName] = state;
+        public void AddState(BaseState state) {
+            m_States[state.StateName] = state;
         }
 
         public void RemoveState(string stateName) {
@@ -81,7 +79,6 @@ namespace XiheFramework.Core.FSM {
 
             if (m_ExitToEnter) {
                 m_States[m_CurrentState].OnEnterInternal();
-                Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_FsmName, m_CurrentState));
                 m_ExitToEnter = false;
                 m_EnterToUpdate = true;
                 m_NextFrameLock = false;
@@ -89,7 +86,6 @@ namespace XiheFramework.Core.FSM {
 
             if (m_UpdateToExit) {
                 m_States[m_CurrentState].OnExitInternal();
-                Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_FsmName, m_CurrentState));
                 m_CurrentState = m_NextState;
                 m_UpdateToExit = false;
                 m_ExitToEnter = true;
@@ -110,6 +106,7 @@ namespace XiheFramework.Core.FSM {
         ///     shutdown fsm
         /// </summary>
         public void Stop() {
+            m_States[m_CurrentState].OnExitInternal();
             m_CurrentState = Empty;
         }
 

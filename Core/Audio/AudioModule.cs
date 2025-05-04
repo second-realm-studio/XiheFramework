@@ -5,8 +5,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio {
     public class AudioModule : GameModule {
-        [Range(0, 100)]
-        public float masterVolume = 50;
+        private float m_MasterVolume = 50;
 
         public GameObject sharedAudioObject;
         private List<uint> m_PlayingEvents = new();
@@ -31,6 +30,12 @@ namespace XiheFramework.Core.Audio {
 
         public void Stop(uint playingId, int fadeOutTime = 500, AkCurveInterpolation curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear) {
             AkSoundEngine.StopPlayingID(playingId, fadeOutTime, curveInterpolation);
+        }
+
+        public void SetMasterVolume(float volume) {
+            volume = Mathf.Clamp(volume, 0, 100);
+            m_MasterVolume = volume;
+            AkSoundEngine.SetRTPCValue("MasterVolume", m_MasterVolume);
         }
 
         public void SetVariable(string variableName, float value, GameObject target) {
@@ -73,8 +78,6 @@ namespace XiheFramework.Core.Audio {
 
         public override void OnUpdate() {
             base.OnUpdate();
-
-            AkSoundEngine.SetRTPCValue("MasterVolume", masterVolume);
         }
     }
 }

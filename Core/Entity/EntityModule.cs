@@ -8,31 +8,22 @@ using XiheFramework.Core.Serialization;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Entity {
-    //TODO: change to hash id
-    public class EntityModule : GameModule, IEntityModule {
-        public string OnEntityInstantiatedEvtName => "Event.OnEntityRegistered";
-        public string OnEntityDestroyedEvtName => "Event.OnEntityDestroyed";
-        public string OnEntityOwnerChangedEvtName => "Event.OnEntityOwnerChanged";
-
-        private readonly Dictionary<uint, GameEntity> m_Entities = new();
+    public class EntityModule : EntityModuleBase {
+        private readonly Dictionary<uint, GameEntityBase> m_Entities = new();
         private readonly Dictionary<uint, uint> m_RecycledEntityIds = new(); //entity ids that's being destroyed at current frame
 
         private readonly object m_LockRoot = new();
-        public GameEntity[] CurrentEntities => m_Entities.Values.ToArray();
+        public GameEntityBase[] CurrentEntities => m_Entities.Values.ToArray();
 
-        public void RegisterInstantiatedEntity<T>(T entity, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0)
-            where T : GameEntity {
-            if (entity.EntityId != 0) {
-                Debug.LogWarning("[ENTITY] Entity : " + entity.EntityId + " has already been registered, no need to register again");
-                return;
+        #region Public Methods
+
+        public override T InstantiateEntity<T>(string entityAddress, uint presetId = 0, Action<T> onInstantiatedCallback = null) {
+            if (string.IsNullOrEmpty(entityAddress)) {
+                Debug.LogError("[ENTITY] Entity address cannot be null or empty");
+                return null;
             }
-            entity.gameObject.name += "(Scene)";
-            lock (m_LockRoot) SetUpGameEntity(entity, entity.gameObject.name, presetId, ownerEntityId, setParent);
-        }
 
-        public T InstantiateEntity<T>(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<T> onInstantiatedCallback = null) where T : GameEntity {
-            var go = Game.Resource.InstantiateAsset<GameObject>(entityAddress, localPosition, localRotation);
+            var go = Game.Resource.InstantiateAsset<GameObject>(entityAddress);
             if (go == null) {
                 Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " is not a GameObject");
                 return null;
@@ -43,8 +34,9 @@ namespace XiheFramework.Core.Entity {
                 Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " has no component of type " + typeof(T));
                 return null;
             }
+
             entity.gameObject.name = entityAddress + "(Prefab)";
-            lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
+            lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, onInstantiatedCallback);
 
             if (enableDebug) {
                 Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityAddress})");
@@ -53,61 +45,36 @@ namespace XiheFramework.Core.Entity {
             return entity;
         }
 
-        public T InstantiateEntity<T>(string entityAddress, Vector3 localPosition, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<T> onInstantiatedCallback = null)
-            where T : GameEntity {
-            return InstantiateEntity(entityAddress, localPosition, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
+        public override GameEntityBase InstantiateEntity(string entityAddress, uint presetId = 0, Action<GameEntityBase> onInstantiatedCallback = null) {
+            return InstantiateEntity<GameEntityBase>(entityAddress, presetId, onInstantiatedCallback);
         }
 
-        public T InstantiateEntity<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0, Action<T> onInstantiatedCallback = null)
-            where T : GameEntity {
-            return InstantiateEntity(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
-        }
-
-        public GameEntity InstantiateEntity(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<GameEntity> onInstantiatedCallback = null) {
-            return InstantiateEntity<GameEntity>(entityAddress, localPosition, localRotation, ownerEntityId, setParent, presetId, onInstantiatedCallback);
-        }
-
-        public GameEntity InstantiateEntity(string entityAddress, Vector3 localPosition, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<GameEntity> onInstantiatedCallback = null) {
-            return InstantiateEntity<GameEntity>(entityAddress, localPosition, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
-        }
-
-        public GameEntity InstantiateEntity(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<GameEntity> onInstantiatedCallback = null) {
-            return InstantiateEntity<GameEntity>(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
-        }
-
-        public void InstantiateEntityAsync<T>(string entityAddress, Vector3 localPosition, Quaternion localRotation, uint ownerEntityId = 0, bool setParent = true,
-            uint presetId = 0, Action<T> onInstantiatedCallback = null)
-            where T : GameEntity {
+        public override void InstantiateEntityAsync<T>(string entityAddress, uint presetId = 0, Action<T> onInstantiatedCallback = null) {
             if (string.IsNullOrEmpty(entityAddress)) {
                 Debug.LogError("[ENTITY] Entity address cannot be null or empty");
                 return;
             }
 
-            Game.Resource.InstantiateAssetAsync<GameObject>(entityAddress, localPosition, localRotation, go => {
+            Game.Resource.InstantiateAssetAsync<GameObject>(entityAddress, go => {
+                if (go == null) {
+                    Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " is not a GameObject");
+                    return;
+                }
+
                 var entity = go.GetComponent<T>();
                 entity.gameObject.name = entityAddress + "(Prefab)";
-                lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, ownerEntityId, setParent, onInstantiatedCallback);
+                lock (m_LockRoot) SetUpGameEntity(entity, entityAddress, presetId, onInstantiatedCallback);
                 if (enableDebug) {
                     Debug.Log($"[ENTITY] Entity Instantiated : {entity.EntityId} ({entity.EntityAddress})");
                 }
             });
         }
 
-        public void InstantiateEntityAsync<T>(string entityAddress, Vector3 localPosition, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0,
-            Action<T> onInstantiatedCallback = null) where T : GameEntity {
-            InstantiateEntityAsync(entityAddress, localPosition, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
+        public override GameEntityBase InstantiateEntityAsync(string entityAddress, uint presetId = 0, Action<GameEntityBase> onInstantiatedCallback = null) {
+            return InstantiateEntity<GameEntityBase>(entityAddress, presetId, onInstantiatedCallback);
         }
 
-        public void InstantiateEntityAsync<T>(string entityAddress, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0, Action<T> onInstantiatedCallback = null)
-            where T : GameEntity {
-            InstantiateEntityAsync(entityAddress, Vector3.zero, Quaternion.identity, ownerEntityId, setParent, presetId, onInstantiatedCallback);
-        }
-
-        public void DestroyEntity(uint entityId) {
+        public override void DestroyEntity(uint entityId) {
             lock (m_LockRoot) {
                 if (!m_Entities.ContainsKey(entityId) || m_RecycledEntityIds.ContainsKey(entityId)) return;
                 var entity = m_Entities[entityId];
@@ -124,14 +91,23 @@ namespace XiheFramework.Core.Entity {
             }
         }
 
-        public void DestroyEntity(GameEntity entity) {
-            DestroyEntity(entity.EntityId);
+        public override void DestroyEntity(GameEntityBase entityBase) {
+            DestroyEntity(entityBase.EntityId);
         }
 
-        public void UnregisterEntity(uint entityId) {
+        public override void RegisterEntity(GameEntityBase entityBase, uint ownerEntityId = 0, bool setParent = true, uint presetId = 0) {
+            if (entityBase.EntityId != 0) {
+                Debug.LogWarning("[ENTITY] Entity : " + entityBase.EntityId + " has already been registered, no need to register again");
+                return;
+            }
+
+            entityBase.gameObject.name += "(Scene)";
+            lock (m_LockRoot) SetUpGameEntity(entityBase, entityBase.EntityAddress, presetId);
+        }
+
+        public override void UnregisterEntity(uint entityId) {
             lock (m_LockRoot) {
-                if (!m_Entities.ContainsKey(entityId)) return;
-                var entity = m_Entities[entityId];
+                if (!m_Entities.TryGetValue(entityId, out var entity)) return;
                 if (entity == null) {
                     Debug.LogError($"[ENTITY] Entity {entityId} can not be unregistered: NULL.");
                     m_Entities.Remove(entityId);
@@ -143,15 +119,15 @@ namespace XiheFramework.Core.Entity {
                     Debug.Log($"[ENTITY] Entity Unregistered : {entityId} ({entity.EntityAddress})");
                 }
 
-                var args = new OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name, entity.transform.position,
+                var args = new EntityModuleEvents.OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name, entity.transform.position,
                     entity.transform.rotation);
-                Game.Event.Invoke(OnEntityDestroyedEvtName, entityId, args);
+                Game.Event.InvokeNow(EntityModuleEvents.OnEntityDestroyedEventName, null, args);
                 m_Entities.Remove(entityId);
                 m_RecycledEntityIds.Remove(entityId); // release recycled id if exist
             }
         }
 
-        public void ChangeEntityOwner(uint entityId, uint ownerId, bool setParent = true, Transform root = null) {
+        public override void ChangeEntityOwner(uint entityId, uint ownerId, bool setParent = true, Transform rootTransform = null) {
             if (!m_Entities.ContainsKey(entityId)) {
                 return;
             }
@@ -162,18 +138,16 @@ namespace XiheFramework.Core.Entity {
 
             m_Entities[entityId].OwnerId = ownerId;
             if (setParent) {
-                if (root) {
-                    m_Entities[entityId].transform.SetParent(root);
+                if (rootTransform) {
+                    m_Entities[entityId].transform.SetParent(rootTransform);
                 }
                 else {
                     m_Entities[entityId].transform.SetParent(m_Entities[ownerId].transform);
                 }
             }
-
-            Game.Event.Invoke(OnEntityOwnerChangedEvtName, entityId, ownerId);
         }
 
-        public T GetEntity<T>(uint entityId) where T : GameEntity {
+        public override T GetEntity<T>(uint entityId) {
             if (!m_Entities.ContainsKey(entityId)) {
                 Debug.LogWarning($"[ENTITY] Entity : {entityId} is not existed or is not Type of {typeof(T)}");
                 return null;
@@ -183,48 +157,59 @@ namespace XiheFramework.Core.Entity {
             return result as T;
         }
 
-        public GameEntity GetEntity(uint entityId) {
-            return GetEntity<GameEntity>(entityId);
+        public override GameEntityBase GetEntity(uint entityId) {
+            return GetEntity<GameEntityBase>(entityId);
         }
 
-        public bool IsEntityAvailable(uint entityId) {
+        public override bool IsEntityAvailable(uint entityId) {
             lock (m_LockRoot) {
-                return m_Entities.ContainsKey(entityId) && !m_RecycledEntityIds.ContainsKey(entityId);
+                m_Entities.TryGetValue(entityId, out var entity);
+                if (entity == null) {
+                    return false;
+                }
+
+                if (m_RecycledEntityIds.ContainsKey(entityId)) {
+                    return false;
+                }
+
+                return true;
             }
         }
 
-        protected override void Awake() {
-            base.Awake();
+        #endregion
+
+
+        public override int Priority => -10;
+
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+            // if (Game.Serialization != null) {
+            //     Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
+            // }
+
             Game.Entity = this;
         }
 
-        public override void Setup() {
-            base.Setup();
-            if (Game.Serialization != null) {
-                Game.Event.Subscribe(Game.Serialization.OnSaveEventName, OnSave);
-            }
-        }
+        // private void OnSave(object sender, object e) {
+        //     var args = (OnSaveEventArgs)e;
+        //     var cache = new List<uint>(m_Entities.Keys);
+        //     foreach (var entity in cache) {
+        //         if (m_Entities.ContainsKey(entity)) {
+        //             m_Entities[entity].OnSaveCallBackInternal(args);
+        //         }
+        //     }
+        // }
 
-        private void OnSave(object sender, object e) {
-            var args = (OnSaveEventArgs)e;
+        protected override void OnUpdate() {
             var cache = new List<uint>(m_Entities.Keys);
-            foreach (var entity in cache) {
-                if (m_Entities.ContainsKey(entity)) {
-                    m_Entities[entity].OnSaveCallBackInternal(args);
+            foreach (var entityId in cache) {
+                if (m_Entities.TryGetValue(entityId, out var entity)) {
+                    entity.OnUpdateCallbackInternal();
                 }
             }
         }
 
-        public override void OnUpdate() {
-            var cache = new List<uint>(m_Entities.Keys);
-            foreach (var entity in cache) {
-                if (m_Entities.ContainsKey(entity)) {
-                    m_Entities[entity].OnUpdateCallbackInternal();
-                }
-            }
-        }
-
-        public override void OnFixedUpdate() {
+        protected override void OnFixedUpdate() {
             var cache = new List<uint>(m_Entities.Keys);
             foreach (var entity in cache) {
                 if (m_Entities.ContainsKey(entity)) {
@@ -233,29 +218,32 @@ namespace XiheFramework.Core.Entity {
             }
         }
 
-        public override void OnLateUpdate() {
+        protected override void OnLateUpdate() {
             var cache = new List<uint>(m_Entities.Keys);
-            foreach (var entity in cache) {
-                if (m_Entities.ContainsKey(entity)) {
-                    m_Entities[entity].OnLateUpdateCallbackInternal();
+            foreach (var entityId in cache) {
+                if (m_Entities.TryGetValue(entityId, out var entity)) {
+                    entity.OnLateUpdateCallbackInternal();
                 }
             }
         }
 
-        public override void OnReset() {
-            var destroyQueue = new Queue<GameEntity>();
+        public void OnDestroy() {
+            var destroyQueue = new Queue<GameEntityBase>();
             foreach (var entity in m_Entities.Values) {
                 destroyQueue.Enqueue(entity);
             }
 
             while (destroyQueue.Count > 0) {
                 var entity = destroyQueue.Dequeue();
-                entity.OnDestroyCallbackInternal();
-                Destroy(entity.gameObject);
+                if (entity != null) {
+                    DestroyEntity(entity);
+                }
             }
 
             m_Entities.Clear();
         }
+
+        #region Private Methods
 
         private uint CalculateFinalId(uint presetId) {
             uint finalId = 1;
@@ -271,33 +259,22 @@ namespace XiheFramework.Core.Entity {
             return finalId;
         }
 
-        private void SetUpGameEntity<T>(T entity, string address, uint presetId, uint ownerEntityId, bool setParent, Action<T> onInstantiated = null) where T : GameEntity {
+        private void SetUpGameEntity<T>(T entity, string address, uint presetId, Action<T> onInstantiated = null) where T : GameEntityBase {
             if (presetId != 0) DestroyEntity(presetId);
             var finalId = CalculateFinalId(presetId);
 
             entity.EntityId = finalId;
             entity.EntityAddress = address;
-            if (ownerEntityId != 0) {
-                if (IsEntityAvailable(ownerEntityId)) {
-                    entity.OwnerId = ownerEntityId;
-                    if (setParent) {
-                        entity.transform.SetParent(GetEntity<GameEntity>(ownerEntityId).transform, false);
-                    }
-                }
-                else {
-                    entity.OwnerId = 0;
-                    Debug.LogWarning("[ENTITY] Entity OwnerId : " + ownerEntityId + $" is not existed. Entity {entity.name} ownerId set to 0(System Owner)");
-                }
-            }
-
             m_Entities.Add(finalId, entity);
 
             onInstantiated?.Invoke(entity);
 
-            var args = new OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
+            var args = new EntityModuleEvents.OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
 
             entity.OnInitCallbackInternal();
-            Game.Event.InvokeNow(OnEntityInstantiatedEvtName, finalId, args);
+            Game.Event.InvokeNow(EntityModuleEvents.OnEntityInstantiatedEventName, null, args);
         }
+
+        #endregion
     }
 }

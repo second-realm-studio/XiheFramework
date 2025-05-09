@@ -1,7 +1,8 @@
 ﻿using XiheFramework.Core.Audio;
+using XiheFramework.Core.Base;
 using XiheFramework.Core.Blackboard;
-using XiheFramework.Core.Command;
 using XiheFramework.Core.Config;
+using XiheFramework.Core.Console;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.Event;
 using XiheFramework.Core.FSM;
@@ -19,10 +20,10 @@ namespace XiheFramework.Runtime {
     /// shortcut to get all component
     /// </summary>
     public static partial class Game {
-        public static AudioModule Audio { get; internal set; }
+        public static IAudioModule Audio { get; internal set; }
         public static EventModule Event { get; internal set; }
         public static BlackboardModule Blackboard { get; internal set; }
-        public static CommandModule Command { get; internal set; }
+        public static ConsoleModule Command { get; internal set; }
         public static ConfigModule Config { get; internal set; }
         public static ResourceModule Resource { get; internal set; }
         public static UIModule UI { get; internal set; }

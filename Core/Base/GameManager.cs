@@ -6,81 +6,133 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using XiheFramework.Core.Utility;
+using XiheFramework.Core.Blackboard;
+using XiheFramework.Core.Entity;
+using XiheFramework.Core.Event;
+using XiheFramework.Core.Resource;
+using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Base {
     /// <summary>
-    /// Game manager for XiheFramework, work as a Singleton.
+    /// Game manager for XiheFramework
+    /// Execution order should be the earliest
     /// </summary>
-    [DefaultExecutionOrder(-300)]
-    public class GameManager : Singleton<GameManager> {
-        public readonly string onXiheFrameworkInitialized = "OnXiheFrameworkInitialized";
+    [DefaultExecutionOrder(300)]
+    public class GameManager : MonoBehaviour {
         public string gameName = "My Game";
-        public int frameRate = 60;
-        public bool dontDestroyOnLoad = true;
 
-        private readonly Dictionary<Type, GameModule> m_GameModules = new();
+        // essential game modules
+        public BlackboardModuleBase blackboardModule;
+        public EntityModuleBase entityModule;
+        public EventModule eventModule;
+        public ResourceModule resourceModule;
 
-        private readonly Queue<GameModule> m_RegisterGameModulesQueue = new();
+        /// <summary>
+        /// drag all custom game modules here
+        /// </summary>
+        public List<GameModuleBase> customGameModules;
 
-        private bool m_OnInitEventInvoked = false;
+        private readonly Dictionary<Type, GameModuleBase> m_PresetGameModules = new();
+        private readonly Dictionary<Type, GameModuleBase> m_AliveGameModules = new();
+        private readonly Queue<GameModuleBase> m_RegisterGameModulesQueue = new();
+        private readonly Dictionary<Type, Action> m_GameModuleOnInstantiatedCallbacks = new();
+        private readonly Dictionary<Type, int> m_AliveGameModuleUpdateTimers = new();
+        private readonly Dictionary<Type, int> m_AliveGameModuleFixedUpdateTimers = new();
+        private readonly Dictionary<Type, int> m_AliveGameModuleLateUpdateTimers = new();
+        private readonly MultiDictionary<int, Type> m_AliveGameModulePriorityBuckets = new();
+
+        #region Lifecycle
 
         private void Awake() {
-            Application.targetFrameRate = frameRate;
+            //cache all core game modules
+            m_PresetGameModules[blackboardModule.GetType()] = blackboardModule;
+            m_PresetGameModules[entityModule.GetType()] = entityModule;
+            m_PresetGameModules[eventModule.GetType()] = eventModule;
+            m_PresetGameModules[resourceModule.GetType()] = resourceModule;
 
-            RegisterAllComponent();
-            foreach (var component in m_GameModules.Values) component.Setup();
+            //cache all pre-set game module prefabs
+            customGameModules.ForEach(module => m_PresetGameModules[module.GetType()] = module);
             Debug.LogFormat("XiheFramework Initialized");
             Game.Manager = this;
         }
 
         private void Start() {
-            if (dontDestroyOnLoad) {
-                DontDestroyOnLoad(gameObject);
-            }
-
-            //late start for all modules
-            foreach (var component in m_GameModules.Values) component.OnLateStart();
+            DontDestroyOnLoad(gameObject);
         }
 
         private void Update() {
-            if (m_OnInitEventInvoked) return;
-            Game.Event.Invoke(onXiheFrameworkInitialized);
-            m_OnInitEventInvoked = true;
-        }
+            foreach (var aliveGameModule in m_AliveGameModules) {
+                if (m_AliveGameModuleUpdateTimers[aliveGameModule.Key] > 0) {
+                    m_AliveGameModuleUpdateTimers[aliveGameModule.Key] -= 1;
+                    continue;
+                }
 
-        private void OnApplicationQuit() {
-            foreach (var module in m_GameModules.Values) {
-                module.OnQuit();
+                aliveGameModule.Value.OnUpdateInternal();
+                m_AliveGameModuleUpdateTimers[aliveGameModule.Key] = aliveGameModule.Value.updateInterval;
             }
         }
 
-        private void RegisterAllComponent() {
+        private void FixedUpdate() { }
+
+        private void LateUpdate() {
+            //register game modules
             while (m_RegisterGameModulesQueue.Count > 0) {
-                var module = m_RegisterGameModulesQueue.Dequeue();
-
-                Instance.m_GameModules.Add(module.GetType(), module);
+                var gameModuleBase = m_RegisterGameModulesQueue.Dequeue();
+                m_AliveGameModules[gameModuleBase.GetType()] = gameModuleBase;
+                gameModuleBase.OnInstantiatedInternal(m_GameModuleOnInstantiatedCallbacks[gameModuleBase.GetType()]);
+                m_AliveGameModulePriorityBuckets[gameModuleBase.Priority].Add(gameModuleBase.GetType());
             }
         }
 
-        /// <summary>
-        /// Register GameModule to let the framework recognize it
-        /// </summary>
-        /// <param name="component"></param>
-        public static void RegisterComponent(GameModule component) {
-            if (component == null) {
-                Debug.LogErrorFormat("[GAME MANAGER]Registering a null component");
+        #endregion
+
+        #region Public Methods
+
+        public static void InstantiatePresetGameModule<T>(Action onInstantiated) where T : GameModuleBase {
+            var gameModuleType = typeof(T);
+
+            if (!Instance.m_PresetGameModules.ContainsKey(gameModuleType)) {
+                Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} does not exist, please create a prefab and drag it into XiheFramework Gameobject");
                 return;
             }
 
-            if (Instance.m_GameModules.ContainsKey(component.GetType())) {
-                Debug.LogErrorFormat("[GAME MANAGER]Component: {0} has already existed", component.GetType().Name);
+            if (Instance.m_AliveGameModules.ContainsKey(gameModuleType)) {
+                Debug.LogError($"[GAME MANAGER]Component: {gameModuleType} has already been registered");
                 return;
             }
 
-            //Instance.m_GameComponents.Add(component.GetType(), component);
-            Instance.m_RegisterGameModulesQueue.Enqueue(component);
+            var gameModule = Instantiate(Instance.m_PresetGameModules[gameModuleType]);
+            if (gameModule == null) {
+                Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} failed to instantiate");
+                return;
+            }
+
+            Instance.m_AliveGameModules[gameModuleType] = gameModule;
+            gameModule.OnInstantiatedInternal(onInstantiated);
+        }
+
+        public static void InstantiatePresetGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
+            var gameModuleType = typeof(T);
+
+            if (!Instance.m_PresetGameModules.ContainsKey(gameModuleType)) {
+                Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} does not exist, please create a prefab and drag it into XiheFramework Gameobject");
+                return;
+            }
+
+            if (Instance.m_AliveGameModules.ContainsKey(gameModuleType)) {
+                Debug.LogError($"[GAME MANAGER]Component: {gameModuleType} has already been registered");
+                return;
+            }
+
+            var gameModule = Instantiate(Instance.m_PresetGameModules[gameModuleType]);
+            if (gameModule == null) {
+                Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} failed to instantiate");
+                return;
+            }
+
+            Instance.m_RegisterGameModulesQueue.Enqueue(gameModule);
+            Instance.m_GameModuleOnInstantiatedCallbacks[gameModuleType] = onInstantiated;
         }
 
         /// <summary>
@@ -89,24 +141,38 @@ namespace XiheFramework.Core.Base {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetModule<T>() where T : GameModule {
+        public static T GetModule<T>() where T : GameModuleBase {
             var t = typeof(T);
             if (Instance == null) return null;
 
-            if (Instance.m_GameModules.TryGetValue(t, out var value)) return (T)value;
+            if (Instance.m_AliveGameModules.TryGetValue(t, out var value)) return (T)value;
 
             Debug.LogErrorFormat("[GAME MANAGER]Component: {0} does not exist", t.Name);
             return null;
         }
 
-        public static void ResetFramework() {
-            foreach (var component in Instance.m_GameModules.Values) component.OnReset();
-            Instance.m_GameModules.Clear();
+        public static void DestroyFramework() {
+            foreach (var component in Instance.m_AliveGameModules.Values) component.OnDestroyedInternal();
+            Instance.m_AliveGameModules.Clear();
             Instance.m_RegisterGameModulesQueue.Clear();
         }
 
-        public static string GetGameName() {
-            return Instance.gameName;
+        public static string GameName => Instance.gameName;
+
+        #endregion
+
+        #region Singleton
+
+        private static GameManager m_Instance;
+
+        private static GameManager Instance {
+            get {
+                if (m_Instance == null) m_Instance = FindObjectOfType<GameManager>();
+
+                return m_Instance;
+            }
         }
+
+        #endregion
     }
 }

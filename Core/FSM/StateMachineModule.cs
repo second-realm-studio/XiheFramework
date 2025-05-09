@@ -6,7 +6,9 @@ using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM {
-    public class StateMachineModule : GameModule {
+    public class StateMachineModule : GameModuleBase {
+        public override int Priority => 0;
+
         public string OnStateEnterEventName => "FSM.OnStateEnter";
         public string OnStateExitEventName => "FSM.OnStateExit";
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
@@ -14,7 +16,8 @@ namespace XiheFramework.Core.FSM {
         private Queue<string> m_RemoveQueue = new();
         private bool m_IsActive = true;
 
-        public override void OnUpdate() {
+
+        protected override void OnUpdate() {
             if (!m_IsActive) return;
 
             while (m_RemoveQueue.Count > 0) {
@@ -156,14 +159,15 @@ namespace XiheFramework.Core.FSM {
             m_IsActive = true;
         }
 
-        public override void OnReset() {
-            m_StateMachines.Clear();
-            m_RemoveQueue.Clear();
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+            Game.Fsm = this;
         }
 
-        protected override void Awake() {
-            base.Awake();
-            Game.Fsm = this;
+        protected override void OnDestroyed() {
+            base.OnDestroyed();
+            m_StateMachines.Clear();
+            m_RemoveQueue.Clear();
         }
     }
 }

@@ -63,33 +63,11 @@ namespace XiheFramework.Editor.Core.Resource {
                 GUI.enabled = false;
             }
 
-            if (GUILayout.Button("Generate Sprite Assets")) {
-                GenerateSpriteAssetsOnly();
-            }
-
             if (GUILayout.Button("Generate Address Wrapper")) {
                 GenerateAddressWrapper();
             }
 
             GUI.enabled = true;
-        }
-
-        private void GenerateSpriteAssetsOnly() {
-            var files = Directory.GetFiles(AddressableResourcesRoot, "*.*", SearchOption.AllDirectories);
-            int count = 0;
-
-            foreach (var file in files) {
-                if (!File.Exists(file)) continue;
-
-                if (AssetDatabase.GetMainAssetTypeAtPath(file) == typeof(Texture2D)) {
-                    bool success = TryCreateSpriteAssetFromTexture(file, out _);
-                    if (success) count++;
-                }
-            }
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            Debug.Log($"生成 Sprite Asset 完成，共生成：{count} 个");
         }
 
         private void GenerateAddressWrapper() {

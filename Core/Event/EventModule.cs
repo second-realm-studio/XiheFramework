@@ -8,7 +8,7 @@ using XiheFramework.Runtime;
 using static System.String;
 
 namespace XiheFramework.Core.Event {
-    public class EventModule : GameModule {
+    public class EventModule : GameModuleBase {
         private readonly MultiDictionary<string, string> m_CurrentEvents = new();
         private readonly Dictionary<string, EventHandler<object>> m_ActiveEventHandlers = new(); //keep track of active event handlers for unsubscribing
 
@@ -16,7 +16,9 @@ namespace XiheFramework.Core.Event {
 
         private readonly object m_LockRoot = new();
 
-        public override void OnUpdate() {
+        public override int Priority => -100;
+
+        protected override void OnUpdate() {
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
                     var element = m_WaitingList.Dequeue();
@@ -143,16 +145,12 @@ namespace XiheFramework.Core.Event {
             }
         }
 
-        public override void OnReset() {
+        protected override void OnDestroyed() {
             m_CurrentEvents.Clear();
             m_ActiveEventHandlers.Clear();
             lock (m_LockRoot) {
                 m_WaitingList.Clear();
             }
-        }
-
-        protected override void Awake() {
-            base.Awake();
 
             Game.Event = this;
         }

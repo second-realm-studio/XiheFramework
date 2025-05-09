@@ -4,7 +4,7 @@ using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Serialization {
-    public abstract class SerializationModuleBase : GameModule, ISerializationModule {
+    public abstract class SerializationModuleBase : GameModuleBase, ISerializationModule {
         public string OnSaveEventName => "Serialization.OnSave";
         public string OnLoadEventName => "Serialization.OnLoad";
 
@@ -23,8 +23,7 @@ namespace XiheFramework.Core.Serialization {
             Game.Event.InvokeNow(OnLoadEventName, null, args);
         }
 
-        protected override void Awake() {
-            base.Awake();
+        protected override void OnInstantiated() {
             Game.Serialization = this;
         }
 

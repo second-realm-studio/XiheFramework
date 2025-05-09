@@ -15,17 +15,19 @@ namespace XiheFramework.Core.Resource {
     /// <summary>
     /// use Unity Addressable to load assets
     /// </summary>
-    public class ResourceModule : GameModule {
+    public class ResourceModule : GameModuleBase {
+        public override int Priority => 0;
         public readonly string onDefaultResourcesLoadedEvtName = "Resource.OnDefaultResourcesLoaded";
         private readonly Dictionary<string, Object> m_CachedAssets = new Dictionary<string, Object>();
         // private readonly Dictionary<string, AsyncOperationHandle> m_CachedAssetHandles = new Dictionary<string, AsyncOperationHandle>();
 
-        public override void Setup() {
+        protected override void OnInstantiated() {
 #if USE_ADDRESSABLE
             Addressables.InitializeAsync(true);
 #else
             Debug.LogError("Please import Addressable Package and define USE_ADDRESSABLE in your project settings: Player->Other Settings->Scripting Define Symbols");
 #endif
+            Game.Resource = this;
         }
 
         #region Sync
@@ -183,7 +185,7 @@ namespace XiheFramework.Core.Resource {
 
         #endregion
 
-        public override void OnReset() {
+        protected override void OnDestroyed() {
 #if USE_ADDRESSABLE
             foreach (var asset in m_CachedAssets) {
                 Addressables.Release(asset.Value);
@@ -195,12 +197,6 @@ namespace XiheFramework.Core.Resource {
 
             m_CachedAssets.Clear();
 #endif
-        }
-
-        protected override void Awake() {
-            base.Awake();
-
-            Game.Resource = this;
         }
     }
 }

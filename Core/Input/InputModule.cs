@@ -5,7 +5,8 @@ using XiheFramework.Core.Base;
 using XiheFramework.Utility.Extension;
 
 namespace XiheFramework.Core.Input {
-    public class InputModule : GameModule {
+    public class InputModule : GameModuleBase {
+        public override int Priority => 0;
         //public List<ActionKeyPair> actionKeyPairs;
         [SerializeField] private List<ActionKeyPair> bindingSetting = new();
 
@@ -29,9 +30,7 @@ namespace XiheFramework.Core.Input {
 
         private readonly Dictionary<string, float> m_TwoDirectionalMultipliers = new();
 
-        protected override void Awake() {
-            base.Awake();
-
+        protected override void OnInstantiated() {
             foreach (var pair in bindingSetting) {
                 if (m_KeyActionBinds.ContainsKey(pair.action))
                     Debug.LogErrorFormat(
@@ -52,7 +51,7 @@ namespace XiheFramework.Core.Input {
             }
         }
 
-        public override void OnUpdate() {
+        protected override void OnUpdate() {
             UpdateMouseDeltaPosition();
         }
 

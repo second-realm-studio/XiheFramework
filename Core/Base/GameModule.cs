@@ -1,68 +1,46 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace XiheFramework.Core.Base {
-    [DefaultExecutionOrder(-301)]
-    public abstract class GameModule : MonoBehaviour {
+    public abstract class GameModuleBase : MonoBehaviour {
+        /// <summary>
+        /// Priority of the module to determine the order of execution
+        /// The smaller the number, the earlier it will be executed
+        /// Default value is 0
+        /// </summary>
+        public abstract int Priority { get; }
+
         public int updateInterval;
         public int fixedUpdateInterval;
         public int lateUpdateInterval;
 
         public bool enableDebug;
 
-        private int m_UpdateTimer;
-        private int m_FixedUpdateTimer;
-        private int m_LateUpdateTimer;
+        #region Game Module Callbacks
 
-        protected virtual void Awake() {
-            GameManager.RegisterComponent(this);
+        internal void OnInstantiatedInternal(Action onInstantiated) {
+            OnInstantiated();
+            onInstantiated?.Invoke();
         }
 
-        private void Update() {
-            if (m_UpdateTimer >= updateInterval) {
-                m_UpdateTimer -= updateInterval;
-                OnUpdate();
-            }
-            else {
-                m_UpdateTimer += 1;
-            }
-        }
+        internal void OnUpdateInternal() => OnUpdate();
 
-        private void FixedUpdate() {
-            if (m_FixedUpdateTimer >= fixedUpdateInterval) {
-                m_FixedUpdateTimer -= fixedUpdateInterval;
-                OnFixedUpdate();
-            }
-            else {
-                m_FixedUpdateTimer += 1;
-            }
-        }
+        internal void OnFixedUpdateInternal() => OnFixedUpdate();
 
-        private void LateUpdate() {
-            if (m_LateUpdateTimer >= lateUpdateInterval) {
-                m_LateUpdateTimer -= lateUpdateInterval;
-                OnLateUpdate();
-            }
-            else {
-                m_LateUpdateTimer += 1;
-            }
-        }
+        internal void OnLateUpdateInternal() => OnLateUpdate();
 
-        public virtual void OnUpdate() { }
-
-        public virtual void OnFixedUpdate() { }
-
-        public virtual void OnLateUpdate() { }
+        internal void OnDestroyedInternal() => OnDestroyed();
 
         /// <summary>
-        /// Called after all game modules are registered (End of Awake)
-        /// Useful for setting up data before other modules trying to access it
+        /// Called after all modules that got instantiated at that frame are instantiated
         /// </summary>
-        public virtual void Setup() { }
+        protected virtual void OnInstantiated() { }
 
-        public virtual void OnLateStart() { }
+        protected virtual void OnUpdate() { }
+        protected virtual void OnFixedUpdate() { }
+        protected virtual void OnLateUpdate() { }
+        protected virtual void OnDestroyed() { }
 
-        public virtual void OnReset() { }
-
-        public virtual void OnQuit() { }
+        #endregion
     }
 }

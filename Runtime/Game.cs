@@ -1,19 +1,28 @@
-﻿using XiheFramework.Core.Base;
+﻿using System;
+using XiheFramework.Core.Base;
 
 namespace XiheFramework.Runtime {
     public partial class Game {
         public static GameManager Manager { get; internal set; }
-        
-        public static T GetModule<T>() where T : GameModule {
+
+        public static void InstantiateGameModule<T>(Action onInstantiated) where T : GameModuleBase {
+            GameManager.InstantiatePresetGameModule<T>(onInstantiated);
+        }
+
+        public static void InstantiateGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
+            GameManager.InstantiatePresetGameModuleAsync<T>(onInstantiated);
+        }
+
+        public static T GetModule<T>() where T : GameModuleBase {
             return GameManager.GetModule<T>();
         }
 
-        public static void ResetFramework() {
-            GameManager.ResetFramework();
+        public static void DestroyFramework() {
+            GameManager.DestroyFramework();
         }
 
         public static string GetGameName() {
-            return GameManager.GetGameName();
+            return GameManager.GameName;
         }
     }
 }

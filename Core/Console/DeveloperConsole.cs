@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using XiheFramework.Core.UI.UIEntity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Console {
-    public class DeveloperConsole : MonoBehaviour {
+    public class DeveloperConsoleUIOverlay : UIOverlayEntityBase {
         public GameObject consolePanel;
         public TMP_InputField inputField;
         public TextMeshProUGUI outputText;
@@ -15,7 +16,9 @@ namespace XiheFramework.Core.Console {
         private bool m_IsOpen;
         private List<string> m_Logs = new List<string>();
 
-        private void Start() {
+        public override void OnInitCallback() {
+            base.OnInitCallback();
+
             consolePanel.SetActive(m_IsOpen);
 
             clearButton.onClick.AddListener(() => {
@@ -24,38 +27,11 @@ namespace XiheFramework.Core.Console {
             });
 
             helpButton.onClick.AddListener(() => {
-                var commands = CommandFactory.PrintAllCommands();
-                m_Logs.Add("Commands:");
-                m_Logs.AddRange(commands);
+                var availableCommandNames = Game.Command.GetAvailableCommandNames();
+                m_Logs.Add("Available Commands:");
+                m_Logs.AddRange(availableCommandNames);
                 outputText.text = string.Join("\n", m_Logs);
             });
-        }
-
-        private void Update() {
-#if USE_REWIRED
-            if (Game.SystemInput.GetButtonDown("OpenDevConsole")) {
-                m_IsOpen = !m_IsOpen;
-                Debug.Log("Dev Console: " + (m_IsOpen ? "Open" : "Close"));
-
-                consolePanel.SetActive(m_IsOpen);
-                Game.LogicTime.SetGlobalTimeScalePermanent(m_IsOpen ? 0f : 1f);
-            }
-
-            if (m_IsOpen && Game.SystemInput.GetButtonDown("ExecuteCommand")) {
-                EventSystem.current.SetSelectedGameObject(inputField.gameObject);
-                var succeed = CommandFactory.ExecuteCommand(inputField.text);
-                if (succeed) {
-                    m_Logs.Add(inputField.text);
-                }
-                else {
-                    m_Logs.Add($"Invalid Command: {inputField.text}");
-                }
-
-                outputText.text = string.Join("\n", m_Logs);
-
-                inputField.text = string.Empty;
-            }
-#endif
         }
     }
 }

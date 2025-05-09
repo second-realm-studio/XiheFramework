@@ -7,7 +7,9 @@ using XiheFramework.Runtime;
 using Object = System.Object;
 
 namespace XiheFramework.Core.Config {
-    public class ConfigModule : GameModule {
+    public class ConfigModule : GameModuleBase {
+        public override int Priority => 0;
+
         public List<PresetConfigEntry> configSettings = new List<PresetConfigEntry>();
 
         private Dictionary<string, ConfigEntry> m_ConfigEntries = new Dictionary<string, ConfigEntry>();
@@ -62,26 +64,7 @@ namespace XiheFramework.Core.Config {
             return ConfigHelper.GetDefaultPath(type, fieldName);
         }
 
-        public override void Setup() {
-            // foreach (var setting in configSettings) {
-            //     var newEntry = new ConfigEntry {
-            //         path = setting.path,
-            //         type = setting.type,
-            //         value = setting.GetValue()
-            //     };
-            //     AddConfig(newEntry);
-            // }
-            //
-            // if (enableDebug) {
-            //     Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
-            // }
-        }
-
-        protected override void Awake() {
-            base.Awake();
-
-            Game.Config = this;
-            
+        protected override void OnInstantiated() {
             foreach (var setting in configSettings) {
                 var newEntry = new ConfigEntry {
                     path = setting.path,
@@ -94,6 +77,8 @@ namespace XiheFramework.Core.Config {
             if (enableDebug) {
                 Debug.Log($"[CONFIG]Loaded {m_ConfigEntries.Count} config entries");
             }
+
+            Game.Config = this;
         }
     }
 }

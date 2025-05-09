@@ -4,9 +4,9 @@ using UnityEngine;
 using XiheFramework.Core.Entity;
 
 namespace XiheFramework.Editor.Core.Entity {
-    [CustomEditor(typeof(GameEntity), true)]
+    [CustomEditor(typeof(GameEntityBase), true)]
     public class GameEntityEditor : UnityEditor.Editor {
-        private GameEntity m_Target;
+        private GameEntityBase m_Target;
         private SerializedObject m_SerializedObject;
 
         private SerializedProperty m_PresetEntityId;
@@ -14,18 +14,18 @@ namespace XiheFramework.Editor.Core.Entity {
         private SerializedProperty m_UseLogicTime;
 
         private void OnEnable() {
-            m_Target = (GameEntity)target;
+            m_Target = (GameEntityBase)target;
             GetEntityProperties(m_Target, out m_SerializedObject, out m_PresetEntityId, out m_PresetOwnerId, out m_UseLogicTime);
         }
         
-        public static void GetEntityProperties(GameEntity target, out SerializedObject serializedObject, out SerializedProperty presetEntityId, out SerializedProperty presetOwnerId, out SerializedProperty useLogicTime) {
+        public static void GetEntityProperties(GameEntityBase target, out SerializedObject serializedObject, out SerializedProperty presetEntityId, out SerializedProperty presetOwnerId, out SerializedProperty useLogicTime) {
             serializedObject = new SerializedObject(target);
             presetEntityId = serializedObject.FindProperty("presetEntityId");
             presetOwnerId = serializedObject.FindProperty("presetOwnerId");
             useLogicTime = serializedObject.FindProperty("useLogicTime");
         }
 
-        public static void DrawEntityProperties(GameEntity target, SerializedObject serializedObject, SerializedProperty presetEntityId, SerializedProperty presetOwnerId, SerializedProperty useLogicTime) {
+        public static void DrawEntityProperties(GameEntityBase target, SerializedObject serializedObject, SerializedProperty presetEntityId, SerializedProperty presetOwnerId, SerializedProperty useLogicTime) {
             GUILayout.Label("Entity Status", EditorStyles.boldLabel);
 
             if (!Application.isPlaying) {

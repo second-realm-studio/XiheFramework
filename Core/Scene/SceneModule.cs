@@ -11,7 +11,8 @@ using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Scene {
-    public class SceneModule : GameModule {
+    public class SceneModule : GameModuleBase {
+        public override int Priority => 0;
 #if USE_ADDRESSABLE
         /// <summary>
         /// Load scene async using Addressable
@@ -42,9 +43,7 @@ namespace XiheFramework.Core.Scene {
         }
 #endif
 
-        protected override void Awake() {
-            base.Awake();
-
+        protected override void OnInstantiated() {
             Game.Scene = this;
         }
     }

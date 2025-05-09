@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using XiheFramework.Core.Base;
 using XiheFramework.Core.UI.UIEntity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
-    public class UIModule : GameModule {
+    public class UIModule : GameModuleBase {
+        public override int Priority => 0;
         // public Vector2 referenceResolution = new(1920, 1080);
         public float referencePixelsPerUnit = 100;
         private Canvas m_PageCanvas;
@@ -16,12 +18,12 @@ namespace XiheFramework.Core.UI {
         private Canvas m_OverlayCanvas;
 
         private readonly LinkedList<PageReturnHistoryInfo> m_PageReturnHistory = new();
-        private readonly Dictionary<uint, UILayoutEntity> m_PopEntities = new();
-        private readonly Dictionary<uint, UILayoutEntity> m_OverlayEntities = new();
+        private readonly Dictionary<uint, UILayoutEntityBase> m_PopEntities = new();
+        private readonly Dictionary<uint, UILayoutEntityBase> m_OverlayEntities = new();
 
         public PageReturnHistoryInfo[] CurrentPageHistory => m_PageReturnHistory.ToArray();
-        public UILayoutEntity[] CurrentPops => m_PopEntities.Values.ToArray();
-        public UILayoutEntity[] CurrentOverlays => m_OverlayEntities.Values.ToArray();
+        public UILayoutEntityBase[] CurrentPops => m_PopEntities.Values.ToArray();
+        public UILayoutEntityBase[] CurrentOverlays => m_OverlayEntities.Values.ToArray();
 
         /// <summary>
         /// Open new UIPageEntity in Page Layer
@@ -34,12 +36,12 @@ namespace XiheFramework.Core.UI {
 
             RemoveRepeatedHistory(address);
 
-            var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(address, m_PageCanvas);
+            var newUIEntity = InstantiateUILayoutEntity<UIPageEntityBase>(address, m_PageCanvas);
             if (newUIEntity.homePage) {
                 var current = m_PageReturnHistory.First;
                 while (current != null) {
-                    if (current.Value.entity != null) {
-                        Game.Entity.DestroyEntity(current.Value.entity.EntityId);
+                    if (current.Value.entityBase != null) {
+                        Game.Entity.DestroyEntity(current.Value.entityBase.EntityId);
                     }
 
                     var next = current.Next;
@@ -65,11 +67,11 @@ namespace XiheFramework.Core.UI {
             if (m_PageReturnHistory.Count == 0) return 0;
 
             var entry = m_PageReturnHistory.Last.Value;
-            if (entry.entity.homePage) {
-                return entry.entity.EntityId;
+            if (entry.entityBase.homePage) {
+                return entry.entityBase.EntityId;
             }
 
-            Game.Entity.DestroyEntity(entry.entity.EntityId);
+            Game.Entity.DestroyEntity(entry.entityBase.EntityId);
             m_PageReturnHistory.RemoveLast();
 
             if (m_PageReturnHistory.Count == 0) {
@@ -78,13 +80,13 @@ namespace XiheFramework.Core.UI {
 
             //find hidden entity
             var lastHistory = m_PageReturnHistory.Last.Value;
-            var hiddenEntity = lastHistory.entity;
+            var hiddenEntity = lastHistory.entityBase;
             if (hiddenEntity != null) {
                 hiddenEntity.Show();
                 return hiddenEntity.EntityId;
             }
 
-            var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(lastHistory.address, m_PageCanvas);
+            var newUIEntity = InstantiateUILayoutEntity<UIPageEntityBase>(lastHistory.address, m_PageCanvas);
 
             lastHistory = new PageReturnHistoryInfo(lastHistory.address, newUIEntity);
             m_PageReturnHistory.Last.Value = lastHistory;
@@ -106,8 +108,8 @@ namespace XiheFramework.Core.UI {
 
             var current = m_PageReturnHistory.Last;
             while (current != null && current != m_PageReturnHistory.First) {
-                if (current.Value.entity != null) {
-                    Game.Entity.DestroyEntity(current.Value.entity.EntityId);
+                if (current.Value.entityBase != null) {
+                    Game.Entity.DestroyEntity(current.Value.entityBase.EntityId);
                 }
 
                 var next = current.Previous;
@@ -116,25 +118,25 @@ namespace XiheFramework.Core.UI {
             }
 
             var entry = m_PageReturnHistory.First.Value;
-            UIPageEntity homeEntity;
-            if (entry.entity != null) {
-                homeEntity = entry.entity;
+            UIPageEntityBase homeEntityBase;
+            if (entry.entityBase != null) {
+                homeEntityBase = entry.entityBase;
             }
             else {
-                var newUIEntity = InstantiateUILayoutEntity<UIPageEntity>(entry.address, m_PageCanvas);
+                var newUIEntity = InstantiateUILayoutEntity<UIPageEntityBase>(entry.address, m_PageCanvas);
 
                 entry = new PageReturnHistoryInfo(entry.address, newUIEntity);
                 m_PageReturnHistory.First.Value = entry;
-                homeEntity = newUIEntity;
+                homeEntityBase = newUIEntity;
             }
 
-            homeEntity.Show();
+            homeEntityBase.Show();
 
-            if (!homeEntity.homePage) {
+            if (!homeEntityBase.homePage) {
                 Debug.LogWarning($"[UI] Home Page not found! Opening first page in history: {entry.address}");
             }
 
-            return homeEntity.EntityId;
+            return homeEntityBase.EntityId;
         }
 
         private void RemoveRepeatedHistory(string address) {
@@ -142,7 +144,7 @@ namespace XiheFramework.Core.UI {
 
             //if opening same page, refresh page only, don't need to remove history
             if (m_PageReturnHistory.Last.Value.address == address) {
-                var hiddenEntity = m_PageReturnHistory.Last.Value.entity;
+                var hiddenEntity = m_PageReturnHistory.Last.Value.entityBase;
                 if (hiddenEntity != null) {
                     Game.Entity.DestroyEntity(hiddenEntity.EntityId);
                 }
@@ -156,8 +158,8 @@ namespace XiheFramework.Core.UI {
                 if (currentNode.Value.address == address) {
                     var temp = currentNode;
                     while (temp != null) {
-                        if (temp.Value.entity != null) {
-                            Game.Entity.DestroyEntity(temp.Value.entity.EntityId);
+                        if (temp.Value.entityBase != null) {
+                            Game.Entity.DestroyEntity(temp.Value.entityBase.EntityId);
                         }
 
                         var prev = temp.Previous;
@@ -175,18 +177,18 @@ namespace XiheFramework.Core.UI {
         private void HideOrDestroyPage() {
             if (m_PageReturnHistory.Count == 0) return;
             var entry = m_PageReturnHistory.Last.Value;
-            if (entry.entity.destroyOnClose) {
-                Game.Entity.DestroyEntity(entry.entity.EntityId);
-                entry.entity = null;
+            if (entry.entityBase.destroyOnClose) {
+                Game.Entity.DestroyEntity(entry.entityBase.EntityId);
+                entry.entityBase = null;
                 m_PageReturnHistory.Last.Value = entry;
             }
             else {
-                entry.entity.Hide();
+                entry.entityBase.Hide();
             }
         }
 
         public uint OpenPop(string address) {
-            var popEntity = OpenPop<UIPopEntity>(address);
+            var popEntity = OpenPop<UIPopEntityBase>(address);
             if (popEntity == null) {
                 return 0;
             }
@@ -194,7 +196,7 @@ namespace XiheFramework.Core.UI {
             return popEntity.EntityId;
         }
 
-        public T OpenPop<T>(string address) where T : UIPopEntity {
+        public T OpenPop<T>(string address) where T : UIPopEntityBase {
             if (!m_PopCanvas || string.IsNullOrEmpty(address)) {
                 return null;
             }
@@ -221,7 +223,7 @@ namespace XiheFramework.Core.UI {
         }
 
         public uint OpenOverlay(string address) {
-            var overlayEntity = OpenOverlay<UIOverlayEntity>(address);
+            var overlayEntity = OpenOverlay<UIOverlayEntityBase>(address);
             if (overlayEntity == null) {
                 return 0;
             }
@@ -229,7 +231,7 @@ namespace XiheFramework.Core.UI {
             return overlayEntity.EntityId;
         }
 
-        public T OpenOverlay<T>(string address) where T : UIOverlayEntity {
+        public T OpenOverlay<T>(string address) where T : UIOverlayEntityBase {
             if (!m_OverlayCanvas || string.IsNullOrEmpty(address)) {
                 return null;
             }
@@ -256,8 +258,7 @@ namespace XiheFramework.Core.UI {
             }
         }
 
-        protected override void Awake() {
-            base.Awake();
+        protected override void OnInstantiated() {
 
             Game.UI = this;
 
@@ -266,9 +267,7 @@ namespace XiheFramework.Core.UI {
             m_OverlayCanvas = CreateCanvas("OverlayCanvas", 2);
         }
 
-        public override void OnReset() {
-            base.OnReset();
-
+        protected override void OnDestroyed() {
             m_PopEntities.Clear();
             m_OverlayEntities.Clear();
             m_PageReturnHistory.Clear();
@@ -293,7 +292,7 @@ namespace XiheFramework.Core.UI {
             return canvas;
         }
 
-        private T InstantiateUILayoutEntity<T>(string address, Canvas target) where T : UILayoutEntity {
+        private T InstantiateUILayoutEntity<T>(string address, Canvas target) where T : UILayoutEntityBase {
             return Game.Entity.InstantiateEntity<T>(address, onInstantiatedCallback: entity => {
                 entity.transform.SetParent(target.transform, false);
                 var rectTransform = entity.GetComponent<RectTransform>();
@@ -306,11 +305,13 @@ namespace XiheFramework.Core.UI {
         [Serializable]
         public struct PageReturnHistoryInfo {
             public string address;
-            public UIPageEntity entity;
 
-            public PageReturnHistoryInfo(string address, UIPageEntity entity) {
+            [FormerlySerializedAs("entity")]
+            public UIPageEntityBase entityBase;
+
+            public PageReturnHistoryInfo(string address, UIPageEntityBase entityBase) {
                 this.address = address;
-                this.entity = entity;
+                this.entityBase = entityBase;
             }
         }
     }

@@ -5,7 +5,8 @@ using UnityEngine;
 using XiheFramework.Core.Base;
 
 namespace XiheFramework.Core.Localization {
-    public class LocalizationModule : GameModule {
+    public class LocalizationModule : GameModuleBase {
+        public override int Priority => 0;
         public Languages language = Languages.English;
 
         public string streamingPath = "Localization.json";

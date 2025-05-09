@@ -3,7 +3,9 @@ using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.LogicTime {
-    public class LogicTimeModule : GameModule {
+    public class LogicTimeModule : GameModuleBase {
+
+        public override int Priority => 0;
         public readonly string onSetGlobalTimeScaleEventName = "Time.OnSetGlobalTimeScale";
 
         public float defaultTimeScale = 1f;
@@ -47,7 +49,7 @@ namespace XiheFramework.Core.LogicTime {
             SetGlobalTimeScaleInFrame(timeScale, 0, setUnityTimeScale);
         }
 
-        public override void OnUpdate() {
+        protected override void OnUpdate() {
             if (m_Duration <= 0f) {
                 return;
             }
@@ -66,19 +68,12 @@ namespace XiheFramework.Core.LogicTime {
             m_Timer = 0;
         }
 
-        public override void Setup() {
+        protected override void OnInstantiated() {
             GlobalTimeScale = defaultTimeScale;
             Time.timeScale = defaultTimeScale;
             Shader.SetGlobalFloat(TimeScalePropertyID, defaultTimeScale);
-        }
-
-        public override void OnLateStart() {
             GlobalTimeScale = defaultTimeScale;
-        }
-
-        protected override void Awake() {
-            base.Awake();
-
+            
             Game.LogicTime = this;
         }
     }

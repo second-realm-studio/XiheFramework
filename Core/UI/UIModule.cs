@@ -280,7 +280,7 @@ namespace XiheFramework.Core.UI {
             var canvas = go.AddComponent<Canvas>();
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(Screen.width, Screen.height);
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.referencePixelsPerUnit = referencePixelsPerUnit;
             go.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;

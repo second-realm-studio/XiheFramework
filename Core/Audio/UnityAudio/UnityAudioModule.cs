@@ -1,19 +1,26 @@
-﻿#if !USE_WWISE
-using UnityEngine;
+﻿using UnityEngine;
+using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio.UnityAudio {
-    public class UnityAudioModule : IAudioModule {
-        public AudioPlayer Play(uint ownerId, AudioClip audioClip, Vector3 worldPosition, bool loop) {
-            var audioPlayer = new GameObject("AudioPlayer(Dynamic)");
-            var audioPlayerComponent = audioPlayer.AddComponent<AudioPlayer>();
-            audioPlayer.transform.position = worldPosition;
+    public class UnityAudioModule : AudioModuleBase {
+        public GameObject Play(AudioClip audioClip, GameObject follow = null, bool loop = false) {
+            GameObject container;
+            if (follow == null) {
+                container = new GameObject("Unity Audio Player (Generated)");
+                container.transform.position = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            }
+            else {
+                container = follow;
+            }
+
+            var audioPlayerComponent = container.AddComponent<AudioPlayer>();
             audioPlayerComponent.AudioClip = audioClip;
-            audioPlayerComponent.Loop = loop;
             audioPlayerComponent.Play();
 
-            return audioPlayerComponent;
+            return container;
         }
+        
+        
     }
 }
-#endif

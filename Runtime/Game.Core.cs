@@ -20,10 +20,13 @@ namespace XiheFramework.Runtime {
     /// shortcut to get all component
     /// </summary>
     public static partial class Game {
-        public static IAudioModule Audio { get; internal set; }
+        public static AudioModuleBase Audio { get; internal set; }
         public static EventModule Event { get; internal set; }
         public static BlackboardModule Blackboard { get; internal set; }
-        public static ConsoleModule Command { get; internal set; }
+        public static ConsoleModule Console { get; internal set; }
+        public static void LogMessage(string message)=> Console.LogMessage(message);
+        public static void LogWarning(string message)=> Console.LogWarning(message);
+        public static void LogError(string message)=> Console.LogError(message);
         public static ConfigModule Config { get; internal set; }
         public static ResourceModule Resource { get; internal set; }
         public static UIModule UI { get; internal set; }

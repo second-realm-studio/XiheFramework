@@ -27,7 +27,7 @@ namespace XiheFramework.Core.Console {
             });
 
             helpButton.onClick.AddListener(() => {
-                var availableCommandNames = Game.Command.GetAvailableCommandNames();
+                var availableCommandNames = Game.Console.GetAvailableCommandNames();
                 m_Logs.Add("Available Commands:");
                 m_Logs.AddRange(availableCommandNames);
                 outputText.text = string.Join("\n", m_Logs);

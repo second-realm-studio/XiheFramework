@@ -1,21 +1,23 @@
-using XiheFramework.Core.Base;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace XiheFramework.Core.Audio.Wwise {
-    public class WwiseAudioModule : GameModuleBase {
-        public override int Priority => 0;
+    public class WwiseAudioModule : AudioModuleBase {
+        public GameObject sharedAudioObject;
 #if USE_WWISE
         private float m_MasterVolume = 50;
 
-        public GameObject sharedAudioObject;
         private List<uint> m_PlayingEvents = new();
-        
-        public void Play(AK.Wwise.Event audioEvent, GameObject container = null) {
+
+        public GameObject Play(object audioEvent, GameObject container = null) {
             if (container == null) {
                 container = sharedAudioObject;
             }
 
             var id = audioEvent.Post(container);
             m_PlayingEvents.Add(id);
+
+            return container;
         }
 
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null, AkCallbackManager.EventCallback callback = null) {
@@ -48,14 +50,10 @@ namespace XiheFramework.Core.Audio.Wwise {
         public void SetState(string stateGroupName, string state) {
             AkSoundEngine.SetState(stateGroupName, state);
         }
-        
-        public override void OnInstantiated() {
-            base.OnInstantiated();
-        }
-        
-        public override void OnDestroyed() {
+
+        protected override void OnDestroyed() {
             base.OnDestroyed();
-            
+
             AkSoundEngine.StopAll();
         }
 #endif

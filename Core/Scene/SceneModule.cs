@@ -12,7 +12,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Scene {
     public class SceneModule : GameModuleBase {
-        public override int Priority => 0;
+        public override int Priority => -1;
 #if USE_ADDRESSABLE
         /// <summary>
         /// Load scene async using Addressable

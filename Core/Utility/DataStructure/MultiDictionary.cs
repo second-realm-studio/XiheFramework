@@ -5,11 +5,7 @@ using UnityEngine;
 
 namespace XiheFramework.Core.Utility.DataStructure {
     public class MultiDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, List<TValue>>> {
-        private readonly Dictionary<TKey, List<TValue>> m_Dictionary;
-
-        public MultiDictionary() {
-            m_Dictionary = new Dictionary<TKey, List<TValue>>();
-        }
+        private readonly Dictionary<TKey, List<TValue>> m_Dictionary = new();
 
         [ItemCanBeNull]
         public List<TValue> this[TKey key] => m_Dictionary[key];
@@ -18,6 +14,17 @@ namespace XiheFramework.Core.Utility.DataStructure {
         public Dictionary<TKey, List<TValue>>.ValueCollection Values => m_Dictionary.Values;
 
         public int Count => m_Dictionary.Count;
+
+
+        public MultiDictionary() { }
+
+        public MultiDictionary([NotNull] Dictionary<TKey, List<TValue>> dictionary) {
+            m_Dictionary = dictionary;
+        }
+
+        public MultiDictionary(IEnumerable<KeyValuePair<TKey, List<TValue>>> source) {
+            m_Dictionary = new Dictionary<TKey, List<TValue>>(source);
+        }
 
         public IEnumerator<KeyValuePair<TKey, List<TValue>>> GetEnumerator() {
             return m_Dictionary.GetEnumerator();
@@ -103,7 +110,7 @@ namespace XiheFramework.Core.Utility.DataStructure {
 
             return m_Dictionary.ContainsKey(key);
         }
-        
+
         public bool TryGetValue(TKey key, out List<TValue> value) {
             if (key == null) {
                 Debug.LogError("MultiDictionary key is null");
@@ -132,6 +139,14 @@ namespace XiheFramework.Core.Utility.DataStructure {
 
         public void Clear() {
             m_Dictionary.Clear();
+        }
+
+        public static implicit operator MultiDictionary<TKey, TValue>(Dictionary<TKey, List<TValue>> dictionary) {
+            return new MultiDictionary<TKey, TValue>(dictionary);
+        }
+
+        public static implicit operator Dictionary<TKey, List<TValue>>(MultiDictionary<TKey, TValue> dictionary) {
+            return dictionary.m_Dictionary;
         }
     }
 }

@@ -5,32 +5,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using XiheFramework.Core.Audio;
 using XiheFramework.Core.Blackboard;
+using XiheFramework.Core.Config;
+using XiheFramework.Core.Console;
 using XiheFramework.Core.Entity;
 using XiheFramework.Core.Event;
+using XiheFramework.Core.FSM;
+using XiheFramework.Core.LogicTime;
 using XiheFramework.Core.Resource;
+using XiheFramework.Core.Scene;
+// using XiheFramework.Core.Serialization;
+using XiheFramework.Core.UI;
 using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Base {
     /// <summary>
     /// Game manager for XiheFramework
-    /// Execution order should be the earliest
     /// </summary>
     [DefaultExecutionOrder(300)]
     public class GameManager : MonoBehaviour {
         public string gameName = "My Game";
 
-        // essential game modules
+        #region Core Game Modules
+
+        public AudioModuleBase audioModule;
         public BlackboardModuleBase blackboardModule;
+        public ConfigModule configModule;
+        public ConsoleModule consoleModule;
         public EntityModuleBase entityModule;
         public EventModule eventModule;
+        public StateMachineModule fsmModule;
+        public LogicTimeModule logicTimeModule;
         public ResourceModule resourceModule;
+        public SceneModule sceneModule;
+        public UIModule uiModule;
+        // public SerializationModuleBase serializationModule;
 
-        /// <summary>
-        /// drag all custom game modules here
-        /// </summary>
+        #endregion
+
+        [Tooltip("drag all custom game module prefabs here")]
         public List<GameModuleBase> customGameModules;
 
         private readonly Dictionary<Type, GameModuleBase> m_PresetGameModules = new();
@@ -40,19 +57,33 @@ namespace XiheFramework.Core.Base {
         private readonly Dictionary<Type, int> m_AliveGameModuleUpdateTimers = new();
         private readonly Dictionary<Type, int> m_AliveGameModuleFixedUpdateTimers = new();
         private readonly Dictionary<Type, int> m_AliveGameModuleLateUpdateTimers = new();
-        private readonly MultiDictionary<int, Type> m_AliveGameModulePriorityBuckets = new();
+        private MultiDictionary<int, Type> m_AliveGameModulePriorityBuckets = new();
 
         #region Lifecycle
 
         private void Awake() {
             //cache all core game modules
-            m_PresetGameModules[blackboardModule.GetType()] = blackboardModule;
-            m_PresetGameModules[entityModule.GetType()] = entityModule;
-            m_PresetGameModules[eventModule.GetType()] = eventModule;
-            m_PresetGameModules[resourceModule.GetType()] = resourceModule;
+            if (audioModule != null) m_PresetGameModules[audioModule.GetType()] = audioModule;
+            if (blackboardModule != null) m_PresetGameModules[blackboardModule.GetType()] = blackboardModule;
+            if (configModule != null) m_PresetGameModules[configModule.GetType()] = configModule;
+            if (consoleModule != null) m_PresetGameModules[consoleModule.GetType()] = consoleModule;
+            if (entityModule != null) m_PresetGameModules[entityModule.GetType()] = entityModule;
+            if (eventModule != null) m_PresetGameModules[eventModule.GetType()] = eventModule;
+            if (fsmModule != null) m_PresetGameModules[fsmModule.GetType()] = fsmModule;
+            if (logicTimeModule != null) m_PresetGameModules[logicTimeModule.GetType()] = logicTimeModule;
+            if (resourceModule != null) m_PresetGameModules[resourceModule.GetType()] = resourceModule;
+            if (sceneModule != null) m_PresetGameModules[sceneModule.GetType()] = sceneModule;
+            if (uiModule != null) m_PresetGameModules[uiModule.GetType()] = uiModule;
+            // if (serializationModule != null) m_PresetGameModules[serializationModule.GetType()] = serializationModule;
+
+            //instantiate all core game modules
+            foreach (var gameModuleType in m_PresetGameModules.Keys) {
+                InstantiatePresetGameModule(gameModuleType);
+            }
 
             //cache all pre-set game module prefabs
             customGameModules.ForEach(module => m_PresetGameModules[module.GetType()] = module);
+
             Debug.LogFormat("XiheFramework Initialized");
             Game.Manager = this;
         }
@@ -73,25 +104,38 @@ namespace XiheFramework.Core.Base {
             }
         }
 
-        private void FixedUpdate() { }
+        private void FixedUpdate() {
+            foreach (var aliveGameModule in m_AliveGameModules) {
+                if (m_AliveGameModuleFixedUpdateTimers[aliveGameModule.Key] > 0) {
+                    m_AliveGameModuleFixedUpdateTimers[aliveGameModule.Key] -= 1;
+                    continue;
+                }
+
+                aliveGameModule.Value.OnFixedUpdateInternal();
+                m_AliveGameModuleFixedUpdateTimers[aliveGameModule.Key] = aliveGameModule.Value.fixedUpdateInterval;
+            }
+        }
 
         private void LateUpdate() {
-            //register game modules
-            while (m_RegisterGameModulesQueue.Count > 0) {
-                var gameModuleBase = m_RegisterGameModulesQueue.Dequeue();
-                m_AliveGameModules[gameModuleBase.GetType()] = gameModuleBase;
-                gameModuleBase.OnInstantiatedInternal(m_GameModuleOnInstantiatedCallbacks[gameModuleBase.GetType()]);
-                m_AliveGameModulePriorityBuckets[gameModuleBase.Priority].Add(gameModuleBase.GetType());
+            foreach (var aliveGameModule in m_AliveGameModules) {
+                if (m_AliveGameModuleLateUpdateTimers[aliveGameModule.Key] > 0) {
+                    m_AliveGameModuleLateUpdateTimers[aliveGameModule.Key] -= 1;
+                    continue;
+                }
+
+                aliveGameModule.Value.OnLateUpdateInternal();
+                m_AliveGameModuleLateUpdateTimers[aliveGameModule.Key] = aliveGameModule.Value.lateUpdateInterval;
             }
+
+            //register game modules
+            ProcessGameModuleRegistrationQueue();
         }
 
         #endregion
 
         #region Public Methods
 
-        public static void InstantiatePresetGameModule<T>(Action onInstantiated) where T : GameModuleBase {
-            var gameModuleType = typeof(T);
-
+        public static void InstantiatePresetGameModule(Type gameModuleType, Action onInstantiated = null) {
             if (!Instance.m_PresetGameModules.ContainsKey(gameModuleType)) {
                 Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} does not exist, please create a prefab and drag it into XiheFramework Gameobject");
                 return;
@@ -112,9 +156,7 @@ namespace XiheFramework.Core.Base {
             gameModule.OnInstantiatedInternal(onInstantiated);
         }
 
-        public static void InstantiatePresetGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
-            var gameModuleType = typeof(T);
-
+        public static void InstantiatePresetGameModuleAsync(Type gameModuleType, Action onInstantiated) {
             if (!Instance.m_PresetGameModules.ContainsKey(gameModuleType)) {
                 Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} does not exist, please create a prefab and drag it into XiheFramework Gameobject");
                 return;
@@ -158,6 +200,24 @@ namespace XiheFramework.Core.Base {
         }
 
         public static string GameName => Instance.gameName;
+
+        #endregion
+
+        #region Private Methods
+
+        private void ProcessGameModuleRegistrationQueue() {
+            while (m_RegisterGameModulesQueue.Count > 0) {
+                var gameModuleBase = m_RegisterGameModulesQueue.Dequeue();
+                m_AliveGameModules[gameModuleBase.GetType()] = gameModuleBase;
+                gameModuleBase.OnInstantiatedInternal(m_GameModuleOnInstantiatedCallbacks[gameModuleBase.GetType()]);
+                m_AliveGameModulePriorityBuckets[gameModuleBase.Priority].Add(gameModuleBase.GetType());
+            }
+
+            //sort by priority
+            m_AliveGameModulePriorityBuckets = m_AliveGameModulePriorityBuckets
+                .OrderBy(x => x.Key)
+                .ToDictionary(x => x.Key, x => x.Value);
+        }
 
         #endregion
 

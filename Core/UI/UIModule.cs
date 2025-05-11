@@ -10,7 +10,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
     public class UIModule : GameModuleBase {
-        public override int Priority => 0;
+        public override int Priority => -1;
         // public Vector2 referenceResolution = new(1920, 1080);
         public float referencePixelsPerUnit = 100;
         private Canvas m_PageCanvas;

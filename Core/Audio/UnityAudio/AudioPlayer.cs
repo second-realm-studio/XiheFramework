@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio.UnityAudio {
     public class AudioPlayer : MonoBehaviour {

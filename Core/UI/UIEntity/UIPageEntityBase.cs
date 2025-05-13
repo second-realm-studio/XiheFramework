@@ -1,5 +1,7 @@
 ﻿namespace XiheFramework.Core.UI.UIEntity {
     public class UIPageEntityBase : UILayoutEntityBase {
+
+        public override string GroupName => "UIPageEntity";
         /// <summary>
         /// Is this page home page
         /// </summary>

@@ -5,7 +5,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio {
     public abstract class AudioModuleBase : GameModuleBase {
-        public override int Priority => -1;
+        public override int Priority => (int)CoreModulePriority.Audio;
 
         public WwiseAudioModule Wwise {
             get {

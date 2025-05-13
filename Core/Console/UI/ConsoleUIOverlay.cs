@@ -4,12 +4,12 @@ using UnityEngine.UI;
 using XiheFramework.Core.UI.UIEntity;
 using XiheFramework.Runtime;
 
-namespace XiheFramework.Core.Console {
-    public class ConsoleOverlay : UIOverlayEntityBase {
+namespace XiheFramework.Core.Console.UI {
+    public class ConsoleUIOverlay : UIOverlayEntityBase {
         public Button helpButton;
         public Button clearButton;
         public Button submitButton;
-        public InputField inputField;
+        public TMP_InputField inputField;
         public TMP_Text outputField;
 
         public override void OnInitCallback() {

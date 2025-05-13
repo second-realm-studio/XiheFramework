@@ -6,7 +6,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Blackboard {
     public class BlackboardModule : BlackboardModuleBase {
-        public override int Priority => 0;
+        public override int Priority => (int)CoreModulePriority.Blackboard;
 
         private readonly Dictionary<string, IBlackboard> m_Blackboards = new();
 

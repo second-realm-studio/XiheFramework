@@ -16,7 +16,7 @@ namespace XiheFramework.Core.Event {
 
         private readonly object m_LockRoot = new();
 
-        public override int Priority => -100;
+        public override int Priority => (int)CoreModulePriority.Event;
 
         protected override void OnUpdate() {
             lock (m_LockRoot) {

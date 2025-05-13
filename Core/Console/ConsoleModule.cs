@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XiheFramework.Core.Base;
+using XiheFramework.Core.Console.UI;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Console {
     public class ConsoleModule : GameModuleBase {
-        public override int Priority => 0;
+        public override int Priority => (int)CoreModulePriority.Console;
         public List<string> Logs { get; private set; }
+
+        public string consoleUIOverlayAddress = "UIOverlayEntity_ConsoleUIOverlay";
+        public string openConsoleUIOverlayInputActionName;
 
         private readonly Dictionary<string, IDevConsoleCommand> m_RegisteredCommands = new();
         private readonly Dictionary<string, string> m_CommandNameIndexingDictionary = new();
@@ -35,6 +39,17 @@ namespace XiheFramework.Core.Console {
             return result;
         }
 
+        public void OpenConsole() {
+            if (string.IsNullOrEmpty(consoleUIOverlayAddress)) {
+                Game.LogError(
+                    "[Console] consoleUIOverlay address is empty, create an copy of ConsoleUIOverlayTemplate in Assets/XiheFramework/Core/Console/UI, drag it into AddressableResources folder");
+
+                return;
+            }
+
+            Game.UI.OpenOverlay<ConsoleUIOverlay>(consoleUIOverlayAddress);
+        }
+
         public string[] GetAvailableCommandNames() {
             return m_RegisteredCommands.Keys.ToArray();
         }
@@ -57,6 +72,20 @@ namespace XiheFramework.Core.Console {
         protected override void OnInstantiated() {
             RegisterAllCommands();
             Game.Console = this;
+        }
+
+        protected override void OnUpdate() {
+            base.OnUpdate();
+
+#if USE_REWIRED
+            if (Game.Input(0).GetButtonUp(openConsoleUIOverlayInputActionName)) {
+                OpenConsole();
+            }
+#else
+            if (UnityEngine.Input.GetKeyUp(KeyCode.BackQuote)) {
+                OpenConsole();
+            }
+#endif
         }
 
         private void RegisterAllCommands() {

@@ -7,7 +7,7 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.FSM {
     public class StateMachineModule : GameModuleBase {
-        public override int Priority => 0;
+        public override int Priority => (int)CoreModulePriority.Fsm;
 
         public string OnStateEnterEventName => "FSM.OnStateEnter";
         public string OnStateExitEventName => "FSM.OnStateExit";

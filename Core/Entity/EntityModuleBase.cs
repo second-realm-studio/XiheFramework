@@ -4,6 +4,8 @@ using XiheFramework.Core.Base;
 
 namespace XiheFramework.Core.Entity {
     public abstract class EntityModuleBase : GameModuleBase, IEntityModule {
+        public override int Priority => (int)CoreModulePriority.Entity;
+
         public abstract T InstantiateEntity<T>(string entityAddress, uint presetId = 0, Action<T> onInstantiatedCallback = null) where T : GameEntityBase;
 
         public abstract GameEntityBase InstantiateEntity(string entityAddress, uint presetId = 0, Action<GameEntityBase> onInstantiatedCallback = null);

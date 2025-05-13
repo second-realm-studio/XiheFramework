@@ -177,10 +177,7 @@ namespace XiheFramework.Core.Entity {
         }
 
         #endregion
-
-
-        public override int Priority => -10;
-
+        
         protected override void OnInstantiated() {
             base.OnInstantiated();
             // if (Game.Serialization != null) {

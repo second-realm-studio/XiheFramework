@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace XiheFramework.Core.Utility.DataStructure {
     public class MultiDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, List<TValue>>> {
         private readonly Dictionary<TKey, List<TValue>> m_Dictionary = new();
 
-        [ItemCanBeNull]
         public List<TValue> this[TKey key] => m_Dictionary[key];
 
         public Dictionary<TKey, List<TValue>>.KeyCollection Keys => m_Dictionary.Keys;
@@ -18,7 +16,7 @@ namespace XiheFramework.Core.Utility.DataStructure {
 
         public MultiDictionary() { }
 
-        public MultiDictionary([NotNull] Dictionary<TKey, List<TValue>> dictionary) {
+        public MultiDictionary(Dictionary<TKey, List<TValue>> dictionary) {
             m_Dictionary = dictionary;
         }
 
@@ -45,8 +43,8 @@ namespace XiheFramework.Core.Utility.DataStructure {
                 return;
             }
 
-            if (m_Dictionary.ContainsKey(key)) {
-                m_Dictionary[key].Add(value);
+            if (m_Dictionary.TryGetValue(key, out var targetList)) {
+                targetList.Add(value);
             }
             else {
                 var list = new List<TValue> { value };

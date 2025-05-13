@@ -5,7 +5,7 @@ using XiheFramework.Runtime;
 namespace XiheFramework.Core.LogicTime {
     public class LogicTimeModule : GameModuleBase {
 
-        public override int Priority => 0;
+        public override int Priority => (int)CoreModulePriority.LogicTime;
         public readonly string onSetGlobalTimeScaleEventName = "Time.OnSetGlobalTimeScale";
 
         public float defaultTimeScale = 1f;

@@ -10,8 +10,8 @@ using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI {
     public class UIModule : GameModuleBase {
-        public override int Priority => -1;
-        // public Vector2 referenceResolution = new(1920, 1080);
+        public override int Priority => (int)CoreModulePriority.UI;
+        public Vector2 referenceResolution = new(1920, 1080);
         public float referencePixelsPerUnit = 100;
         private Canvas m_PageCanvas;
         private Canvas m_PopCanvas;
@@ -259,7 +259,6 @@ namespace XiheFramework.Core.UI {
         }
 
         protected override void OnInstantiated() {
-
             Game.UI = this;
 
             m_PageCanvas = CreateCanvas("PageCanvas", 0);
@@ -279,7 +278,7 @@ namespace XiheFramework.Core.UI {
             var canvas = go.AddComponent<Canvas>();
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(Screen.width, Screen.height);
+            scaler.referenceResolution = referenceResolution;
             scaler.referencePixelsPerUnit = referencePixelsPerUnit;
             go.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;

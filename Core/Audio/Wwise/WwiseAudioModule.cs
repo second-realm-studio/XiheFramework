@@ -9,15 +9,13 @@ namespace XiheFramework.Core.Audio.Wwise {
 
         private List<uint> m_PlayingEvents = new();
 
-        public GameObject Play(object audioEvent, GameObject container = null) {
+        public void Play(AK.Wwise.Event audioEvent, GameObject container = null) {
             if (container == null) {
                 container = sharedAudioObject;
             }
 
             var id = audioEvent.Post(container);
             m_PlayingEvents.Add(id);
-
-            return container;
         }
 
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null, AkCallbackManager.EventCallback callback = null) {

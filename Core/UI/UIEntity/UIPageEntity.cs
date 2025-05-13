@@ -1,5 +1,5 @@
 ﻿namespace XiheFramework.Core.UI.UIEntity {
-    public class UIPageEntityBase : UILayoutEntityBase {
+    public class UIPageEntity : UILayoutEntityBase {
 
         public override string GroupName => "UIPageEntity";
         /// <summary>

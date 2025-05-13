@@ -1,7 +1,7 @@
 ﻿using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.UI.UIEntity {
-    public class UIPopEntityBase : UILayoutEntityBase {
+    public class UIPopEntity : UILayoutEntityBase {
         public override string GroupName => "UIPopEntity";
 
         public void Close() {

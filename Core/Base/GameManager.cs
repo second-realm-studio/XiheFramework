@@ -139,6 +139,11 @@ namespace XiheFramework.Core.Base {
         #region Public Methods
 
         public static void InstantiatePresetGameModule(Type gameModuleType, Action onInstantiated = null) {
+            if (!typeof(GameModuleBase).IsAssignableFrom(gameModuleType)) {
+                Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} is not a GameModuleBase");
+                return;
+            }
+
             if (!Instance.m_PresetGameModules.ContainsKey(gameModuleType)) {
                 Debug.LogError($"[GAME MANAGER] GameModule: {gameModuleType.Name} does not exist, please create a prefab and drag it into XiheFramework Gameobject");
                 return;
@@ -165,6 +170,10 @@ namespace XiheFramework.Core.Base {
 
             Instance.m_AliveGameModules[gameModule.GetType()] = gameModule;
             Instance.m_AliveGameModulePriorityBuckets.Add(gameModule.Priority, gameModule.GetType());
+        }
+
+        public static void InstantiatePresetGameModule<T>(Action onInstantiated = null) where T : GameModuleBase {
+            InstantiatePresetGameModule(typeof(T), onInstantiated);
         }
 
         public static void InstantiatePresetGameModuleAsync(Type gameModuleType, Action onInstantiated) {
@@ -194,6 +203,10 @@ namespace XiheFramework.Core.Base {
 
             Instance.m_AliveGameModules[gameModule.GetType()] = gameModule;
             Instance.m_AliveGameModulePriorityBuckets.Add(gameModule.Priority, gameModule.GetType());
+        }
+
+        public static void InstantiatePresetGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
+            InstantiatePresetGameModuleAsync(typeof(T), onInstantiated);
         }
 
         /// <summary>

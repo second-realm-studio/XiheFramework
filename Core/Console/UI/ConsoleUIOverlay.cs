@@ -5,7 +5,7 @@ using XiheFramework.Core.UI.UIEntity;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Console.UI {
-    public class ConsoleUIOverlay : UIOverlayEntityBase {
+    public class ConsoleUIOverlay : UIOverlayEntity {
         public Button helpButton;
         public Button clearButton;
         public Button submitButton;

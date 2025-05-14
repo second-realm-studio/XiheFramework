@@ -18,6 +18,14 @@ namespace XiheFramework.Core.Event {
 
         public override int Priority => (int)CoreModulePriority.Event;
 
+        #region Life Cycle
+
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+
+            Game.Event = this;
+        }
+
         protected override void OnUpdate() {
             lock (m_LockRoot) {
                 while (m_WaitingList.Count > 0) {
@@ -26,6 +34,20 @@ namespace XiheFramework.Core.Event {
                 }
             }
         }
+
+        protected override void OnDestroyed() {
+            m_CurrentEvents.Clear();
+            m_ActiveEventHandlers.Clear();
+            lock (m_LockRoot) {
+                m_WaitingList.Clear();
+            }
+
+            Game.Event = this;
+        }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Subscribe to event name with a handler
@@ -133,6 +155,8 @@ namespace XiheFramework.Core.Event {
             return m_ActiveEventHandlers;
         }
 
+        #endregion
+
         private struct EventPair {
             public readonly object argument;
             public readonly EventHandler<object> eventHandler;
@@ -143,16 +167,6 @@ namespace XiheFramework.Core.Event {
                 this.argument = argument;
                 this.eventHandler = eventHandler;
             }
-        }
-
-        protected override void OnDestroyed() {
-            m_CurrentEvents.Clear();
-            m_ActiveEventHandlers.Clear();
-            lock (m_LockRoot) {
-                m_WaitingList.Clear();
-            }
-
-            Game.Event = this;
         }
     }
 }

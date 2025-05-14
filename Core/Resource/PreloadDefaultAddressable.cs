@@ -25,7 +25,7 @@ namespace XiheFramework.Core.Resource {
             });
             yield return handle;
 
-            Game.Event.Invoke(Game.Resource.onDefaultResourcesLoadedEvtName);
+            Game.Event.Invoke(ResourceModuleEvents.OnDefaultResourcesLoadedEvtName);
         }
     }
 }

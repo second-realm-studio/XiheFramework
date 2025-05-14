@@ -5,7 +5,9 @@ namespace XiheFramework.Core.Blackboard {
         /// <summary>
         /// Create a new blackboard
         /// </summary>
-        void CreateBlackboard<T>(string blackboardName) where T : IBlackboard, new();
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T CreateBlackboard<T>(string blackboardName) where T : IBlackboard, new();
 
         /// <summary>
         /// Get the reference of name-specific blackboard

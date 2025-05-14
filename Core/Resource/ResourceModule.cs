@@ -17,7 +17,6 @@ namespace XiheFramework.Core.Resource {
     /// </summary>
     public class ResourceModule : GameModuleBase {
         public override int Priority => (int)CoreModulePriority.Resource;
-        public readonly string onDefaultResourcesLoadedEvtName = "Resource.OnDefaultResourcesLoaded";
         private readonly Dictionary<string, Object> m_CachedAssets = new Dictionary<string, Object>();
         // private readonly Dictionary<string, AsyncOperationHandle> m_CachedAssetHandles = new Dictionary<string, AsyncOperationHandle>();
 

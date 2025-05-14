@@ -10,11 +10,22 @@ namespace XiheFramework.Core.Blackboard {
 
         private readonly Dictionary<string, IBlackboard> m_Blackboards = new();
 
+        #region Life Cycle
+
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+
+            Game.Blackboard = this;
+        }
+
+        #endregion
+
         #region Public Methods
 
-        public override void CreateBlackboard<T>(string blackboardName) {
+        public override T CreateBlackboard<T>(string blackboardName) {
             var blackboard = new T();
             m_Blackboards[blackboardName] = blackboard;
+            return blackboard;
         }
 
         public override T GetBlackboard<T>(string blackboardName) {

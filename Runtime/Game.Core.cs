@@ -23,6 +23,7 @@ namespace XiheFramework.Runtime {
         public static AudioModuleBase Audio { get; internal set; }
         public static EventModule Event { get; internal set; }
         public static BlackboardModule Blackboard { get; internal set; }
+        public static T GetBlackboard<T>(string blackboardName) where T : IBlackboard => Blackboard.GetBlackboard<T>(blackboardName);
         public static ConsoleModule Console { get; internal set; }
         public static void LogMessage(string message)=> Console.LogMessage(message);
         public static void LogWarning(string message)=> Console.LogWarning(message);

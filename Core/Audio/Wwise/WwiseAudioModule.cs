@@ -1,13 +1,35 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio.Wwise {
     public class WwiseAudioModule : AudioModuleBase {
         public GameObject sharedAudioObject;
-#if USE_WWISE
+
         private float m_MasterVolume = 50;
 
         private List<uint> m_PlayingEvents = new();
+
+#if USE_WWISE
+
+        #region Life Cycle
+
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+
+            Game.Audio = this;
+        }
+
+
+        protected override void OnDestroyed() {
+            base.OnDestroyed();
+
+            AkSoundEngine.StopAll();
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public void Play(AK.Wwise.Event audioEvent, GameObject container = null) {
             if (container == null) {
@@ -49,11 +71,7 @@ namespace XiheFramework.Core.Audio.Wwise {
             AkSoundEngine.SetState(stateGroupName, state);
         }
 
-        protected override void OnDestroyed() {
-            base.OnDestroyed();
-
-            AkSoundEngine.StopAll();
-        }
+        #endregion
 #endif
     }
 }

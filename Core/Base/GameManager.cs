@@ -242,6 +242,7 @@ namespace XiheFramework.Core.Base {
 
             foreach (var gameModule in tempDic) {
                 InstantiatePresetGameModule(gameModule.Key);
+                // Debug.Log($"[GAME MANAGER] GameModule: {gameModule.Key.Name} instantiated");
             }
         }
 

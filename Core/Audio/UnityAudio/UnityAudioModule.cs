@@ -1,9 +1,20 @@
 ﻿using UnityEngine;
-using XiheFramework.Core.Base;
 using XiheFramework.Runtime;
 
 namespace XiheFramework.Core.Audio.UnityAudio {
     public class UnityAudioModule : AudioModuleBase {
+        #region Life Cycle
+
+        protected override void OnInstantiated() {
+            base.OnInstantiated();
+
+            Game.Audio = this;
+        }
+
+        #endregion
+
+        #region Public Methods
+
         public GameObject Play(AudioClip audioClip, GameObject follow = null, bool loop = false) {
             GameObject container;
             if (follow == null) {
@@ -20,7 +31,7 @@ namespace XiheFramework.Core.Audio.UnityAudio {
 
             return container;
         }
-        
-        
+
+        #endregion
     }
 }

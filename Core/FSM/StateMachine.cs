@@ -53,7 +53,7 @@ namespace XiheFramework.Core.FSM {
             m_States.Clear();
         }
 
-        public void Start() {
+        public void OnStart() {
             if (m_InitialState == null || !m_States.ContainsKey(m_InitialState)) m_InitialState = m_States.Keys.First();
 
             m_CurrentState = m_InitialState;
@@ -74,7 +74,7 @@ namespace XiheFramework.Core.FSM {
             if (Game.Fsm.enableDebug) Debug.Log("Change to " + targetState);
         }
 
-        public void Update() {
+        public void OnUpdate() {
             if (IsNullOrEmpty(m_CurrentState)) return;
 
             if (m_ExitToEnter) {
@@ -105,7 +105,7 @@ namespace XiheFramework.Core.FSM {
         /// <summary>
         ///     shutdown fsm
         /// </summary>
-        public void Stop() {
+        public void OnExit() {
             m_States[m_CurrentState].OnExitInternal();
             m_CurrentState = Empty;
         }

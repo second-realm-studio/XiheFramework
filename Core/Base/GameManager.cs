@@ -52,8 +52,7 @@ namespace XiheFramework.Core.Base {
 
         private readonly Dictionary<Type, GameModuleBase> m_PresetGameModules = new();
         private readonly Dictionary<Type, GameModuleBase> m_AliveGameModules = new();
-        private readonly Queue<GameModuleBase> m_RegisterGameModulesQueue = new();
-        private readonly Dictionary<Type, Action> m_GameModuleOnInstantiatedCallbacks = new();
+        private readonly Queue<GameModuleRegistrationInfo> m_RegisterGameModulesQueue = new();
         private readonly Dictionary<Type, int> m_AliveGameModuleUpdateTimers = new();
         private readonly Dictionary<Type, int> m_AliveGameModuleFixedUpdateTimers = new();
         private readonly Dictionary<Type, int> m_AliveGameModuleLateUpdateTimers = new();
@@ -193,16 +192,11 @@ namespace XiheFramework.Core.Base {
                 return;
             }
 
-            Instance.m_RegisterGameModulesQueue.Enqueue(gameModule);
-            Instance.m_GameModuleOnInstantiatedCallbacks[gameModuleType] = onInstantiated;
-
-            //timer
-            Instance.m_AliveGameModuleUpdateTimers[gameModuleType] = gameModule.updateInterval;
-            Instance.m_AliveGameModuleFixedUpdateTimers[gameModuleType] = gameModule.fixedUpdateInterval;
-            Instance.m_AliveGameModuleLateUpdateTimers[gameModuleType] = gameModule.lateUpdateInterval;
-
-            Instance.m_AliveGameModules[gameModule.GetType()] = gameModule;
-            Instance.m_AliveGameModulePriorityBuckets.Add(gameModule.Priority, gameModule.GetType());
+            var info = new GameModuleRegistrationInfo();
+            info.gameModule = gameModule;
+            info.gameModuleType = gameModuleType;
+            info.onInstantiated = onInstantiated;
+            Instance.m_RegisterGameModulesQueue.Enqueue(info);
         }
 
         public static void InstantiatePresetGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
@@ -248,8 +242,15 @@ namespace XiheFramework.Core.Base {
 
         private void ProcessGameModuleRegistrationQueue() {
             while (m_RegisterGameModulesQueue.Count > 0) {
-                var gameModuleBase = m_RegisterGameModulesQueue.Dequeue();
-                gameModuleBase.OnInstantiatedInternal(m_GameModuleOnInstantiatedCallbacks[gameModuleBase.GetType()]);
+                var registrationInfo = m_RegisterGameModulesQueue.Dequeue();
+                registrationInfo.gameModule.OnInstantiatedInternal(registrationInfo.onInstantiated);
+                //timer
+                Instance.m_AliveGameModuleUpdateTimers[registrationInfo.gameModuleType] = registrationInfo.gameModule.updateInterval;
+                Instance.m_AliveGameModuleFixedUpdateTimers[registrationInfo.gameModuleType] = registrationInfo.gameModule.fixedUpdateInterval;
+                Instance.m_AliveGameModuleLateUpdateTimers[registrationInfo.gameModuleType] = registrationInfo.gameModule.lateUpdateInterval;
+
+                Instance.m_AliveGameModules[registrationInfo.gameModuleType] = registrationInfo.gameModule;
+                Instance.m_AliveGameModulePriorityBuckets.Add(registrationInfo.gameModule.Priority, registrationInfo.gameModule.GetType());
             }
 
             //sort by priority
@@ -270,6 +271,16 @@ namespace XiheFramework.Core.Base {
 
                 return m_Instance;
             }
+        }
+
+        #endregion
+
+        #region Registration Info Type
+
+        private class GameModuleRegistrationInfo {
+            public GameModuleBase gameModule;
+            public Type gameModuleType;
+            public Action onInstantiated;
         }
 
         #endregion

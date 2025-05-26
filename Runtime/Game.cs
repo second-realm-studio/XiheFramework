@@ -9,7 +9,7 @@ namespace XiheFramework.Runtime {
             GameManager.InstantiatePresetGameModule<T>(onInstantiated);
         }
 
-        public static void InstantiateGameModuleAsync<T>(Action onInstantiated) where T : GameModuleBase {
+        public static void InstantiateGameModuleAsync<T>(Action onInstantiated = null) where T : GameModuleBase {
             GameManager.InstantiatePresetGameModuleAsync<T>(onInstantiated);
         }
 

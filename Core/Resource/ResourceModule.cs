@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #if USE_ADDRESSABLE
 using UnityEngine.AddressableAssets;
@@ -137,7 +138,13 @@ namespace XiheFramework.Core.Resource {
         public IEnumerator LoadAssetsAsyncCoroutine(IEnumerable<string> labels, Action<float> onProgress = null, Action<string> onLoaded = null,
             Action<IEnumerable<Object>> onFinished = null) {
 #if USE_ADDRESSABLE
-            var locationOpHandle = Addressables.LoadResourceLocationsAsync(labels, Addressables.MergeMode.Intersection);
+            var enumerable = labels.ToList();
+            if (!enumerable.Any()) {
+                onFinished?.Invoke(null);
+                yield break;
+            }
+            
+            var locationOpHandle = Addressables.LoadResourceLocationsAsync(enumerable, Addressables.MergeMode.Intersection);
             yield return locationOpHandle;
 
             if (locationOpHandle.Status == AsyncOperationStatus.Failed) {

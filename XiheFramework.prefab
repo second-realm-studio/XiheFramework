@@ -180,17 +180,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameName: My Game
-  audioModule: {fileID: 3116445981691434761, guid: 496bf18c35a16054b8346b865b45a4b7, type: 3}
-  blackboardModule: {fileID: 7563566627055990113, guid: b4054472333cfdd43aa5994ad45cd6e1, type: 3}
-  configModule: {fileID: 6809202156758416109, guid: d76e00b0623b998409809327be235ce5, type: 3}
-  consoleModule: {fileID: 2985751042860444812, guid: f412c1be6d7d5aa42bfa311c99296f6a, type: 3}
-  entityModule: {fileID: 6073365392024866621, guid: 2fad7c011085d2844b11ea7efff19da3, type: 3}
-  eventModule: {fileID: 4929048176556936669, guid: 82f8e845c2a29bc4498577eafb42a207, type: 3}
-  fsmModule: {fileID: 1966528819442357449, guid: d3107ce2d74aeae49ab3deca41065ea2, type: 3}
-  logicTimeModule: {fileID: 6706050416166794287, guid: a8247f21a80f3844da27defd2c37ab6d, type: 3}
-  resourceModule: {fileID: 5465151087903902281, guid: e06451c2a77a3c94ba954f6370dfd656, type: 3}
-  sceneModule: {fileID: 6712906138039977373, guid: e83d7fa475fffa14895abb505021da17, type: 3}
-  uiModule: {fileID: 1268650218820752308, guid: 77278f1c9c2ecda4d8dc0aaeafafdeec, type: 3}
+  audioModule: {fileID: 3116445981691434761, guid: 496bf18c35a16054b8346b865b45a4b7,
+    type: 3}
+  blackboardModule: {fileID: 7563566627055990113, guid: b4054472333cfdd43aa5994ad45cd6e1,
+    type: 3}
+  configModule: {fileID: 6809202156758416109, guid: d76e00b0623b998409809327be235ce5,
+    type: 3}
+  consoleModule: {fileID: 2985751042860444812, guid: f412c1be6d7d5aa42bfa311c99296f6a,
+    type: 3}
+  entityModule: {fileID: 6073365392024866621, guid: 2fad7c011085d2844b11ea7efff19da3,
+    type: 3}
+  eventModule: {fileID: 4929048176556936669, guid: 82f8e845c2a29bc4498577eafb42a207,
+    type: 3}
+  fsmModule: {fileID: 1966528819442357449, guid: d3107ce2d74aeae49ab3deca41065ea2,
+    type: 3}
+  logicTimeModule: {fileID: 6706050416166794287, guid: a8247f21a80f3844da27defd2c37ab6d,
+    type: 3}
+  resourceModule: {fileID: 5465151087903902281, guid: e06451c2a77a3c94ba954f6370dfd656,
+    type: 3}
+  sceneModule: {fileID: 6712906138039977373, guid: e83d7fa475fffa14895abb505021da17,
+    type: 3}
+  uiModule: {fileID: 1268650218820752308, guid: 77278f1c9c2ecda4d8dc0aaeafafdeec,
+    type: 3}
   customGameModules: []
 --- !u!1 &5452149060114569929
 GameObject:

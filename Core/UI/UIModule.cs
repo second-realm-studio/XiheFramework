@@ -275,6 +275,7 @@ namespace XiheFramework.Core.UI {
         private Canvas CreateCanvas(string canvasName, int sortingOrder) {
             var go = new GameObject(canvasName);
             go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one;
             var canvas = go.AddComponent<Canvas>();
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

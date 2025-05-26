@@ -139,10 +139,10 @@ namespace XiheFramework.Core.Entity {
             m_Entities[entityId].OwnerId = ownerId;
             if (setParent) {
                 if (rootTransform) {
-                    m_Entities[entityId].transform.SetParent(rootTransform);
+                    m_Entities[entityId].transform.SetParent(rootTransform, false);
                 }
                 else {
-                    m_Entities[entityId].transform.SetParent(m_Entities[ownerId].transform);
+                    m_Entities[entityId].transform.SetParent(m_Entities[ownerId].transform, false);
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace XiheFramework.Core.Entity {
         }
 
         #endregion
-        
+
         protected override void OnInstantiated() {
             base.OnInstantiated();
             // if (Game.Serialization != null) {

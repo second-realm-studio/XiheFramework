@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Core.Config;
+using XiheFramework.Runtime.Config;
 
 namespace XiheFramework.Editor.Core.Config {
     [CustomEditor(typeof(ConfigModule))]

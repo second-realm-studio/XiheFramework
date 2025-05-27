@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Serialization;
-using XiheFramework.Core.Entity;
+using XiheFramework.Runtime.Entity;
 
 namespace XiheFramework.Editor.Core.Entity {
     [CustomEditor(typeof(EntityModule))]

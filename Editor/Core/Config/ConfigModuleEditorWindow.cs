@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using XiheFramework.Core.Config;
+using XiheFramework.Runtime.Config;
 
 namespace XiheFramework.Editor.Core.Config {
     public class ConfigModuleEditorWindow : EditorWindow {

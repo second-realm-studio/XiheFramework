@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using XiheFramework.Core.Config;
+using XiheFramework.Runtime.Config;
 
 namespace XiheFramework.Editor.Core.Config {
     public static class ConfigEditorHelper {

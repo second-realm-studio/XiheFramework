@@ -1,5 +1,5 @@
 ﻿using System;
-using XiheFramework.Core.Base;
+using XiheFramework.Runtime.Base;
 
 namespace XiheFramework.Runtime {
     public partial class Game {

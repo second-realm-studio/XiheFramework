@@ -11,8 +11,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 #endif
 using UnityEngine;
-using XiheFramework.Core.Entity;
-using XiheFramework.Core.Resource;
+using XiheFramework.Runtime.Resource;
 
 namespace XiheFramework.Editor.Core.Resource {
     [CustomEditor(typeof(ResourceModule))]

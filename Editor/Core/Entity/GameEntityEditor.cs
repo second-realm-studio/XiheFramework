@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Core.Entity;
+using XiheFramework.Runtime.Entity;
 
 namespace XiheFramework.Editor.Core.Entity {
     [CustomEditor(typeof(GameEntityBase), true)]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Core.UI;
+using XiheFramework.Runtime.UI;
 
 namespace XiheFramework.Editor.Core.UI {
     [CustomEditor(typeof(UIModule))]

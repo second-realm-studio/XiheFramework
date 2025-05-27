@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-using XiheFramework.Core.Utility.DataStructure;
 using XiheFramework.Runtime;
+using XiheFramework.Runtime.Utility.DataStructure;
 
 namespace XiheFramework.Editor.Core.Event {
     public class EventDebugWindow : EditorWindow {

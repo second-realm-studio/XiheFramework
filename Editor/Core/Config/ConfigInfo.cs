@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using XiheFramework.Core.Config;
+using XiheFramework.Runtime.Config;
 
 namespace XiheFramework.Editor.Core.Config {
     public class ConfigInfo {

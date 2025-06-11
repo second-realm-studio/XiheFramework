@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Editor.Core.Config.PropertyDrawer {
+namespace XiheFramework.Editor.Runtime.Config.PropertyDrawer {
     [CustomPropertyDrawer(typeof(Vector2))]
     public class Vector2Drawer : UnityEditor.PropertyDrawer {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {

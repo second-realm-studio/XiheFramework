@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using XiheFramework.Runtime.Config;
 
-namespace XiheFramework.Editor.Core.Config {
+namespace XiheFramework.Editor.Runtime.Config {
     [CustomEditor(typeof(ConfigModule))]
     public class ConfigModuleEditor : UnityEditor.Editor {
         private SerializedObject m_Target;

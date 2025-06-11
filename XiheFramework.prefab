@@ -184,7 +184,7 @@ MonoBehaviour:
     type: 3}
   blackboardModule: {fileID: 7563566627055990113, guid: b4054472333cfdd43aa5994ad45cd6e1,
     type: 3}
-  configModule: {fileID: 6809202156758416109, guid: d76e00b0623b998409809327be235ce5,
+  configModule: {fileID: -5127166738006237271, guid: a521d3ef78af5274492b4d3f9a7748a1,
     type: 3}
   consoleModule: {fileID: 2985751042860444812, guid: f412c1be6d7d5aa42bfa311c99296f6a,
     type: 3}

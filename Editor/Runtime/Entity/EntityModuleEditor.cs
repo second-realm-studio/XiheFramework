@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Serialization;
 using XiheFramework.Runtime.Entity;
 
-namespace XiheFramework.Editor.Core.Entity {
+namespace XiheFramework.Editor.Runtime.Entity {
     [CustomEditor(typeof(EntityModule))]
     public class EntityModuleEditor : UnityEditor.Editor {
         private SerializedObject m_Target;

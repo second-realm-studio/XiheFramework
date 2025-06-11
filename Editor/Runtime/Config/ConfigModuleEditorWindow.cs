@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using XiheFramework.Runtime.Config;
 
-namespace XiheFramework.Editor.Core.Config {
+namespace XiheFramework.Editor.Runtime.Config {
     public class ConfigModuleEditorWindow : EditorWindow {
         private SerializedObject m_Target;
         private SerializedProperty m_ConfigSettings;

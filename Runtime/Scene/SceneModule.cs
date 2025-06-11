@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+#if USE_ADDRESSABLE
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+#endif
 using UnityEngine.SceneManagement;
 using XiheFramework.Runtime.Base;
 

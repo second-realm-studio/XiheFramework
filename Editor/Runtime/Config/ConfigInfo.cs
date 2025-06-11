@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
-using XiheFramework.Runtime.Config;
+﻿using XiheFramework.Runtime.Config;
 
-namespace XiheFramework.Editor.Core.Config {
+namespace XiheFramework.Editor.Runtime.Config {
     public class ConfigInfo {
         public string path;
         public ConfigType type;

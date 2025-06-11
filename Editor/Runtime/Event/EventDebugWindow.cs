@@ -3,27 +3,28 @@ using UnityEngine;
 using XiheFramework.Runtime;
 using XiheFramework.Runtime.Utility.DataStructure;
 
-namespace XiheFramework.Editor.Core.Fsm {
-    public class FsmDebugWindow : EditorWindow {
+namespace XiheFramework.Editor.Runtime.Event {
+    public class EventDebugWindow : EditorWindow {
         private int m_IterationIndex;
 
         //string[] m_Options = {"Group", "Type"};
         //private int m_SortingMode;
-        private Vector2 m_ScrollPos;
+        private Vector2 m_EventsScrollPos;
+        private Vector2 m_HandlersScrollPos;
 
         private TreeNode<bool> m_States;
 
-        [MenuItem("XiheFramework/FSM Debug Window")]
+        [MenuItem("XiheFramework/Events Debug Window")]
         private static void Init() {
             // Get existing open window or if none, make a new one:
-            var window = (FsmDebugWindow)GetWindow(typeof(FsmDebugWindow));
+            var window = (EventDebugWindow)GetWindow(typeof(EventDebugWindow));
             window.Show();
         }
 
         private void Update() {
             Repaint();
         }
-
+        
         private void OnGUI() {
             if (!Application.isPlaying) {
                 GUILayout.Label("DATA STATUS : NOT IN PLAY MODE", EditorStyles.boldLabel);
@@ -31,15 +32,20 @@ namespace XiheFramework.Editor.Core.Fsm {
                 return;
             }
 
-            if (Game.Fsm == null) {
+            if (Game.Event == null) {
                 GUILayout.Label("DATA STATUS : MISSING XIHE FRAMEWORK", EditorStyles.boldLabel);
                 return;
             }
 
-            var data = Game.Fsm.GetData();
-            //var root = Game.Blackboard.GetDataPaths();
-            if (data == null) {
-                GUILayout.Label("DATA STATUS : DATA NULL", EditorStyles.boldLabel);
+            var events = Game.Event.GetEvents();
+            if (events == null) {
+                GUILayout.Label("DATA STATUS : EVENTS NULL", EditorStyles.boldLabel);
+                return;
+            }
+
+            var handlers = Game.Event.GetHandlers();
+            if (handlers == null) {
+                GUILayout.Label("DATA STATUS : HANDLERS NULL", EditorStyles.boldLabel);
                 return;
             }
 
@@ -49,19 +55,30 @@ namespace XiheFramework.Editor.Core.Fsm {
 
             GUILayout.Space(10f);
 
-            m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
+            m_EventsScrollPos = EditorGUILayout.BeginScrollView(m_EventsScrollPos);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("State Machine", EditorStyles.boldLabel);
-            GUILayout.Label("Current State", EditorStyles.boldLabel);
+            GUILayout.Label("Event Name", EditorStyles.boldLabel);
+            GUILayout.Label("Handler Count", EditorStyles.boldLabel);
             GUILayout.EndHorizontal();
 
-            foreach (var key in data.Keys) {
+            foreach (var key in events.Keys) {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(key, EditorStyles.boldLabel);
-                GUILayout.Label(data[key].GetCurrentState());
+                GUILayout.Label(events[key].Count.ToString(), EditorStyles.boldLabel);
                 GUILayout.EndHorizontal();
             }
+
+            GUILayout.Space(10f);
+
+            EditorGUILayout.EndScrollView();
+
+            m_HandlersScrollPos = EditorGUILayout.BeginScrollView(m_HandlersScrollPos);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Handler Count:", EditorStyles.boldLabel);
+            GUILayout.Label(handlers.Count.ToString(), EditorStyles.boldLabel);
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(10f);
 

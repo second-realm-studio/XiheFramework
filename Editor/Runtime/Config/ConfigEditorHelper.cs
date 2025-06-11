@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using XiheFramework.Runtime.Config;
 
-namespace XiheFramework.Editor.Core.Config {
+namespace XiheFramework.Editor.Runtime.Config {
     public static class ConfigEditorHelper {
         public static ConfigInfo[] FindAllConfigInfo() {
             var result = new List<ConfigInfo>();

@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
+using XiheFramework.Runtime.Entity;
 #if USE_ADDRESSABLE
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 #endif
-using UnityEngine;
-using XiheFramework.Runtime.Entity;
 
-namespace XiheFramework.Editor.Core.Resource {
+namespace XiheFramework.Editor.Runtime.Resource {
     public static class MarkAddressableMenu {
         private const string AddressableResourcesRoot = "Assets/AddressableResources/";
         private const string TemplatePath = "Assets/XiheFramework/Editor/Core/Resource/AddressWrapperTemplate.txt";

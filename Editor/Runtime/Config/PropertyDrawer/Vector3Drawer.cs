@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XiheFramework.Editor.Core.Config.PropertyDrawer {
+namespace XiheFramework.Editor.Runtime.Config.PropertyDrawer {
     [CustomPropertyDrawer(typeof(Vector3))]
     public class Vector3Drawer : UnityEditor.PropertyDrawer
     {

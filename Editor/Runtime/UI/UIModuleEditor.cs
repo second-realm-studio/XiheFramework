@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using XiheFramework.Runtime.UI;
 
-namespace XiheFramework.Editor.Core.UI {
+namespace XiheFramework.Editor.Runtime.UI {
     [CustomEditor(typeof(UIModule))]
     public class UIModuleEditor : UnityEditor.Editor {
         private SerializedObject m_SerializedObject;

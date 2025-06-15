@@ -1,6 +1,7 @@
 ﻿namespace XiheFramework.Runtime.Base {
     public enum CoreModulePriority {
         Default = -1,
+        CustomModuleDefault = 0,
         Event = -100,
         Blackboard = -90,
         LogicTime = -80,

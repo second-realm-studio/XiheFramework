@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace XiheFramework.Runtime.Utility {
     public static class SystemUtil {
@@ -12,6 +13,14 @@ namespace XiheFramework.Runtime.Utility {
             while ((index = str.IndexOf(substr, index, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) != -1) indexes.Add(index++);
 
             return indexes.ToArray();
+        }
+
+        public static IEnumerable<Type> GetAllImplementedTypeFrom<T>() {
+            var resultTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => typeof(T).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
+
+            return resultTypes;
         }
     }
 }

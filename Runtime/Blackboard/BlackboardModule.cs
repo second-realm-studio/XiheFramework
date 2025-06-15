@@ -23,6 +23,7 @@ namespace XiheFramework.Runtime.Blackboard {
         public override T CreateBlackboard<T>(string blackboardName) {
             var blackboard = new T();
             m_Blackboards[blackboardName] = blackboard;
+            blackboard.OnCreated();
             return blackboard;
         }
 

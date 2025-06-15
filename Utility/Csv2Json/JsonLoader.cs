@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XiheFramework.Runtime;
 
-namespace Json {
+namespace XiheFramework.Utility.Csv2Json {
     public static class JsonLoader {
         public static List<T> LoadDataList<T>(string jsonAddress) {
             // 从Resources加载（无需.json扩展名）

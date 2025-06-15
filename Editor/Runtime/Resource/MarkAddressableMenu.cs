@@ -15,9 +15,9 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 namespace XiheFramework.Editor.Runtime.Resource {
     public static class MarkAddressableMenu {
         private const string AddressableResourcesRoot = "Assets/AddressableResources/";
-        private const string TemplatePath = "Assets/XiheFramework/Editor/Core/Resource/AddressWrapperTemplate.txt";
+        private const string TemplatePath = "Assets/XiheFramework/Editor/Runtime/Resource/AddressWrapperTemplate.txt";
         private const string LinkScriptsDirectory = "Assets/Scripts/GameConstant/";
-        private const string ConsoleUIOverlayPath = "Assets/XiheFramework/Core/Console/UI/ConsoleUIOverlay.prefab";
+        private const string ConsoleUIOverlayPath = "Assets/XiheFramework/Runtime/Console/UI/ConsoleUIOverlay.prefab";
 
 
         [MenuItem("XiheFramework/Resource/Create Addressable Folder")]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rewired;
 using UnityEngine;
 using XiheFramework.Runtime.Base;
 using XiheFramework.Runtime.Console.UI;
@@ -77,7 +78,7 @@ namespace XiheFramework.Runtime.Console {
             base.OnUpdate();
 
 #if USE_REWIRED
-            if (Game.Input(0).GetButtonUp(openConsoleUIOverlayInputActionName)) {
+            if (Game.SystemInput.GetButtonUp(openConsoleUIOverlayInputActionName)) {
                 OpenConsole();
             }
 #else

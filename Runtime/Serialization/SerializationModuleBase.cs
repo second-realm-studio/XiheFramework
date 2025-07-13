@@ -11,14 +11,14 @@ namespace XiheFramework.Runtime.Serialization {
 
             var args = new OnSaveEventArgs();
             args.timeStamp = DateTime.Now;
-            Game.Event.InvokeNow(OnSaveEventName, null, args);
+            Game.Event.InvokeNow(OnSaveEventName, args);
         }
 
         public void LoadGame() {
             OnLoadCallback();
 
             var args = new OnLoadEventArgs();
-            Game.Event.InvokeNow(OnLoadEventName, null, args);
+            Game.Event.InvokeNow(OnLoadEventName, args);
         }
 
         protected override void OnInstantiated() {

@@ -117,7 +117,7 @@ namespace XiheFramework.Runtime.Entity {
 
                 var args = new EntityModuleEvents.OnEntityDestroyedEventArgs(entityId, entity.GetType(), entity.EntityAddress, entity.gameObject.name, entity.transform.position,
                     entity.transform.rotation);
-                Game.Event.InvokeNow(EntityModuleEvents.OnEntityDestroyedEventName, null, args);
+                Game.Event.InvokeNow(EntityModuleEvents.OnEntityDestroyedEventName, args);
                 m_Entities.Remove(entityId);
                 m_RecycledEntityIds.Remove(entityId); // release recycled id if exist
             }
@@ -265,7 +265,7 @@ namespace XiheFramework.Runtime.Entity {
             var args = new EntityModuleEvents.OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
 
             entity.OnInitCallbackInternal();
-            Game.Event.InvokeNow(EntityModuleEvents.OnEntityInstantiatedEventName, null, args);
+            Game.Event.InvokeNow(EntityModuleEvents.OnEntityInstantiatedEventName, args);
         }
 
         #endregion

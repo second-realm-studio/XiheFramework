@@ -15,7 +15,7 @@ namespace XiheFramework.Runtime.FSM {
 
         internal void OnEnterInternal() {
             OnEnterCallback();
-            Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, this, new OnStateEnteredEventArgs(m_ParentStateMachine.FsmName, m_StateName));
+            Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, new OnStateEnteredEventArgs(m_ParentStateMachine.FsmName, m_StateName));
         }
 
         internal void OnUpdateInternal() {
@@ -29,7 +29,7 @@ namespace XiheFramework.Runtime.FSM {
 
             m_EventHandlerIds.Clear();
             OnExitCallback();
-            Game.Event.Invoke(Game.Fsm.OnStateExitEventName, this, new OnStateExitedEventArgs(m_ParentStateMachine.FsmName, m_StateName));
+            Game.Event.Invoke(Game.Fsm.OnStateExitEventName, new OnStateExitedEventArgs(m_ParentStateMachine.FsmName, m_StateName));
         }
 
         protected abstract void OnEnterCallback();

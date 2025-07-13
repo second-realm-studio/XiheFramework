@@ -94,7 +94,7 @@ namespace XiheFramework.Runtime.Event {
             m_ActiveEventHandlers.Remove(handlerId);
         }
 
-        public void InvokeNow(string eventName, object sender = null, object eventArg = null) {
+        public void InvokeNow(string eventName, object eventArg = null) {
             if (m_CurrentEvents.ContainsKey(eventName)) {
                 var handlers = m_CurrentEvents[eventName].ToArray(); //TODO: change to linkedlist to avoid "handler list being modified during iteration" error
                 foreach (var handlerId in handlers) {
@@ -104,7 +104,7 @@ namespace XiheFramework.Runtime.Event {
                     }
 
                     if (m_ActiveEventHandlers.TryGetValue(handlerId, out var handler)) {
-                        handler.Invoke(sender, eventArg);
+                        handler.Invoke(null, eventArg);
                     }
                     else {
                         Debug.LogError($"Handler: {handlerId} callback is null");
@@ -116,7 +116,7 @@ namespace XiheFramework.Runtime.Event {
             }
         }
 
-        public void Invoke(string eventName, object sender = null, object eventArg = null) {
+        public void Invoke(string eventName, object eventArg = null) {
             if (m_CurrentEvents.TryGetValue(eventName, out var value))
                 foreach (var handlerId in value) {
                     if (IsNullOrEmpty(handlerId)) {
@@ -125,7 +125,7 @@ namespace XiheFramework.Runtime.Event {
                     }
 
                     if (m_ActiveEventHandlers.TryGetValue(handlerId, out var handler)) {
-                        var eventPair = new EventPair(sender, eventArg, handler);
+                        var eventPair = new EventPair(null, eventArg, handler);
                         lock (m_LockRoot) {
                             m_WaitingList.Enqueue(eventPair);
                             if (enableDebug) {

@@ -15,7 +15,7 @@ namespace XiheFramework.Runtime.Utility {
             return indexes.ToArray();
         }
 
-        public static IEnumerable<Type> GetAllImplementedTypeFrom<T>() {
+        public static IEnumerable<Type> GetAllTypesImplemented<T>() {
             var resultTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => typeof(T).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);

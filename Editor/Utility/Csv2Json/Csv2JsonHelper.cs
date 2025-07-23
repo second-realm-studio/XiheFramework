@@ -66,14 +66,11 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
                         var propertyInfo = type.GetProperty(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase); // 属性信息
 
                         if (fieldInfo == null && propertyInfo == null) {
-                            Debug.LogWarning($"Cannot find field or property: {fieldName}, assigning default value.");
+                            Debug.LogWarning($"Cannot find field or property: {fieldName} in {tableName}, skipping this column.");
                         }
-
-                        // 如果字段或属性存在
-                        if (fieldInfo != null || propertyInfo != null) {
+                        else {
                             // 解析值（根据目标类型）
-                            object value = ParseValue(values[j].Trim(),
-                                fieldInfo != null ? fieldInfo.FieldType : propertyInfo.PropertyType);
+                            object value = ParseValue(values[j].Trim(), fieldInfo != null ? fieldInfo.FieldType : propertyInfo.PropertyType);
 
                             // 设置值
                             if (fieldInfo != null) {

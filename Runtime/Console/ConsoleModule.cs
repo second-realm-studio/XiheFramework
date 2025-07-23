@@ -71,6 +71,7 @@ namespace XiheFramework.Runtime.Console {
 
         protected override void OnInstantiated() {
             RegisterAllCommands();
+            Logs = new List<string>();
             Game.Console = this;
         }
 

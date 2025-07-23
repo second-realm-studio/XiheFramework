@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using XiheFramework.Runtime.Utility.DataStructure;
 
 namespace XiheFramework.Runtime.Base {
     public abstract class GameModuleBase : MonoBehaviour {
@@ -40,6 +41,30 @@ namespace XiheFramework.Runtime.Base {
         protected virtual void OnFixedUpdate() { }
         protected virtual void OnLateUpdate() { }
         protected virtual void OnDestroyed() { }
+
+        #endregion
+
+        #region Event Management
+
+        private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
+
+        /// <summary>
+        /// Automatically Unsubscribe Event when Entity is being Destroyed
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <param name="eventHandler"></param>
+        protected void SubscribeEvent(string eventName, EventHandler<object> eventHandler) {
+            var handlerId = Game.Event.Subscribe(eventName, eventHandler);
+            m_EventHandlerIds.Add(eventName, handlerId);
+        }
+
+        private void UnsubscribeEvent(string eventName) {
+            if (m_EventHandlerIds.TryGetValue(eventName, out var handlerIds)) {
+                foreach (var handlerId in handlerIds) {
+                    Game.Event.Unsubscribe(eventName, handlerId);
+                }
+            }
+        }
 
         #endregion
     }

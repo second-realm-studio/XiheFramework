@@ -21,7 +21,7 @@ namespace XiheFramework.Runtime.Entity {
 
             var go = Game.Resource.InstantiateAsset<GameObject>(entityAddress);
             if (go == null) {
-                Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " is not a GameObject");
+                // Debug.LogError("[ENTITY] Entity Instantiation Failed : " + entityAddress + " does not exist or is not a GameObject");
                 return null;
             }
 

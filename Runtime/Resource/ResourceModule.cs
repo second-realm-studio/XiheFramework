@@ -60,7 +60,7 @@ namespace XiheFramework.Runtime.Resource {
                 AsyncOperationHandle<T> op = Addressables.LoadAssetAsync<T>(address);
                 var result = op.WaitForCompletion();
                 if (result == null) {
-                    Debug.LogError("LoadAsync failed: " + address);
+                    // Debug.LogError("Load failed: " + address);
                     return null;
                 }
 
@@ -141,7 +141,7 @@ namespace XiheFramework.Runtime.Resource {
                 onFinished?.Invoke(null);
                 yield break;
             }
-            
+
             var locationOpHandle = Addressables.LoadResourceLocationsAsync(enumerable, Addressables.MergeMode.Intersection);
             yield return locationOpHandle;
 

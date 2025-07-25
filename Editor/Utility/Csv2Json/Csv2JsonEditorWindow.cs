@@ -72,7 +72,7 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
                 InitReorderableList();
             }
 
-            if (m_CsvTypePairsListProp.serializedObject != null) {
+            if (m_CsvTypePairsListProp != null && m_CsvTypePairsListProp.serializedObject != null) {
                 m_CsvTypePairsListProp.serializedObject.Update();
                 m_CsvTypePairsReorderableList?.DoLayoutList();
                 m_CsvTypePairsListProp.serializedObject.ApplyModifiedProperties();

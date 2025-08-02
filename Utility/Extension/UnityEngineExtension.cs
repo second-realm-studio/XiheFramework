@@ -146,6 +146,10 @@ namespace XiheFramework.Utility.Extension {
         public static bool Includes(this LayerMask mask, int layer) {
             return mask == (mask | (1 << layer));
         }
+
+        public static bool IncludesBitMask(this uint mask1, uint mask2) {
+            return (mask1 & mask2) != 0;
+        }
     }
 
 

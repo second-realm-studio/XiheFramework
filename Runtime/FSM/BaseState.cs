@@ -5,17 +5,17 @@ namespace XiheFramework.Runtime.FSM {
     public abstract class BaseState {
         public string StateName => m_StateName;
         private string m_StateName;
-        private readonly StateMachine m_ParentStateMachine;
+        protected readonly StateMachine parentStateMachine;
         private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
 
         protected BaseState(StateMachine parentStateMachine, string stateName) {
-            m_ParentStateMachine = parentStateMachine;
+            this.parentStateMachine = parentStateMachine;
             m_StateName = stateName;
         }
 
         internal void OnEnterInternal() {
             OnEnterCallback();
-            Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, new OnStateEnteredEventArgs(m_ParentStateMachine.FsmName, m_StateName));
+            Game.Event.Invoke(Game.Fsm.OnStateEnterEventName, new OnStateEnteredEventArgs(parentStateMachine.FsmName, m_StateName));
         }
 
         internal void OnUpdateInternal() {
@@ -29,7 +29,7 @@ namespace XiheFramework.Runtime.FSM {
 
             m_EventHandlerIds.Clear();
             OnExitCallback();
-            Game.Event.Invoke(Game.Fsm.OnStateExitEventName, new OnStateExitedEventArgs(m_ParentStateMachine.FsmName, m_StateName));
+            Game.Event.Invoke(Game.Fsm.OnStateExitEventName, new OnStateExitedEventArgs(parentStateMachine.FsmName, m_StateName));
         }
 
         protected abstract void OnEnterCallback();
@@ -37,7 +37,7 @@ namespace XiheFramework.Runtime.FSM {
         protected abstract void OnExitCallback();
 
         public void ChangeState(string targetState) {
-            m_ParentStateMachine.ChangeState(targetState);
+            parentStateMachine.ChangeState(targetState);
         }
 
         protected void SubscribeEvent(string eventName, EventHandler<object> eventHandler) {

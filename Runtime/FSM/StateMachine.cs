@@ -14,6 +14,8 @@ namespace XiheFramework.Runtime.FSM {
         private string m_InitialState;
         private string m_NextState;
 
+        private string m_PreviousState;
+
         private Dictionary<string, BaseState> m_States = new();
 
         public static StateMachine Create(string fsmName, string initialState) {
@@ -40,6 +42,10 @@ namespace XiheFramework.Runtime.FSM {
             return m_CurrentState;
         }
 
+        public string GetPreviousState() {
+            return m_PreviousState;
+        }
+
         public void AddState(BaseState state) {
             m_States[state.StateName] = state;
         }
@@ -52,15 +58,6 @@ namespace XiheFramework.Runtime.FSM {
             m_States.Clear();
         }
 
-        public void OnStart() {
-            if (m_InitialState == null || !m_States.ContainsKey(m_InitialState)) m_InitialState = m_States.Keys.First();
-
-            m_CurrentState = m_InitialState;
-
-            m_ExitToEnter = true;
-            // m_States[m_CurrentState].OnEnter();
-        }
-
         public void ChangeState(string targetState) {
             //when targetState has not been added to this state machine
             if (!m_States.ContainsKey(targetState)) {
@@ -69,8 +66,20 @@ namespace XiheFramework.Runtime.FSM {
             }
 
             m_UpdateToExit = true;
+            m_PreviousState = m_CurrentState;
             m_NextState = targetState;
             if (Game.Fsm.enableDebug) Debug.Log("Change to " + targetState);
+        }
+
+        #region Life Cycle
+
+        public void OnStart() {
+            if (m_InitialState == null || !m_States.ContainsKey(m_InitialState)) m_InitialState = m_States.Keys.First();
+
+            m_CurrentState = m_InitialState;
+
+            m_ExitToEnter = true;
+            // m_States[m_CurrentState].OnEnter();
         }
 
         public void OnUpdate() {
@@ -101,13 +110,12 @@ namespace XiheFramework.Runtime.FSM {
             m_NextFrameLock = true;
         }
 
-        /// <summary>
-        ///     shutdown fsm
-        /// </summary>
         public void OnExit() {
             m_States[m_CurrentState].OnExitInternal();
             m_CurrentState = Empty;
         }
+
+        #endregion
 
         #region Locks
 

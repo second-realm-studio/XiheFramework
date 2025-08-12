@@ -24,11 +24,11 @@ namespace XiheFramework.Runtime.Entity {
 
         private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
 
-        public virtual void OnInitCallback() { }
-        public virtual void OnUpdateCallback() { }
-        public virtual void OnFixedUpdateCallback() { }
-        public virtual void OnLateUpdateCallback() { }
-        public virtual void OnDestroyCallback() { }
+        protected virtual void OnInitCallback() { }
+        protected virtual void OnUpdateCallback() { }
+        protected virtual void OnFixedUpdateCallback() { }
+        protected virtual void OnLateUpdateCallback() { }
+        protected virtual void OnDestroyCallback() { }
 
         // public virtual SerializableEntityData OnSaveCallBack(OnSaveEventArgs args) {
         //     var data = new SerializableEntityData();
@@ -91,7 +91,7 @@ namespace XiheFramework.Runtime.Entity {
             }
         }
 
-        private void OnSetGlobalTimeScale(object sender, object e) {
+        protected virtual void OnSetGlobalTimeScale(object sender, object e) {
             if (useLogicTime) {
                 var args = (OnSetGlobalTimeScaleEventArgs)e;
                 TimeScale = args.newTimeScale;

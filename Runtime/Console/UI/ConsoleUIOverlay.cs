@@ -11,7 +11,7 @@ namespace XiheFramework.Runtime.Console.UI {
         public TMP_InputField inputField;
         public TMP_Text outputField;
 
-        public override void OnInitCallback() {
+        protected override void OnInitCallback() {
             base.OnInitCallback();
 
             helpButton.onClick.AddListener(() => { Game.Console.ExecuteCommand("help", out var message); });

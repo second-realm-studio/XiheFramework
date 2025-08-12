@@ -47,4 +47,4 @@ MonoBehaviour:
   updateInterval: 0
   fixedUpdateInterval: 0
   lateUpdateInterval: 0
-  enableDebug: 0
+  enableDebug: 1

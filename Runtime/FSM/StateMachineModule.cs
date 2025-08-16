@@ -7,14 +7,11 @@ using XiheFramework.Runtime.Base;
 namespace XiheFramework.Runtime.FSM {
     public class StateMachineModule : GameModuleBase {
         public override int Priority => (int)CoreModulePriority.Fsm;
-
-        public string OnStateEnterEventName => "FSM.OnStateEnter";
-        public string OnStateExitEventName => "FSM.OnStateExit";
+        
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
         private Queue<string> m_RemoveQueue = new();
         private bool m_IsActive = true;
-
 
         protected override void OnUpdate() {
             if (!m_IsActive) return;

@@ -11,7 +11,7 @@ namespace XiheFramework.Utility.Extension {
             return gameObject.AddComponent<T>();
         }
 
-        public static Vector2 ToVector2(this Vector3 vector3, V3ToV2Type convertType = V3ToV2Type.XZ) {
+        public static Vector2 ToVector2(this Vector3 vector3, V3ToV2Type convertType) {
             var result = convertType switch {
                 V3ToV2Type.XY => new Vector2(vector3.x, vector3.y),
                 V3ToV2Type.XZ => new Vector2(vector3.x, vector3.z),
@@ -22,7 +22,7 @@ namespace XiheFramework.Utility.Extension {
             return result;
         }
 
-        public static Vector3 ToVector3(this Vector2 vector2, V2ToV3Type convertType = V2ToV3Type.XZ) {
+        public static Vector3 ToVector3(this Vector2 vector2, V2ToV3Type convertType) {
             var result = convertType switch {
                 V2ToV3Type.XY => new Vector3(vector2.x, vector2.y, 0f),
                 V2ToV3Type.XZ => new Vector3(vector2.x, 0f, vector2.y),

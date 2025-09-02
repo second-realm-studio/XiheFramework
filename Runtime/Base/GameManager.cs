@@ -19,6 +19,7 @@ using XiheFramework.Runtime.Resource;
 using XiheFramework.Runtime.Scene;
 using XiheFramework.Runtime.UI;
 using XiheFramework.Runtime.Utility.DataStructure;
+
 // using XiheFramework.Core.Serialization;
 
 namespace XiheFramework.Runtime.Base {
@@ -159,7 +160,12 @@ namespace XiheFramework.Runtime.Base {
             }
 
             Instance.m_AliveGameModules[gameModuleType] = gameModule;
-            gameModule.OnInstantiatedInternal(onInstantiated);
+            try {
+                gameModule.OnInstantiatedInternal(onInstantiated);
+            }
+            catch (Exception e) {
+                System.Console.WriteLine(e);
+            }
 
             //timer
             Instance.m_AliveGameModuleUpdateTimers[gameModuleType] = gameModule.updateInterval;

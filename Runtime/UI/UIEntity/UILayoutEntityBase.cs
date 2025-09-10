@@ -5,5 +5,18 @@ namespace XiheFramework.Runtime.UI.UIEntity {
     [DisallowMultipleComponent]
     public abstract class UILayoutEntityBase : GameEntityBase {
         public override string GroupName => "UILayoutEntity";
+
+        protected RectTransform rectTransform;
+
+        protected override void OnInitCallback() {
+            base.OnInitCallback();
+
+            if (transform is not RectTransform) {
+                rectTransform = gameObject.AddComponent<RectTransform>();
+            }
+            else {
+                rectTransform = transform as RectTransform;
+            }
+        }
     }
 }

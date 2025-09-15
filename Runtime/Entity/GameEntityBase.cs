@@ -25,6 +25,12 @@ namespace XiheFramework.Runtime.Entity {
         private readonly MultiDictionary<string, string> m_EventHandlerIds = new();
 
         protected virtual void OnInitCallback() { }
+
+        /// <summary>
+        /// one frame after init
+        /// </summary>
+        protected virtual void OnAwakeCallback() { }
+
         protected virtual void OnUpdateCallback() { }
         protected virtual void OnFixedUpdateCallback() { }
         protected virtual void OnLateUpdateCallback() { }
@@ -46,7 +52,20 @@ namespace XiheFramework.Runtime.Entity {
         internal void OnInitCallbackInternal() {
             TimeScale = 1;
             SubscribeEvent(Game.LogicTime.onSetGlobalTimeScaleEventName, OnSetGlobalTimeScale);
+            SubscribeEvent(EntityModuleEvents.OnEntityInstantiatedEventName, OnEntityInstantiated);
             OnInitCallback();
+        }
+
+        private void OnEntityInstantiated(object sender, object e) {
+            if (e is not EntityModuleEvents.OnEntityInstantiatedEventArgs args) {
+                return;
+            }
+
+            if (args.entityId != EntityId) {
+                return;
+            }
+
+            OnAwakeCallback();
         }
 
         internal void OnUpdateCallbackInternal() => OnUpdateCallback();

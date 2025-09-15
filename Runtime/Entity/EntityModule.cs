@@ -265,7 +265,7 @@ namespace XiheFramework.Runtime.Entity {
             var args = new EntityModuleEvents.OnEntityInstantiatedEventArgs(finalId, entity.EntityAddress, entity.gameObject.name);
 
             entity.OnInitCallbackInternal();
-            Game.Event.InvokeNow(EntityModuleEvents.OnEntityInstantiatedEventName, args);
+            Game.Event.Invoke(EntityModuleEvents.OnEntityInstantiatedEventName, args);
         }
 
         #endregion

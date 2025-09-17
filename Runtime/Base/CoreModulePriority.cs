@@ -1,17 +1,17 @@
 ﻿namespace XiheFramework.Runtime.Base {
-    public enum CoreModulePriority {
-        Default = -1,
-        CustomModuleDefault = 0,
-        Event = -100,
-        Blackboard = -90,
-        LogicTime = -80,
-        Config = -80,
-        Resource = -70,
-        Fsm = -70,
-        Entity = -60,
-        UI = -50,
-        Scene = -40,
-        Console = -40,
-        Audio = -40,
+    public static class CoreModulePriority {
+        public const int Default = -1;
+        public const int CustomModuleDefault = 0;
+        public const int Event = -100;
+        public const int Blackboard = -90;
+        public const int LogicTime = -80;
+        public const int Config = -80;
+        public const int Resource = -70;
+        public const int Fsm = -70;
+        public const int Entity = -60;
+        public const int UI = -50;
+        public const int Scene = -40;
+        public const int Console = -40;
+        public const int Audio = -40;
     }
 }

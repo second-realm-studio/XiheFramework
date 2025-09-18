@@ -13,7 +13,8 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
         /// <typeparam name="T">目标数据类型</typeparam>
         /// <param name="csvPath">表格名称（不带扩展名）</param>
         /// <param name="outputDirectory"></param>
-        public static void ConvertCsv2Json<T>(string csvPath, string outputDirectory) where T : new() {
+        /// <param name="firstLine"></param>
+        public static void ConvertCsv2Json<T>(string csvPath, string outputDirectory, int firstLine) where T : new() {
             if (!Directory.Exists(outputDirectory)) {
                 Directory.CreateDirectory(outputDirectory);
             }
@@ -47,7 +48,7 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
                 System.Type type = typeof(T); // 获取目标类型信息
 
                 // 处理每一行数据（从第三行开始）
-                for (int i = 2; i < csvLines.Length; i++) {
+                for (int i = firstLine - 1; i < csvLines.Length; i++) {
                     string[] values = ParseCsvLine(csvLines[i]); // 解析CSV行
 
                     // 检查列数是否匹配

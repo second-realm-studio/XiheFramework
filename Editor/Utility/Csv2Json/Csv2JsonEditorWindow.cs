@@ -40,20 +40,23 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
 
         private void InitReorderableList() {
             m_CsvTypePairsReorderableList = new ReorderableList(m_SerializedObject, m_CsvTypePairsListProp, true, true, true, true);
-            m_CsvTypePairsReorderableList.elementHeight = EditorGUIUtility.singleLineHeight * 2;
+            m_CsvTypePairsReorderableList.elementHeight = EditorGUIUtility.singleLineHeight * 3;
             m_CsvTypePairsReorderableList.drawElementCallback = OnDrawElement;
             m_CsvTypePairsReorderableList.onAddCallback = OnAddElement;
-            m_CsvTypePairsReorderableList.elementHeightCallback = (int index) => EditorGUIUtility.singleLineHeight * 2 + EditorGUIUtility.standardVerticalSpacing;
+            m_CsvTypePairsReorderableList.elementHeightCallback = (int index) => EditorGUIUtility.singleLineHeight * 3 + EditorGUIUtility.standardVerticalSpacing;
         }
 
         private void OnDrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             var element = m_CsvTypePairsListProp.GetArrayElementAtIndex(index);
             var csvAsset = element.FindPropertyRelative("csvAsset");
             var dataType = element.FindPropertyRelative("infoType");
+            var firstLine = element.FindPropertyRelative("firstLine");
             var pathRect = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.PropertyField(pathRect, csvAsset, new GUIContent("CSV Asset"));
             var typeRect = new Rect(rect.x, rect.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing, rect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.PropertyField(typeRect, dataType, new GUIContent("Table Type"));
+            var firstLineRect = new Rect(rect.x, rect.y + EditorGUIUtility.singleLineHeight * 2 + EditorGUIUtility.standardVerticalSpacing * 2, rect.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.PropertyField(firstLineRect, firstLine, new GUIContent("First Line"));
         }
 
         private void OnAddElement(ReorderableList list) {
@@ -95,7 +98,7 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
                 var infoType = ResolveType(csvTypePair.infoType.fullName);
                 var generic = method.MakeGenericMethod(infoType);
                 var filePath = AssetDatabase.GetAssetPath(csvTypePair.csvAsset);
-                generic.Invoke(null, new object[] { filePath, m_OutputPath });
+                generic.Invoke(null, new object[] { filePath, m_OutputPath, csvTypePair.firstLine });
             }
         }
 
@@ -113,6 +116,7 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
         private class CsvTypePair {
             public TextAsset csvAsset;
             public InfoType infoType;
+            public int firstLine = 3;
         }
 
         [Serializable]

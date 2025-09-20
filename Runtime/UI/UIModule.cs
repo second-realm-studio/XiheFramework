@@ -28,7 +28,7 @@ namespace XiheFramework.Runtime.UI {
         /// Open new UIPageEntity in Page Layer
         /// </summary>
         /// <param name="address"></param>
-        /// <returns></returns>
+        /// <returns>Page entity id</returns>
         public uint OpenPage(string address) {
             if (!m_PageCanvas || string.IsNullOrEmpty(address)) return 0;
             HideOrDestroyPage();
@@ -176,14 +176,14 @@ namespace XiheFramework.Runtime.UI {
         private void HideOrDestroyPage() {
             if (m_PageReturnHistory.Count == 0) return;
             var entry = m_PageReturnHistory.Last.Value;
-            if (entry.entity.destroyOnClose) {
-                Game.Entity.DestroyEntity(entry.entity.EntityId);
-                entry.entity = null;
-                m_PageReturnHistory.Last.Value = entry;
-            }
-            else {
-                entry.entity.Hide();
-            }
+            // if (entry.entity.destroyOnClose) {
+            Game.Entity.DestroyEntity(entry.entity.EntityId);
+            entry.entity = null;
+            m_PageReturnHistory.Last.Value = entry;
+            // }
+            // else {
+            //     entry.entity.Hide();
+            // }
         }
 
         public uint OpenPop(string address) {

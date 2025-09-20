@@ -10,7 +10,7 @@
         /// <summary>
         /// destroy instead of hide
         /// </summary>
-        public bool destroyOnClose = true;
+        // public bool destroyOnClose = true;
 
         public void Show() {
             gameObject.SetActive(true);

@@ -116,7 +116,7 @@ namespace XiheFramework.Runtime.Event {
             }
         }
 
-        public void Invoke(string eventName, object eventArg = null) {
+        public void Invoke(string eventName, object eventArg = null, object sender = null) {
             if (m_CurrentEvents.TryGetValue(eventName, out var value))
                 foreach (var handlerId in value) {
                     if (IsNullOrEmpty(handlerId)) {
@@ -125,7 +125,7 @@ namespace XiheFramework.Runtime.Event {
                     }
 
                     if (m_ActiveEventHandlers.TryGetValue(handlerId, out var handler)) {
-                        var eventPair = new EventPair(null, eventArg, handler);
+                        var eventPair = new EventPair(sender, eventArg, handler);
                         lock (m_LockRoot) {
                             m_WaitingList.Enqueue(eventPair);
                             if (enableDebug) {

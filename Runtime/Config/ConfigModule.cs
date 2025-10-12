@@ -6,7 +6,7 @@ using Object = System.Object;
 
 namespace XiheFramework.Runtime.Config {
     public class ConfigModule : GameModuleBase {
-        public override int Priority => (int)CoreModulePriority.Config;
+        public override int Priority => CoreModulePriority.Config;
 
         public List<PresetConfigEntry> configSettings = new List<PresetConfigEntry>();
 

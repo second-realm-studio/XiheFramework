@@ -20,7 +20,7 @@ namespace XiheFramework.Editor.Utility.Csv2Json {
             }
 
             if (!typeof(T).IsSerializable) {
-                Debug.LogError($"{nameof(T)} is not serializable. Add [System.Serializable] attribute.");
+                Debug.LogError($"{typeof(T).Name} is not serializable. Add [System.Serializable] attribute.");
                 return;
             }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,10 +19,17 @@ namespace XiheFramework.Runtime.Resource {
         }
 
         IEnumerator LoadLabelAsync(IEnumerable<string> label) {
-            var handle = Game.Resource.LoadAssetsAsyncCoroutine(label, onLoaded: (address) => {
-                if (display != null) display.text = $"loaded: {address}";
-            });
-            yield return handle;
+            // if (display) {
+            //     display.text = "loading default resources...";
+            // }
+
+            var loadedAssetNames = new StringBuilder();
+
+            yield return Game.Resource.LoadAssetsAsyncCoroutine(label,
+                onProgress: (progress) => {
+                    if (display != null) display.text = $"loading: {(progress * 100):F2}%\n\n{loadedAssetNames}";
+                },
+                onLoaded: (address) => { loadedAssetNames.Append($"loaded: {address}\n"); });
 
             Game.Event.Invoke(ResourceModuleEvents.OnDefaultResourcesLoadedEvtName);
         }

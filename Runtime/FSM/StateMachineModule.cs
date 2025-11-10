@@ -7,7 +7,7 @@ using XiheFramework.Runtime.Base;
 namespace XiheFramework.Runtime.FSM {
     public class StateMachineModule : GameModuleBase {
         public override int Priority => (int)CoreModulePriority.Fsm;
-        
+
         private readonly Dictionary<string, StateMachine> m_StateMachines = new();
 
         private Queue<string> m_RemoveQueue = new();
@@ -99,8 +99,8 @@ namespace XiheFramework.Runtime.FSM {
         }
 
         public void RemoveStateMachine(string fsmName) {
-            if (m_StateMachines.ContainsKey(fsmName)) {
-                m_StateMachines[fsmName].OnExit();
+            if (m_StateMachines.TryGetValue(fsmName, out var stateMachine)) {
+                stateMachine.OnExit();
                 m_RemoveQueue.Enqueue(fsmName);
             }
             else {
@@ -109,8 +109,8 @@ namespace XiheFramework.Runtime.FSM {
         }
 
         public void StartStateMachine(string fsmName) {
-            if (m_StateMachines.ContainsKey(fsmName)) {
-                m_StateMachines[fsmName].OnStart();
+            if (m_StateMachines.TryGetValue(fsmName, out var stateMachine)) {
+                stateMachine.OnStart();
             }
             else {
                 Debug.LogWarningFormat("[FSM] Can not start fsm with name: {0} because it does not exist", fsmName);
@@ -118,20 +118,11 @@ namespace XiheFramework.Runtime.FSM {
         }
 
         public void StopStateMachine(string fsmName) {
-            if (m_StateMachines.ContainsKey(fsmName)) {
-                m_StateMachines[fsmName].OnExit();
+            if (m_StateMachines.TryGetValue(fsmName, out var stateMachine)) {
+                stateMachine.OnExit();
             }
             else {
                 Debug.LogWarningFormat("[FSM] Can not stop fsm with name: {0} because it does not exist", fsmName);
-            }
-        }
-
-        public void DestroyStateMachine(string fsmName) {
-            if (m_StateMachines.ContainsKey(fsmName)) {
-                m_StateMachines[fsmName].OnExit();
-            }
-            else {
-                Debug.LogWarningFormat("[FSM] Can not destroy fsm with name: {0} because it does not exist", fsmName);
             }
         }
 
